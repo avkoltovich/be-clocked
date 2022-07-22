@@ -5,7 +5,9 @@
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/be-clocked",
         "index": "apps/be-clocked/src/index.html",
@@ -17,7 +19,10 @@
           "apps/be-clocked/src/favicon.ico",
           "apps/be-clocked/src/assets"
         ],
-        "styles": ["apps/be-clocked/src/styles.scss"],
+        "styles": [
+          "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
+          "apps/be-clocked/src/styles.scss"
+        ],
         "scripts": []
       },
       "configurations": {
@@ -85,7 +90,9 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/be-clocked"],
+      "outputs": [
+        "coverage/apps/be-clocked"
+      ],
       "options": {
         "jestConfig": "apps/be-clocked/jest.config.ts",
         "passWithNoTests": true
