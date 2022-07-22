@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2020 browser module main",
-    "start": "node dist/apps/api/main.js",
+    "start": "nx run-many --target=serve --projects=api,be-clocked --parallel=true",
     "api": "nx serve api",
     "start-many": "nx run-many --target=serve --projects=be-clocked,api --parallel=true",
     "build": "nx run-many --target=build --projects=be-clocked,api --parallel=true",
