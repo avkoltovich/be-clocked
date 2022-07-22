@@ -5,9 +5,10 @@
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2020 browser module main",
-    "start": "nx serve",
+    "start": "node dist/apps/api/main.js",
     "api": "nx serve api",
-    "build": "nx build",
+    "start-many": "nx run-many --target=serve --projects=be-clocked,api --parallel=true",
+    "build": "nx run-many --target=build --projects=be-clocked,api --parallel=true",
     "test": "nx test"
   },
   "private": true,
