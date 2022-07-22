@@ -1,14 +1,15 @@
-<form class="form">
+<form class="form" [formGroup]="loginForm">
   <mat-form-field appearance="fill">
     <mat-label>
       Логин
     </mat-label>
-    <input matInput>
+    <input matInput formControlName="login">
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>
       Пароль
     </mat-label>
-    <input type="password" matInput>
+    <input type="password" matInput formControlName="password">
   </mat-form-field>
+  <button mat-flat-button color="primary" (click)="onLoginButtonClick()">Войти</button>
 </form>
