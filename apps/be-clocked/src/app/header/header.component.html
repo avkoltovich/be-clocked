@@ -1,5 +1,9 @@
 <mat-toolbar color="primary">
-  <button mat-icon-button class="menu-button">
+  <button mat-icon-button class="menu-button" [matMenuTriggerFor]="menu">
     <mat-icon>menu</mat-icon>
   </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/login">Войти</button>
+    <button mat-menu-item routerLink="/register">Регистрация</button>
+  </mat-menu>
 </mat-toolbar>
