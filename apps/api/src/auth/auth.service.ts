@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { Prisma } from "@prisma/client";
+import { compare, genSalt, hash } from "bcryptjs";
 
 @Injectable()
 export class AuthService {
@@ -11,10 +12,12 @@ export class AuthService {
   ) {
   }
 
-  async validateUser({ username, passwordHash }: Prisma.UserCreateInput): Promise<any> {
+  async validateUser({ username, password }: CreateUserDto): Promise<any> {
     const user = await this.usersService.findOne({ username });
 
-    if (user && user.passwordHash === passwordHash) {
+    const isCorrectPassword = compare(password, user.passwordHash);
+
+    if (user && isCorrectPassword) {
       const { passwordHash, ...result } = user;
 
       return result;
@@ -32,11 +35,13 @@ export class AuthService {
   }
 
   async create(data: CreateUserDto) {
-    const user: Prisma.UserCreateInput = {
+    const salt = await genSalt(10);
+
+    const newUser: Prisma.UserCreateInput = {
       username: data.username,
-      passwordHash: data.password
+      passwordHash: await hash(data.password, salt)
     };
 
-    return this.usersService.create(user);
+    return this.usersService.create(newUser);
   }
 }
