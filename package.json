@@ -9,7 +9,8 @@
     "api": "nx serve api",
     "start-many": "nx run-many --target=serve --projects=be-clocked,api --parallel=true",
     "build": "nx run-many --target=build --projects=be-clocked,api --parallel=true",
-    "test": "nx test"
+    "test": "nx test",
+    "heroku-postbuild": "nx build $PROJECT_NAME --prod"
   },
   "private": true,
   "dependencies": {
