@@ -3,7 +3,13 @@
     <mat-icon>menu</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item routerLink="/login">Войти</button>
-    <button mat-menu-item routerLink="/register">Регистрация</button>
+    <ng-container *ngIf="!(isAuthorized$ | async); else authorized">
+      <button mat-menu-item routerLink="/login">Войти</button>
+      <button mat-menu-item routerLink="/register">Регистрация</button>
+    </ng-container>
   </mat-menu>
 </mat-toolbar>
+
+<ng-template #authorized>
+  <button mat-menu-item (click)="onLogoutClick()">Выйти</button>
+</ng-template>

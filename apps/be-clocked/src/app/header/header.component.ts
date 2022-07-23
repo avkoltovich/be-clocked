@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { AuthService } from "../auth/auth.service";
 
 @Component({
   selector: "be-clocked-header",
@@ -6,9 +7,15 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./header.component.scss"]
 })
 export class HeaderComponent implements OnInit {
-  constructor() {
+  public isAuthorized$ = this.authService.isAuthorized$;
+
+  constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {
+  }
+
+  public onLogoutClick() {
+    this.authService.logout();
   }
 }
