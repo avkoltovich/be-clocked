@@ -1,7 +1,8 @@
 {
   "root": "dist/apps/be-clocked/",
+  "clean_urls": false,
   "routes": {
-    "/**/*.html": "index.html"
+    "/**": "index.html"
   },
   "proxies": {
     "/api/": {
