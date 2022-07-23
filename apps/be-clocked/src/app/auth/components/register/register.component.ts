@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { combineLatest, map, startWith, tap } from "rxjs";
 import { AuthService } from "../../auth.service";
-import { Router } from "@angular/router";
 
 @Component({
   selector: "be-clocked-register",
@@ -34,7 +33,7 @@ export class RegisterComponent implements OnInit {
     })
   );
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {

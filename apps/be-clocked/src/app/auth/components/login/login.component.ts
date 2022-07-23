@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { AuthService } from "../../auth.service";
 import { tap } from "rxjs";
-import { Router } from "@angular/router";
 
 @Component({
   selector: "be-clocked-login",
@@ -13,7 +12,7 @@ export class LoginComponent implements OnInit {
   public login = new FormControl("", [Validators.required]);
   public password = new FormControl("", [Validators.required]);
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {

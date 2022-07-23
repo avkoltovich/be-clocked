@@ -8,7 +8,7 @@ import { Router } from "@angular/router";
   providedIn: "root"
 })
 export class AuthService {
-  public isAuthorized$ = new BehaviorSubject(window.localStorage.getItem(JWT_TOKEN) !== undefined);
+  public isAuthorized$ = new BehaviorSubject(window.localStorage.getItem(JWT_TOKEN) !== null);
 
   constructor(private http: HttpClient, private router: Router) {
   }
@@ -25,11 +25,10 @@ export class AuthService {
     window.localStorage.removeItem(JWT_TOKEN);
     window.localStorage.removeItem(USER_ID);
     window.localStorage.removeItem(USER_LOGIN);
-    this.router.navigate(["login"]);
-
     setTimeout(() => {
       this.isAuthorized$.next(false);
-    }, 1000);
+      this.router.navigate(["login"]);
+    }, 300);
   }
 
   public authorize(user: AuthenticatedUser) {
