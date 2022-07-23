@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, Validators } from "@angular/forms";
 import { AuthService } from "../../auth.service";
 import { switchMap, tap } from "rxjs";
 
@@ -9,10 +9,8 @@ import { switchMap, tap } from "rxjs";
   styleUrls: ["../../auth.module.scss"]
 })
 export class LoginComponent implements OnInit {
-  public loginForm = new FormGroup({
-    login: new FormControl(),
-    password: new FormControl()
-  });
+  public login = new FormControl("", [Validators.required]);
+  public password = new FormControl("", [Validators.required]);
 
   constructor(private authService: AuthService) {
   }
@@ -22,8 +20,8 @@ export class LoginComponent implements OnInit {
 
   public onLoginButtonClick() {
     const user: AuthDto = {
-      username: this.loginForm.get("login")?.value,
-      password: this.loginForm.get("password")?.value
+      username: this.login.value!,
+      password: this.password.value!
     };
 
     this.authService.login(user).pipe(

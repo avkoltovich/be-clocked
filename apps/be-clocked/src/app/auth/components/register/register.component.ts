@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
-import { tap } from "rxjs";
+import { FormControl, Validators } from "@angular/forms";
+import { combineLatest, map, startWith, tap } from "rxjs";
 import { AuthService } from "../../auth.service";
 
 @Component({
@@ -9,21 +9,41 @@ import { AuthService } from "../../auth.service";
   styleUrls: ["../../auth.module.scss"]
 })
 export class RegisterComponent implements OnInit {
-  public createForm = new FormGroup({
-    login: new FormControl(),
-    password: new FormControl()
-  });
+  public login = new FormControl("", [Validators.required]);
+  public password = new FormControl("", [Validators.required]);
+  public repeatedPassword = new FormControl("", [Validators.required]);
+
+  public isInvalidForm = combineLatest([
+    this.password.valueChanges.pipe(
+      startWith(null)
+    ),
+    this.repeatedPassword.valueChanges.pipe(
+      startWith(null)
+    ),
+    this.login.valueChanges.pipe(
+      startWith(null)
+    )
+  ]).pipe(
+    map(([password, repeatedPassword]) => {
+      if (password !== repeatedPassword) {
+        this.repeatedPassword.setErrors({ incorrect: true });
+      }
+
+      return this.login.invalid || this.password.invalid || password !== repeatedPassword;
+    })
+  );
 
   constructor(private authService: AuthService) {
   }
 
   ngOnInit(): void {
+    this.isInvalidForm.subscribe();
   }
 
   public onCreateButtonClick() {
     const user: AuthDto = {
-      username: this.createForm.get("login")?.value,
-      password: this.createForm.get("password")?.value
+      username: this.login.value!,
+      password: this.password.value!
     };
 
     this.authService.create(user).pipe(
