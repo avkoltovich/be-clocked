@@ -1,11 +1,11 @@
 {
-  "root": "dist/apps/photo/fe/",
+  "root": "dist/apps/be-clocked/",
   "routes": {
     "/**/*.html": "index.html"
   },
   "proxies": {
     "/api/": {
-      "origin": "https://ktrz-nx-photos-api.herokuapp.com/api/"
+      "origin": "https://be-clocked-api.herokuapp.com/api/"
     }
   }
 }
