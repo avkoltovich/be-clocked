@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root"
@@ -9,19 +10,11 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  public login(user: AuthDto) {
-    return this.http.post("/api/auth/login", { ...user });
+  public login(user: AuthDto): Observable<AuthenticatedUser> {
+    return this.http.post<AuthenticatedUser>("/api/auth/login", { ...user });
   }
 
-  public create(user: AuthDto) {
-    return this.http.post("/api/auth/create", { ...user });
-  }
-
-  public getProfile(token: string) {
-    const headers = new HttpHeaders({
-      "Authorization": `Bearer ${token}`
-    });
-
-    return this.http.get("/api/profile", { headers });
+  public create(user: AuthDto): Observable<AuthenticatedUser> {
+    return this.http.post<AuthenticatedUser>("/api/auth/create", { ...user });
   }
 }

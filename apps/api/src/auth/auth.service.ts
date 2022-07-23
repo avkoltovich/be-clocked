@@ -30,11 +30,13 @@ export class AuthService {
     const payload = { username: user.username, sub: user.id };
 
     return {
-      access_token: this.jwtService.sign(payload)
+      accessToken: this.jwtService.sign(payload),
+      username: user.username,
+      id: user.id
     };
   }
 
-  async create(data: AuthDto) {
+  async create(data: AuthDto): Promise<AuthenticatedUser> {
     const salt = await genSalt(10);
 
     const newUser: Prisma.UserCreateInput = {
@@ -42,6 +44,12 @@ export class AuthService {
       passwordHash: await hash(data.password, salt)
     };
 
-    return this.usersService.create(newUser);
+    const createdUser = await this.usersService.create(newUser);
+
+    return {
+      id: createdUser.id,
+      username: createdUser.username,
+      accessToken: this.jwtService.sign(createdUser)
+    };
   }
 }

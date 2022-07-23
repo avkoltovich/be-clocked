@@ -1,7 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { AuthService } from "../../auth.service";
-import { switchMap, tap } from "rxjs";
+import { tap } from "rxjs";
+import { JWT_TOKEN, USER_ID, USER_LOGIN } from "../../../../../../../shared/constants";
 
 @Component({
   selector: "be-clocked-login",
@@ -25,14 +26,10 @@ export class LoginComponent implements OnInit {
     };
 
     this.authService.login(user).pipe(
-      tap((data) => {
-        console.log(data);
-      }),
-      switchMap((data) => {
-        // @ts-ignore
-        const token = data["access_token"];
-
-        return this.authService.getProfile(token);
+      tap((user) => {
+        window.localStorage.setItem(JWT_TOKEN, user.accessToken);
+        window.localStorage.setItem(USER_LOGIN, user.username);
+        window.localStorage.setItem(USER_ID, user.id.toString());
       })
     ).subscribe();
   }

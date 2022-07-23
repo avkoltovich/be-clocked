@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
 import { combineLatest, map, startWith, tap } from "rxjs";
 import { AuthService } from "../../auth.service";
+import { JWT_TOKEN, USER_ID, USER_LOGIN } from "../../../../../../../shared/constants";
 
 @Component({
   selector: "be-clocked-register",
@@ -47,8 +48,10 @@ export class RegisterComponent implements OnInit {
     };
 
     this.authService.create(user).pipe(
-      tap((data) => {
-        console.log(data);
+      tap((user) => {
+        window.localStorage.setItem(JWT_TOKEN, user.accessToken);
+        window.localStorage.setItem(USER_LOGIN, user.username);
+        window.localStorage.setItem(USER_ID, user.id.toString());
       })
     ).subscribe();
   }
