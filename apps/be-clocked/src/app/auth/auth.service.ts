@@ -9,8 +9,8 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  public login(user: { login: string, password: string }) {
-    return this.http.post("/api/auth/login", { username: "john", password: "changeme" });
+  public login(user: CreateUserDto) {
+    return this.http.post("/api/auth/login", { ...user });
   }
 
   public getProfile(token: string) {

@@ -21,8 +21,8 @@ export class LoginComponent implements OnInit {
   }
 
   public onLoginButtonClick() {
-    const user = {
-      login: this.loginForm.get("login")?.value,
+    const user: CreateUserDto = {
+      username: this.loginForm.get("login")?.value,
       password: this.loginForm.get("password")?.value
     };
 

@@ -1,4 +1,5 @@
 import { Component, OnInit } from "@angular/core";
+import { FormControl, FormGroup } from "@angular/forms";
 
 @Component({
   selector: "be-clocked-register",
@@ -6,6 +7,11 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["../../auth.module.scss"]
 })
 export class RegisterComponent implements OnInit {
+  public loginForm = new FormGroup({
+    login: new FormControl(),
+    password: new FormControl()
+  });
+
   constructor() {
   }
 
