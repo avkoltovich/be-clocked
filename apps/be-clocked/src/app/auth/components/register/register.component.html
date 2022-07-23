@@ -1,15 +1,15 @@
-<form class="form">
+<form class="form" [formGroup]="createForm">
   <mat-form-field appearance="fill">
     <mat-label>
       Введите логин
     </mat-label>
-    <input matInput>
+    <input matInput formControlName="login">
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>
       Введите пароль
     </mat-label>
-    <input type="password" matInput>
+    <input type="password" matInput formControlName="password">
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>
@@ -17,5 +17,5 @@
     </mat-label>
     <input type="password" matInput>
   </mat-form-field>
-  <button mat-flat-button color="primary">Зарегистрироваться</button>
+  <button mat-flat-button color="primary" (click)="onCreateButtonClick()">Зарегистрироваться</button>
 </form>

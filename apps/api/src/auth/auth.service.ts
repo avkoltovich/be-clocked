@@ -30,4 +30,13 @@ export class AuthService {
       access_token: this.jwtService.sign(payload)
     };
   }
+
+  async create(data: CreateUserDto) {
+    const user: Prisma.UserCreateInput = {
+      username: data.username,
+      passwordHash: data.password
+    };
+
+    return this.usersService.create(user);
+  }
 }

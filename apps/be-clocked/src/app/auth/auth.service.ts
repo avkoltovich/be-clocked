@@ -13,6 +13,10 @@ export class AuthService {
     return this.http.post("/api/auth/login", { ...user });
   }
 
+  public create(user: CreateUserDto) {
+    return this.http.post("/api/auth/create", { ...user });
+  }
+
   public getProfile(token: string) {
     const headers = new HttpHeaders({
       "Authorization": `Bearer ${token}`
