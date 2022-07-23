@@ -12,7 +12,7 @@ export class AuthService {
   ) {
   }
 
-  async validateUser({ username, password }: CreateUserDto): Promise<any> {
+  async validateUser({ username, password }: AuthDto): Promise<any> {
     const user = await this.usersService.findOne({ username });
 
     const isCorrectPassword = compare(password, user.passwordHash);
@@ -34,7 +34,7 @@ export class AuthService {
     };
   }
 
-  async create(data: CreateUserDto) {
+  async create(data: AuthDto) {
     const salt = await genSalt(10);
 
     const newUser: Prisma.UserCreateInput = {

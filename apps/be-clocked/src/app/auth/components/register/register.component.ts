@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
   }
 
   public onCreateButtonClick() {
-    const user: CreateUserDto = {
+    const user: AuthDto = {
       username: this.createForm.get("login")?.value,
       password: this.createForm.get("password")?.value
     };

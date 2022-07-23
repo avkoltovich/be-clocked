@@ -9,11 +9,11 @@ export class AuthService {
   constructor(private http: HttpClient) {
   }
 
-  public login(user: CreateUserDto) {
+  public login(user: AuthDto) {
     return this.http.post("/api/auth/login", { ...user });
   }
 
-  public create(user: CreateUserDto) {
+  public create(user: AuthDto) {
     return this.http.post("/api/auth/create", { ...user });
   }
 
