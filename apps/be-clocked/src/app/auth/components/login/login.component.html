@@ -9,11 +9,13 @@
     <mat-label>
       Пароль
     </mat-label>
-    <input [type]="hide ? 'password' : 'text'" matInput [formControl]="password">
-    <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="hide" tabindex="-1">
-      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    <input [type]="isHide ? 'password' : 'text'" matInput [formControl]="password">
+    <button type="button" mat-icon-button matSuffix (click)="isHide = !isHide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="isHide" tabindex="-1">
+      <mat-icon>{{isHide ? 'visibility_off' : 'visibility'}}</mat-icon>
     </button>
   </mat-form-field>
-  <button type="button" mat-flat-button color="primary" (click)="onLoginButtonClick()">Войти</button>
+  <button type="button" mat-flat-button color="primary" (click)="onLoginButtonClick()" [disabled]="isLoading">
+    Войти
+  </button>
 </form>

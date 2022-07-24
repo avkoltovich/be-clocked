@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, Validators } from "@angular/forms";
-import { combineLatest, map, startWith, tap } from "rxjs";
+import { catchError, combineLatest, EMPTY, map, startWith, tap } from "rxjs";
 import { AuthService } from "../../auth.service";
 
 @Component({
@@ -9,7 +9,8 @@ import { AuthService } from "../../auth.service";
   styleUrls: ["../../auth.module.scss"]
 })
 export class RegisterComponent implements OnInit {
-  public hide = true;
+  public isHide = true;
+  public isLoading = false;
   public login = new FormControl("", [Validators.required]);
   public password = new FormControl("", [Validators.required]);
   public repeatedPassword = new FormControl("", [Validators.required]);
@@ -42,6 +43,8 @@ export class RegisterComponent implements OnInit {
   }
 
   public onCreateButtonClick() {
+    this.isLoading = true;
+
     const user: AuthDto = {
       username: this.login.value!,
       password: this.password.value!
@@ -50,6 +53,12 @@ export class RegisterComponent implements OnInit {
     this.authService.create(user).pipe(
       tap((user) => {
         this.authService.authorize(user);
+        this.isLoading = false;
+      }),
+      catchError(() => {
+        this.isLoading = false;
+
+        return EMPTY;
       })
     ).subscribe();
   }
