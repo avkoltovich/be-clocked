@@ -1,15 +1,15 @@
-<form class="form">
+<form class="form" [formGroup]="authForm">
   <mat-form-field appearance="fill">
     <mat-label>
       Логин
     </mat-label>
-    <input matInput [formControl]="login">
+    <input matInput formControlName="login">
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>
       Пароль
     </mat-label>
-    <input [type]="isHide ? 'password' : 'text'" matInput [formControl]="password">
+    <input [type]="isHide ? 'password' : 'text'" matInput formControlName="password">
     <button type="button" mat-icon-button matSuffix (click)="isHide = !isHide" [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="isHide" tabindex="-1">
       <mat-icon>{{isHide ? 'visibility_off' : 'visibility'}}</mat-icon>
