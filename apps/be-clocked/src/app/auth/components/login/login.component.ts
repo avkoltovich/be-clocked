@@ -9,6 +9,7 @@ import { tap } from "rxjs";
   styleUrls: ["../../auth.module.scss"]
 })
 export class LoginComponent implements OnInit {
+  public hide = true;
   public login = new FormControl("", [Validators.required]);
   public password = new FormControl("", [Validators.required]);
 

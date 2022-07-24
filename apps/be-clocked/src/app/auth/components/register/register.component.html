@@ -9,13 +9,21 @@
     <mat-label>
       Введите пароль
     </mat-label>
-    <input type="password" matInput [formControl]="password">
+    <input [type]="hide ? 'password' : 'text'" matInput [formControl]="password">
+    <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide" tabindex="-1">
+      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>
       Повторите пароль
     </mat-label>
-    <input type="password" matInput [formControl]="repeatedPassword">
+    <input [type]="hide ? 'password' : 'text'" matInput [formControl]="repeatedPassword">
+    <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide" tabindex="-1">
+      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
   </mat-form-field>
   <button type="button" mat-flat-button color="primary" (click)="onCreateButtonClick()">Зарегистрироваться</button>
 </form>

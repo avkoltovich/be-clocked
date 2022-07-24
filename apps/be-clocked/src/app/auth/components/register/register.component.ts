@@ -9,6 +9,7 @@ import { AuthService } from "../../auth.service";
   styleUrls: ["../../auth.module.scss"]
 })
 export class RegisterComponent implements OnInit {
+  public hide = true;
   public login = new FormControl("", [Validators.required]);
   public password = new FormControl("", [Validators.required]);
   public repeatedPassword = new FormControl("", [Validators.required]);
