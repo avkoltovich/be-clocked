@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
-import { JWT_TOKEN, USER_EMAIL, USER_ID } from "../../../../../shared/constants";
+import { API_URL, JWT_TOKEN, USER_EMAIL, USER_ID } from "../../../../../shared/constants";
 import { Router } from "@angular/router";
 
 @Injectable({
@@ -14,11 +14,15 @@ export class AuthService {
   }
 
   public login(user: AuthDto): Observable<AuthenticatedUser> {
-    return this.http.post<AuthenticatedUser>("/api/auth/login", { ...user });
+    const headers = new HttpHeaders();
+
+    return this.http.post<AuthenticatedUser>(`${API_URL}/api/auth/login`, { ...user }, { headers });
   }
 
   public create(user: NewUser): Observable<AuthenticatedUser> {
-    return this.http.post<AuthenticatedUser>("/api/auth/create", { ...user });
+    const headers = new HttpHeaders();
+
+    return this.http.post<AuthenticatedUser>(`${API_URL}/api/auth/create`, { ...user }, { headers });
   }
 
   public logout(): void {
