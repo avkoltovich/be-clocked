@@ -1,13 +1,13 @@
 <form class="form" [formGroup]="authForm">
   <mat-form-field appearance="fill">
     <mat-label>
-      Введите логин
+      Email
     </mat-label>
-    <input matInput formControlName="login">
+    <input matInput type="email" formControlName="email">
   </mat-form-field>
   <mat-form-field appearance="fill">
     <mat-label>
-      Введите пароль
+      Пароль
     </mat-label>
     <input [type]="isHide ? 'password' : 'text'" matInput formControlName="password">
     <button type="button" mat-icon-button matSuffix (click)="isHide = !isHide" [attr.aria-label]="'Hide password'"
@@ -24,6 +24,46 @@
             [attr.aria-pressed]="isHide" tabindex="-1">
       <mat-icon>{{isHide ? 'visibility_off' : 'visibility'}}</mat-icon>
     </button>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Имя
+    </mat-label>
+    <input matInput type="text" formControlName="name">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Фамилию
+    </mat-label>
+    <input matInput type="text" formControlName="surname">
+  </mat-form-field>
+  <mat-radio-group class="radio-button-group" formControlName="gender">
+    <mat-radio-button value="MAN">Муж.</mat-radio-button>
+    <mat-radio-button value="WOMAN">Жен.</mat-radio-button>
+  </mat-radio-group>
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Дата рождения ДД.ММ.ГГГГ
+    </mat-label>
+    <input matInput type="text" formControlName="dob">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Мобильный телефон
+    </mat-label>
+    <input matInput type="text" formControlName="phone">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Город
+    </mat-label>
+    <input matInput type="text" formControlName="city">
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>
+      Команда
+    </mat-label>
+    <input matInput type="text" formControlName="team">
   </mat-form-field>
   <button type="button" mat-flat-button color="primary" (click)="onCreateButtonClick()"
           [disabled]="(isInvalidForm$ | async)">

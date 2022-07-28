@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { Prisma } from "@prisma/client";
 import { compare, genSalt, hash } from "bcryptjs";
+import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from "./auth.constants";
 
 @Injectable()
 export class AuthService {
@@ -12,43 +13,54 @@ export class AuthService {
   ) {
   }
 
-  async validateUser({ username, password }: AuthDto): Promise<any> {
-    const user = await this.usersService.findOne({ username });
+  async validateUser({ email, password }: AuthDto): Promise<any> {
+    const user = await this.usersService.findOne({ email });
 
-    const isCorrectPassword = compare(password, user.passwordHash);
-
-    if (user && isCorrectPassword) {
-      const { passwordHash, ...result } = user;
-
-      return result;
+    if (!user) {
+      throw new UnauthorizedException(USER_NOT_FOUND_ERROR);
     }
 
-    return null;
+    const isCorrectPassword = await compare(password, user.passwordHash);
+
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException(WRONG_PASSWORD_ERROR);
+    }
+
+    const { passwordHash, ...result } = user;
+
+    return result;
   }
 
   async login(user: Prisma.UserWhereUniqueInput) {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { email: user.email, sub: user.id };
 
     return {
       accessToken: this.jwtService.sign(payload),
-      username: user.username,
+      email: user.email,
       id: user.id
     };
   }
 
-  async create(data: AuthDto): Promise<AuthenticatedUser> {
+  async create(data: NewUser): Promise<AuthenticatedUser> {
     const salt = await genSalt(10);
 
     const newUser: Prisma.UserCreateInput = {
-      username: data.username,
-      passwordHash: await hash(data.password, salt)
+      email: data.email,
+      passwordHash: await hash(data.password, salt),
+      name: data.name,
+      surname: data.surname,
+      gender: data.gender,
+      dob: data.dob,
+      phone: data.phone,
+      city: data.city,
+      team: data.team
     };
 
     const createdUser = await this.usersService.create(newUser);
 
     return {
       id: createdUser.id,
-      username: createdUser.username,
+      email: createdUser.email,
       accessToken: this.jwtService.sign(createdUser)
     };
   }

@@ -12,9 +12,16 @@ export class RegisterComponent implements OnInit {
   public isHide = true;
   public isLoading = false;
   public authForm = new FormGroup({
-    login: new FormControl("", [Validators.required]),
+    email: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required]),
-    repeatedPassword: new FormControl("", [Validators.required])
+    repeatedPassword: new FormControl("", [Validators.required]),
+    name: new FormControl("", [Validators.required]),
+    surname: new FormControl("", [Validators.required]),
+    dob: new FormControl("", [Validators.required]),
+    phone: new FormControl("", [Validators.required]),
+    city: new FormControl("", [Validators.required]),
+    team: new FormControl(""),
+    gender: new FormControl("", [Validators.required])
   });
 
   public isInvalidForm$ = this.authForm.valueChanges.pipe(
@@ -24,7 +31,7 @@ export class RegisterComponent implements OnInit {
         this.authForm.get("repeatedPassword")?.setErrors({ incorrect: true });
       }
 
-      return this.authForm.get("login")?.invalid || this.authForm.get("password")?.invalid || password !== repeatedPassword;
+      return this.authForm.get("email")?.invalid || this.authForm.get("password")?.invalid || password !== repeatedPassword;
     })
   );
 
@@ -35,17 +42,41 @@ export class RegisterComponent implements OnInit {
   }
 
   public onCreateButtonClick() {
-    const username = this.authForm.get("login")?.value;
+    const email = this.authForm.get("email")?.value;
     const password = this.authForm.get("password")?.value;
+    const name = this.authForm.get("name")?.value;
+    const surname = this.authForm.get("surname")?.value;
+    const dob = this.authForm.get("dob")?.value;
+    const phone = this.authForm.get("phone")?.value;
+    const city = this.authForm.get("city")?.value;
+    const team = this.authForm.get("team")?.value;
+    const gender = this.authForm.get("gender")?.value;
 
-    if (!username || !password) return;
+    if (
+      !email
+      || !password
+      || !surname
+      || !dob
+      || !phone
+      || !city
+      || !team
+      || !gender
+      || !name
+    ) return;
 
     this.isLoading = true;
     this.authForm.disable();
 
-    const user: AuthDto = {
-      username,
-      password
+    const user: NewUser = {
+      email,
+      password,
+      name,
+      surname,
+      dob,
+      phone,
+      city,
+      team,
+      gender: gender as Gender
     };
 
     this.authService.create(user).pipe(

@@ -12,7 +12,7 @@ export class LoginComponent implements OnInit {
   public isHide = true;
   public isLoading = false;
   public authForm = new FormGroup({
-    login: new FormControl("", [Validators.required]),
+    email: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required])
   });
 
@@ -23,16 +23,16 @@ export class LoginComponent implements OnInit {
   }
 
   public onLoginButtonClick() {
-    const username = this.authForm.get("login")?.value;
+    const email = this.authForm.get("email")?.value;
     const password = this.authForm.get("password")?.value;
 
-    if (!username || !password) return;
+    if (!email || !password) return;
 
     this.isLoading = true;
     this.authForm.disable();
 
     const user: AuthDto = {
-      username,
+      email,
       password
     };
 

@@ -15,7 +15,7 @@ export class AppController {
   }
 
   @Post("auth/create")
-  async create(@Body() user: AuthDto) {
+  async create(@Body() user: NewUser) {
     return this.authService.create(user);
   }
 

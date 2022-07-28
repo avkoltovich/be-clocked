@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { BehaviorSubject, Observable } from "rxjs";
-import { JWT_TOKEN, USER_ID, USER_LOGIN } from "../../../../../shared/constants";
+import { JWT_TOKEN, USER_EMAIL, USER_ID } from "../../../../../shared/constants";
 import { Router } from "@angular/router";
 
 @Injectable({
@@ -17,14 +17,14 @@ export class AuthService {
     return this.http.post<AuthenticatedUser>("/api/auth/login", { ...user });
   }
 
-  public create(user: AuthDto): Observable<AuthenticatedUser> {
+  public create(user: NewUser): Observable<AuthenticatedUser> {
     return this.http.post<AuthenticatedUser>("/api/auth/create", { ...user });
   }
 
   public logout(): void {
     window.localStorage.removeItem(JWT_TOKEN);
     window.localStorage.removeItem(USER_ID);
-    window.localStorage.removeItem(USER_LOGIN);
+    window.localStorage.removeItem(USER_EMAIL);
     setTimeout(() => {
       this.isAuthorized$.next(false);
       this.router.navigate(["login"]);
@@ -33,7 +33,7 @@ export class AuthService {
 
   public authorize(user: AuthenticatedUser) {
     window.localStorage.setItem(JWT_TOKEN, user.accessToken);
-    window.localStorage.setItem(USER_LOGIN, user.username);
+    window.localStorage.setItem(USER_EMAIL, user.email);
     window.localStorage.setItem(USER_ID, user.id.toString());
     this.isAuthorized$.next(true);
     this.router.navigate([""]);

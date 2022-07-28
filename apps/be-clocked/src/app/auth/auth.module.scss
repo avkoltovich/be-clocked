@@ -14,3 +14,11 @@
   margin: 0 auto;
 
 }
+
+.mat-radio-button ~ .mat-radio-button {
+  margin-left: 1.34375em;
+}
+
+.radio-button-group {
+  padding-bottom: 1.34375em;
+}
