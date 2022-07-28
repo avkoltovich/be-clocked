@@ -16,13 +16,13 @@ export class AuthService {
   public login(user: AuthDto): Observable<AuthenticatedUser> {
     const headers = new HttpHeaders();
 
-    return this.http.post<AuthenticatedUser>(`${API_URL}/api/auth/login`, { ...user }, { headers });
+    return this.http.post<AuthenticatedUser>(`${API_URL}/auth/login`, { ...user }, { headers });
   }
 
   public create(user: NewUser): Observable<AuthenticatedUser> {
     const headers = new HttpHeaders();
 
-    return this.http.post<AuthenticatedUser>(`${API_URL}/api/auth/create`, { ...user }, { headers });
+    return this.http.post<AuthenticatedUser>(`${API_URL}/auth/create`, { ...user }, { headers });
   }
 
   public logout(): void {
