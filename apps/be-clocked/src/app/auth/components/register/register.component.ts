@@ -42,14 +42,14 @@ export class RegisterComponent implements OnInit {
   }
 
   public onCreateButtonClick() {
-    const email = this.authForm.get("email")?.value;
+    const email = this.authForm.get("email")?.value?.trim().toLowerCase();
     const password = this.authForm.get("password")?.value;
-    const name = this.authForm.get("name")?.value;
-    const surname = this.authForm.get("surname")?.value;
+    const name = this.authForm.get("name")?.value?.trim();
+    const surname = this.authForm.get("surname")?.value?.trim();
     const dob = this.authForm.get("dob")?.value;
-    const phone = this.authForm.get("phone")?.value;
-    const city = this.authForm.get("city")?.value;
-    const team = this.authForm.get("team")?.value;
+    const phone = this.authForm.get("phone")?.value?.replace(/\D/g, "");
+    const city = this.authForm.get("city")?.value?.trim();
+    const team = this.authForm.get("team")?.value?.trim();
     const gender = this.authForm.get("gender")?.value;
 
     if (

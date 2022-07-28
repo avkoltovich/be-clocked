@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onLoginButtonClick() {
-    const email = this.authForm.get("email")?.value;
+    const email = this.authForm.get("email")?.value?.toLowerCase();
     const password = this.authForm.get("password")?.value;
 
     if (!email || !password) return;
