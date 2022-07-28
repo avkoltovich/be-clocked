@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "yes",
+    "public": "dist/apps/be-clocked",
     "ignore": [
       "firebase.json",
       "**/.*",
