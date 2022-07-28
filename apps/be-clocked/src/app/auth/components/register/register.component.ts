@@ -31,7 +31,7 @@ export class RegisterComponent implements OnInit {
         this.authForm.get("repeatedPassword")?.setErrors({ incorrect: true });
       }
 
-      return this.authForm.get("email")?.invalid || this.authForm.get("password")?.invalid || password !== repeatedPassword;
+      return this.authForm.invalid || password !== repeatedPassword;
     })
   );
 
