@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { catchError, EMPTY, map, startWith, tap } from "rxjs";
+import { catchError, defer, EMPTY, map, startWith, tap } from "rxjs";
 import { AuthService } from "../../auth.service";
 
 @Component({
@@ -9,15 +9,28 @@ import { AuthService } from "../../auth.service";
   styleUrls: ["../../auth.module.scss"]
 })
 export class RegisterComponent implements OnInit {
+  private dobTransform$ = defer(() => this.authForm.get("dob")!.valueChanges.pipe(
+    map((value) => {
+      if (!value) return;
+
+      let finalDob = value;
+
+      if (value.length >= 2) {
+        finalDob = value.slice(0, 2);
+      }
+    })
+  ));
+
   public isHide = true;
   public isLoading = false;
+  public minDate: Date = new Date("1986-06-20T00:00:00");
   public authForm = new FormGroup({
     email: new FormControl("", [Validators.required]),
     password: new FormControl("", [Validators.required]),
     repeatedPassword: new FormControl("", [Validators.required]),
     name: new FormControl("", [Validators.required]),
     surname: new FormControl("", [Validators.required]),
-    dob: new FormControl("", [Validators.required]),
+    dob: new FormControl("1986-06-20T00:00:00", [Validators.required]),
     phone: new FormControl("", [Validators.required]),
     city: new FormControl("", [Validators.required]),
     team: new FormControl(""),
@@ -46,7 +59,7 @@ export class RegisterComponent implements OnInit {
     const password = this.authForm.get("password")?.value;
     const name = this.authForm.get("name")?.value?.trim();
     const surname = this.authForm.get("surname")?.value?.trim();
-    const dob = this.authForm.get("dob")?.value;
+    const dob = new Date(this.authForm.get("dob")?.value!);
     const phone = this.authForm.get("phone")?.value?.replace(/\D/g, "");
     const city = this.authForm.get("city")?.value?.trim();
     const team = this.authForm.get("team")?.value?.trim();
@@ -64,6 +77,8 @@ export class RegisterComponent implements OnInit {
       || !name
     ) return;
 
+    const dobString = `${dob.getDate().toString().padStart(2, "0")}.${(dob.getMonth() + 1).toString().padStart(2, "0")}.${dob.getFullYear()}`;
+
     this.isLoading = true;
     this.authForm.disable();
 
@@ -72,7 +87,7 @@ export class RegisterComponent implements OnInit {
       password,
       name,
       surname,
-      dob,
+      dob: dobString,
       phone,
       city,
       team,
