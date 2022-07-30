@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { catchError, defer, EMPTY, map, startWith, tap } from "rxjs";
+import { catchError, EMPTY, map, startWith, tap } from "rxjs";
 import { AuthService } from "../../auth.service";
 
 @Component({
@@ -9,18 +9,6 @@ import { AuthService } from "../../auth.service";
   styleUrls: ["../../auth.module.scss"]
 })
 export class RegisterComponent implements OnInit {
-  private dobTransform$ = defer(() => this.authForm.get("dob")!.valueChanges.pipe(
-    map((value) => {
-      if (!value) return;
-
-      let finalDob = value;
-
-      if (value.length >= 2) {
-        finalDob = value.slice(0, 2);
-      }
-    })
-  ));
-
   public isHide = true;
   public isLoading = false;
   public minDate: Date = new Date("1986-06-20T00:00:00");
@@ -34,7 +22,8 @@ export class RegisterComponent implements OnInit {
     phone: new FormControl("", [Validators.required]),
     city: new FormControl("", [Validators.required]),
     team: new FormControl(""),
-    gender: new FormControl("", [Validators.required])
+    gender: new FormControl("", [Validators.required]),
+    personalData: new FormControl(true, [Validators.required])
   });
 
   public isInvalidForm$ = this.authForm.valueChanges.pipe(
@@ -44,7 +33,7 @@ export class RegisterComponent implements OnInit {
         this.authForm.get("repeatedPassword")?.setErrors({ incorrect: true });
       }
 
-      return this.authForm.invalid || password !== repeatedPassword;
+      return this.authForm.invalid || !this.authForm.get("personalData")?.value || password !== repeatedPassword;
     })
   );
 

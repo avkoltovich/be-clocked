@@ -69,6 +69,12 @@
       </mat-label>
       <input matInput type="text" formControlName="team">
     </mat-form-field>
+    <div class="personal-data-checkbox">
+      <mat-checkbox formControlName="personalData"></mat-checkbox>
+      <span class="personal-data-text">
+        Даю согласние на обработку <a href="" target="_blank">персональных данных</a>
+      </span>
+    </div>
     <button type="button" mat-flat-button color="primary" (click)="onCreateButtonClick()"
             [disabled]="(isInvalidForm$ | async)">
       Зарегистрироваться

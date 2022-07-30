@@ -20,5 +20,15 @@
 }
 
 .radio-button-group {
-  padding-bottom: 1.34375em;
+  margin-bottom: 1.34375em;
+}
+
+.personal-data-checkbox {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.34375em;
+}
+
+.personal-data-text {
+  max-width: 220px;
 }
