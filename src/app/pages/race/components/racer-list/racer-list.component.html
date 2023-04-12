@@ -14,7 +14,6 @@
         title="Выше"
         shape="rounded"
         type="button"
-        class="remove"
         (click)="up(i)"
         [disabled]="i === 0"
       ></button>
@@ -26,7 +25,6 @@
         title="Ниже"
         shape="rounded"
         type="button"
-        class="remove"
         (click)="down(i)"
         [disabled]="i === (list | async)!.length - 1"
       ></button>
@@ -38,7 +36,6 @@
         title="Удалить"
         shape="rounded"
         type="button"
-        class="remove"
         (click)="remove(i)"
       ></button>
     </li>

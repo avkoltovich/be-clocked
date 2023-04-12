@@ -19,10 +19,18 @@ export class RacerListComponent {
   }
 
   up(i: number) {
-
+    const currentList = this.racersService.racers$.value.slice();
+    let swap = currentList[i];
+    currentList[i] = currentList[i - 1];
+    currentList[i - 1] = swap;
+    this.racersService.racers$.next(currentList);
   }
 
   down(i: number) {
-
+    const currentList = this.racersService.racers$.value.slice();
+    let swap = currentList[i];
+    currentList[i] = currentList[i + 1];
+    currentList[i + 1] = swap;
+    this.racersService.racers$.next(currentList);
   }
 }
