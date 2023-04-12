@@ -9,6 +9,8 @@ import { RaceRoutingModule } from "./race-routing.module";
 import { TuiInputModule, TuiIslandModule, TuiProgressModule } from "@taiga-ui/kit";
 import { TuiButtonModule, TuiSvgModule } from "@taiga-ui/core";
 import { TuiReorderModule } from "@taiga-ui/addon-table";
+import { RacersService } from "./services/racers.service";
+import { ReactiveFormsModule } from "@angular/forms";
 
 
 @NgModule({
@@ -27,7 +29,11 @@ import { TuiReorderModule } from "@taiga-ui/addon-table";
     TuiButtonModule,
     TuiSvgModule,
     TuiReorderModule,
-    TuiProgressModule
+    TuiProgressModule,
+    ReactiveFormsModule
+  ],
+  providers: [
+    RacersService
   ]
 })
 export class RaceModule {

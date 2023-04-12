@@ -1,4 +1,6 @@
 import { Component } from "@angular/core";
+import { FormControl, FormGroup } from "@angular/forms";
+import { RacersService } from "../../services/racers.service";
 
 @Component({
   selector: "app-add-racer",
@@ -6,5 +8,18 @@ import { Component } from "@angular/core";
   styleUrls: ["./add-racer.component.scss"]
 })
 export class AddRacerComponent {
+  public formGroup = new FormGroup({
+    racer: new FormControl("")
+  });
 
+  constructor(private racersService: RacersService) {
+  }
+
+  public onAddRacer() {
+    const currentList = this.racersService.racers$.value.slice();
+    currentList.push(this.formGroup.controls.racer.value as string);
+    this.racersService.racers$.next(currentList);
+
+    this.formGroup.controls.racer.reset();
+  }
 }

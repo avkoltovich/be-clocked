@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { RacersService } from "../../services/racers.service";
 
 @Component({
   selector: "app-racer-list",
@@ -6,14 +7,22 @@ import { Component } from "@angular/core";
   styleUrls: ["./racer-list.component.scss"]
 })
 export class RacerListComponent {
-  items: readonly string[] = [
-    "John Cleese",
-    "Eric Idle",
-    "Michael Palin",
-    "Terry Gilliam",
-    "Terry Jones",
-    "Graham Chapman"
-  ];
+  constructor(private racersService: RacersService) {
+  }
 
-  enabled = this.items;
+  public list = this.racersService.racers$;
+
+  remove(i: number) {
+    const currentList = this.racersService.racers$.value.slice();
+    currentList.splice(i, 1);
+    this.racersService.racers$.next(currentList);
+  }
+
+  up(i: number) {
+
+  }
+
+  down(i: number) {
+
+  }
 }

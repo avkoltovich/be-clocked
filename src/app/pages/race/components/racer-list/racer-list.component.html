@@ -1,8 +1,48 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Список участников</h2>
-  <tui-reorder
-    class="list"
-    [(items)]="items"
-    [(enabled)]="enabled"
-  ></tui-reorder>
+
+  <ol class="tui-list tui-list_ordered tui-list_large">
+    <li class="tui-list__item item" *ngFor="let item of list | async; let i = index">
+      <span class="name">
+        {{ item }}
+      </span>
+      <button
+        tuiIconButton
+        appearance="flat"
+        size="s"
+        icon="tuiIconArrowUp"
+        title="Выше"
+        shape="rounded"
+        type="button"
+        class="remove"
+        (click)="up(i)"
+        [disabled]="i === 0"
+      ></button>
+      <button
+        tuiIconButton
+        appearance="flat"
+        size="s"
+        icon="tuiIconArrowDown"
+        title="Ниже"
+        shape="rounded"
+        type="button"
+        class="remove"
+        (click)="down(i)"
+        [disabled]="i === (list | async)!.length - 1"
+      ></button>
+      <button
+        tuiIconButton
+        appearance="flat"
+        size="s"
+        icon="tuiIconTrash"
+        title="Удалить"
+        shape="rounded"
+        type="button"
+        class="remove"
+        (click)="remove(i)"
+      ></button>
+    </li>
+  </ol>
+
+
 </tui-island>
