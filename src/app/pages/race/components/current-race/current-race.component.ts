@@ -27,7 +27,7 @@ export class CurrentRaceComponent {
   }
 
   public onStart() {
-    this.racersService.raceStartTime = Date.now();
+    this.racersService.storeStartTimeInLS(Date.now());
     this.racersService.isRaceStarted$.next(true);
     this.timer$.subscribe();
   }

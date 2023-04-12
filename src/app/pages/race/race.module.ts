@@ -12,6 +12,7 @@ import { TuiReorderModule } from "@taiga-ui/addon-table";
 import { RacersService } from "./services/racers.service";
 import { ReactiveFormsModule } from "@angular/forms";
 import { TuiLetModule } from "@taiga-ui/cdk";
+import { HttpClientModule } from "@angular/common/http";
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { TuiLetModule } from "@taiga-ui/cdk";
     TuiReorderModule,
     TuiProgressModule,
     ReactiveFormsModule,
-    TuiLetModule
+    TuiLetModule,
+    HttpClientModule
   ],
   providers: [
     RacersService
