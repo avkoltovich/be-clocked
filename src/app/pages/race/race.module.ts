@@ -7,7 +7,7 @@ import { FinishRaceComponent } from "./components/finish-race/finish-race.compon
 import { RaceComponent } from "./components/race/race.component";
 import { RaceRoutingModule } from "./race-routing.module";
 import { TuiInputModule, TuiIslandModule, TuiProgressModule } from "@taiga-ui/kit";
-import { TuiButtonModule, TuiSvgModule } from "@taiga-ui/core";
+import { TuiButtonModule, TuiDataListModule, TuiSvgModule } from "@taiga-ui/core";
 import { TuiReorderModule } from "@taiga-ui/addon-table";
 import { RacersService } from "./services/racers.service";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -34,7 +34,8 @@ import { HttpClientModule } from "@angular/common/http";
     TuiProgressModule,
     ReactiveFormsModule,
     TuiLetModule,
-    HttpClientModule
+    HttpClientModule,
+    TuiDataListModule
   ],
   providers: [
     RacersService

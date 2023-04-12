@@ -1,17 +1,33 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Финишный протокол</h2>
-  <form class="tui-form__row_multi-fields tui-space_bottom-8">
-    <tui-input class="input tui-space_right-3">
+  <form class="tui-form__row_multi-fields tui-space_bottom-8" [formGroup]="formGroup">
+    <tui-input
+      *tuiLet="racers$ | async as racers"
+      class="input tui-space_right-3"
+      formControlName="racer"
+    >
       Фамилия Имя
       <input
         tuiTextfield
         type="text"
       >
+      <ng-container *ngIf="racers?.length">
+        <tui-data-list *tuiDataList>
+          <button
+            *ngFor="let racer of racers"
+            tuiOption
+            [value]="racer.toString()"
+          >
+            {{ racer }}
+          </button>
+        </tui-data-list>
+      </ng-container>
     </tui-input>
     <button
       tuiButton
       type="button"
       appearance="secondary"
+      (click)="onFinish()"
     >
       <tui-svg
         src="tuiIconFlagLarge"
@@ -21,11 +37,11 @@
     </button>
   </form>
   <ol class="tui-list tui-list_ordered tui-list_large">
-    <li class="tui-list__item">Константиновский Константин - 20:46</li>
-    <li class="tui-list__item">Константиновский Константин - 20:46</li>
-    <li class="tui-list__item">Константиновский Константин - 20:46</li>
-    <li class="tui-list__item">Константиновский Константин - 20:46</li>
-    <li class="tui-list__item">Константиновский Константин - 20:46</li>
-    <li class="tui-list__item">Константиновский Константин - 20:46</li>
+    <li
+      *ngFor="let finisher of finishers"
+      class="tui-list__item"
+    >
+      {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+    </li>
   </ol>
 </tui-island>

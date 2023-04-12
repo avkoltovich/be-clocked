@@ -15,8 +15,9 @@ export class RacersService {
   public currentRacerIndex$ = new BehaviorSubject(0);
 
   public racers$ = new BehaviorSubject<string[]>([]);
+  public finishedRacers: string[] = [];
 
-  public secondsDelta = 30;
+  public secondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
 
@@ -70,5 +71,11 @@ export class RacersService {
 
   public storeStartTimeInLS(time: number) {
     window.localStorage.setItem("startTime", time.toString());
+  }
+
+  public getStartTimeFromLS() {
+    const startTime = window.localStorage.getItem("startTime");
+
+    return startTime !== null ? Number.parseInt(startTime) : 0;
   }
 }
