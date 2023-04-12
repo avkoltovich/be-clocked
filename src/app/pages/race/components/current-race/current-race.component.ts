@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { map, tap, timer } from "rxjs";
+import { tap } from "rxjs";
 import { RacersService } from "../../services/racers.service";
 
 @Component({
@@ -8,21 +8,24 @@ import { RacersService } from "../../services/racers.service";
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent {
-  readonly max = 30;
   private count = 0;
-  readonly value$ = timer(0, 1000).pipe(
-    map(i => 30 - i + this.count),
+  readonly max = 30;
+  public value = 30;
+  public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
-      if (value === 0) {
-        this.count += 30;
-        const currentList = this.racersService.racers$.value.slice(1);
-        this.racersService.racers$.next(currentList);
-      }
+      this.value = value;
     })
   );
+  public racers$ = this.racersService.registeredRacers$;
+  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
 
   constructor(private racersService: RacersService) {
   }
 
-  public racers$ = this.racersService.racers$;
+  public onStart() {
+    this.racersService.raceStartTime = Date.now();
+    this.racersService.isRaceStarted$.next(true);
+    this.timer$.subscribe();
+  }
 }

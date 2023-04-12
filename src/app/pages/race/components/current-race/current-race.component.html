@@ -42,7 +42,7 @@
       </svg>
 
       <label
-        *tuiLet="(value$ | async)! as value"
+        *ngIf="(racers$ | async)!.length; else emptyList"
         tuiProgressLabel
       >
         <span class="tui-text_h1">{{ value }}</span>
@@ -60,6 +60,8 @@
         tuiButton
         type="button"
         appearance="secondary"
+        (click)="onStart()"
+        [disabled]="(isRaceStarted$ | async)!"
       >
         <tui-svg
           src="tuiIconClockLarge"
@@ -71,6 +73,7 @@
         tuiButton
         type="button"
         appearance="secondary-destructive"
+        [disabled]="(isAllMembersStarted$ | async)!"
       >
         <tui-svg
           src="tuiIconSlashLarge"
@@ -81,3 +84,6 @@
     </div>
   </div>
 </tui-island>
+<ng-template #emptyList>
+  <p class="tui-text_h3 empty-list">Все участники стартовали</p>
+</ng-template>
