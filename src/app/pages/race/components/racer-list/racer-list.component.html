@@ -11,38 +11,41 @@
       >
         {{ item }}
       </span>
-      <button
-        tuiIconButton
-        appearance="flat"
-        size="s"
-        icon="tuiIconArrowUp"
-        title="Выше"
-        shape="rounded"
-        type="button"
-        (click)="up(i)"
-        [disabled]="i === 0"
-      ></button>
-      <button
-        tuiIconButton
-        appearance="flat"
-        size="s"
-        icon="tuiIconArrowDown"
-        title="Ниже"
-        shape="rounded"
-        type="button"
-        (click)="down(i)"
-        [disabled]="i === (racers$ | async)!.length - 1"
-      ></button>
-      <button
-        tuiIconButton
-        appearance="flat"
-        size="s"
-        icon="tuiIconTrash"
-        title="Удалить"
-        shape="rounded"
-        type="button"
-        (click)="remove(i)"
-      ></button>
+      <ng-container *ngIf="!(isRaceStarted$ | async)! || i >= (currentRacerIndex$ | async)!">
+        <button
+          tuiIconButton
+          appearance="flat"
+          size="s"
+          icon="tuiIconArrowUp"
+          title="Выше"
+          shape="rounded"
+          type="button"
+          (click)="up(i)"
+          [disabled]="i === (currentRacerIndex$ | async)!"
+        ></button>
+        <button
+          tuiIconButton
+          appearance="flat"
+          size="s"
+          icon="tuiIconArrowDown"
+          title="Ниже"
+          shape="rounded"
+          type="button"
+          (click)="down(i)"
+          [disabled]="i === (racers$ | async)!.length - 1"
+        ></button>
+        <button
+          tuiIconButton
+          appearance="flat"
+          size="s"
+          icon="tuiIconTrash"
+          title="Удалить"
+          shape="rounded"
+          type="button"
+          (click)="remove(i)"
+        ></button>
+      </ng-container>
+
     </li>
   </ol>
 

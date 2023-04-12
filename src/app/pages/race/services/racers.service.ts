@@ -18,14 +18,15 @@ export class RacersService {
   ]);
 
   public raceStartTime = 0;
+  public secondsDelta = 30;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
 
   public timer$ = timer(0, 1000).pipe(
-    map(i => 5 - i + this.timerDelta),
+    map(i => this.secondsDelta - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
-        this.timerDelta += 5;
+        this.timerDelta += this.secondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
       }
     }),

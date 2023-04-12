@@ -8,8 +8,8 @@ import { RacersService } from "../../services/racers.service";
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent {
-  readonly max = 5;
-  public value = 5;
+  readonly max = this.racersService.secondsDelta;
+  public value = this.racersService.secondsDelta;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.value = value;
@@ -34,10 +34,12 @@ export class CurrentRaceComponent {
 
   public onCancel() {
     const currentRacers = this.racers$.value.slice();
-    const skippedRacer = currentRacers[0];
-    currentRacers.push(skippedRacer);
-    currentRacers[0] = "Пропуск";
+    const skippedRacer = currentRacers[this.currentRacerIndex$.value];
 
+    if (skippedRacer === "Пропуск") return;
+
+    currentRacers.push(skippedRacer);
+    currentRacers[this.currentRacerIndex$.value] = "Пропуск";
 
     this.racersService.racers$.next(currentRacers);
   }
