@@ -2,8 +2,13 @@
   <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
   <ol class="tui-list tui-list_ordered tui-list_large">
-    <li class="tui-list__item item" *ngFor="let item of list | async; let i = index">
-      <span class="name">
+    <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
+      <span
+        class="name"
+        [ngClass]="{
+          current: (currentRacerIndex$ | async) === i && (isRaceStarted$ | async)
+        }"
+      >
         {{ item }}
       </span>
       <button
@@ -26,7 +31,7 @@
         shape="rounded"
         type="button"
         (click)="down(i)"
-        [disabled]="i === (list | async)!.length - 1"
+        [disabled]="i === (racers$ | async)!.length - 1"
       ></button>
       <button
         tuiIconButton

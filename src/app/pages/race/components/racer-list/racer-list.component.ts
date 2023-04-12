@@ -7,30 +7,32 @@ import { RacersService } from "../../services/racers.service";
   styleUrls: ["./racer-list.component.scss"]
 })
 export class RacerListComponent {
+  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
+  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public racers$ = this.racersService.racers$;
+
   constructor(private racersService: RacersService) {
   }
 
-  public list = this.racersService.registeredRacers$;
-
-  remove(i: number) {
-    const currentList = this.racersService.registeredRacers$.value.slice();
+  public remove(i: number) {
+    const currentList = this.racersService.racers$.value.slice();
     currentList.splice(i, 1);
-    this.racersService.registeredRacers$.next(currentList);
+    this.racersService.racers$.next(currentList);
   }
 
-  up(i: number) {
-    const currentList = this.racersService.registeredRacers$.value.slice();
+  public up(i: number) {
+    const currentList = this.racersService.racers$.value.slice();
     let swap = currentList[i];
     currentList[i] = currentList[i - 1];
     currentList[i - 1] = swap;
-    this.racersService.registeredRacers$.next(currentList);
+    this.racersService.racers$.next(currentList);
   }
 
-  down(i: number) {
-    const currentList = this.racersService.registeredRacers$.value.slice();
+  public down(i: number) {
+    const currentList = this.racersService.racers$.value.slice();
     let swap = currentList[i];
     currentList[i] = currentList[i + 1];
     currentList[i + 1] = swap;
-    this.racersService.registeredRacers$.next(currentList);
+    this.racersService.racers$.next(currentList);
   }
 }

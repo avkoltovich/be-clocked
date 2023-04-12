@@ -5,13 +5,13 @@
       <p class="current">
         <span class="tui-text_body-xl">Стартует</span>
         <span class="tui-text_h3 racer">
-          {{ (racers$ | async)![0] }}
+          {{ (racers$ | async)![(currentRacerIndex$ | async)!] }}
         </span>
       </p>
       <p class="next">
         <span class="tui-text_body-xl">Следующий</span>
         <span class="tui-text_h3 racer">
-          {{ (racers$ | async)![1] }}
+          {{ (racers$ | async)![(currentRacerIndex$ | async)! + 1] }}
         </span>
       </p>
     </div>
@@ -42,7 +42,7 @@
       </svg>
 
       <label
-        *ngIf="(racers$ | async)!.length; else emptyList"
+        *ngIf="(racers$ | async)!.length > (currentRacerIndex$ | async)!; else emptyList"
         tuiProgressLabel
       >
         <span class="tui-text_h1">{{ value }}</span>
@@ -73,17 +73,19 @@
         tuiButton
         type="button"
         appearance="secondary-destructive"
-        [disabled]="(isAllMembersStarted$ | async)!"
+        (click)="onCancel()"
+        [disabled]="(isAllMembersStarted$ | async)! || !(isRaceStarted$ | async)"
       >
         <tui-svg
           src="tuiIconSlashLarge"
           class="tui-space_right-2"
         ></tui-svg>
-        Стоп
+        Отмена
       </button>
     </div>
   </div>
 </tui-island>
+
 <ng-template #emptyList>
   <p class="tui-text_h3 empty-list">Все участники стартовали</p>
 </ng-template>

@@ -6,8 +6,9 @@ import { BehaviorSubject, finalize, map, takeWhile, tap, timer } from "rxjs";
 })
 export class RacersService {
   private timerDelta = 0;
+  public currentRacerIndex$ = new BehaviorSubject(0);
 
-  public registeredRacers$ = new BehaviorSubject([
+  public racers$ = new BehaviorSubject([
     "Константиновский Константин",
     "Eric Idle",
     "Michael Palin",
@@ -16,22 +17,19 @@ export class RacersService {
     "Graham Chapman"
   ]);
 
-  public startedRacers$ = new BehaviorSubject([]);
-  public finishedRacers$ = new BehaviorSubject([]);
   public raceStartTime = 0;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
 
   public timer$ = timer(0, 1000).pipe(
-    map(i => 30 - i + this.timerDelta),
+    map(i => 5 - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
-        this.timerDelta += 30;
-        const currentList = this.registeredRacers$.value.slice(1);
-        this.registeredRacers$.next(currentList);
+        this.timerDelta += 5;
+        this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
       }
     }),
-    takeWhile(() => this.registeredRacers$.value.length > 0),
+    takeWhile(() => this.racers$.value.length !== this.currentRacerIndex$.value),
     finalize(() => {
       this.isAllMembersStarted$.next(true);
     })
