@@ -6,5 +6,14 @@ import { Component } from "@angular/core";
   styleUrls: ["./racer-list.component.scss"]
 })
 export class RacerListComponent {
+  items: readonly string[] = [
+    "John Cleese",
+    "Eric Idle",
+    "Michael Palin",
+    "Terry Gilliam",
+    "Terry Jones",
+    "Graham Chapman"
+  ];
 
+  enabled = this.items;
 }

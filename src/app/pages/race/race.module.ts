@@ -8,6 +8,7 @@ import { RaceComponent } from "./components/race/race.component";
 import { RaceRoutingModule } from "./race-routing.module";
 import { TuiInputModule, TuiIslandModule } from "@taiga-ui/kit";
 import { TuiButtonModule, TuiSvgModule } from "@taiga-ui/core";
+import { TuiReorderModule } from "@taiga-ui/addon-table";
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { TuiButtonModule, TuiSvgModule } from "@taiga-ui/core";
     TuiIslandModule,
     TuiInputModule,
     TuiButtonModule,
-    TuiSvgModule
+    TuiSvgModule,
+    TuiReorderModule
   ]
 })
 export class RaceModule {

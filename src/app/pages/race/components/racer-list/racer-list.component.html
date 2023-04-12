@@ -1,1 +1,11 @@
-<p>racer-list works!</p>
+<tui-island size="l">
+  <h2 class="tui-island__title tui-space_bottom-5">Список участников</h2>
+  <tui-reorder
+    class="list"
+    [(items)]="items"
+    [(enabled)]="enabled"
+  ></tui-reorder>
+  <p>{{ items | json }}</p>
+  <p>{{ enabled | json }}</p>
+
+</tui-island>
