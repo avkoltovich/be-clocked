@@ -53,7 +53,7 @@ export class FinishRaceComponent {
 
       const finishers = this.finishers.slice();
       const racerIndex = this.racersService.racers$.value.indexOf(currentRacer);
-      const actualTime = currentTime - this.racersService.getStartTimeFromLS() - racerIndex * this.racersService.secondsDelta * 1000;
+      const actualTime = currentTime - this.racersService.getStartTimeFromLS() - racerIndex * this.racersService.racerSecondsDelta * 1000;
 
       finishers.push({
         name: currentRacer,

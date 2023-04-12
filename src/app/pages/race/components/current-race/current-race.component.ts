@@ -8,8 +8,8 @@ import { RacersService } from "../../services/racers.service";
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent {
-  readonly max = this.racersService.secondsDelta;
-  public value = this.racersService.secondsDelta;
+  readonly max = this.racersService.racerSecondsDelta;
+  public value = this.racersService.racerSecondsDelta;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.value = value;

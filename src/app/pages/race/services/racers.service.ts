@@ -17,15 +17,15 @@ export class RacersService {
   public racers$ = new BehaviorSubject<string[]>([]);
   public finishedRacers: string[] = [];
 
-  public secondsDelta = 5;
+  public racerSecondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
 
   public timer$ = timer(0, 1000).pipe(
-    map(i => this.secondsDelta - i + this.timerDelta),
+    map(i => this.racerSecondsDelta - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
-        this.timerDelta += this.secondsDelta;
+        this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
       }
     }),
