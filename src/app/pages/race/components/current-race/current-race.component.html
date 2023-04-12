@@ -1,29 +1,54 @@
 <tui-island size="l">
-  <h2 class="tui-island__title tui-space_bottom-5">Старт</h2>
+  <h2 class="tui-island__title tui-space_bottom-5">Черника 2023. ITT.</h2>
   <div class="grid">
     <div class="racers">
       <p class="current">
         <span class="tui-text_body-xl">Стартует</span>
-        <span class="tui-text_h3">
+        <span class="tui-text_h3 racer">
           {{ (racers$ | async)![0] }}
         </span>
       </p>
       <p class="next">
         <span class="tui-text_body-xl">Следующий</span>
-        <span class="tui-text_h3">
+        <span class="tui-text_h3 racer">
           {{ (racers$ | async)![1] }}
         </span>
       </p>
     </div>
     <div class="timer">
+      <svg
+        width="0"
+        height="0"
+      >
+        <defs>
+          <linearGradient
+            id="gradient"
+            gradientTransform="rotate(95)"
+          >
+            <stop
+              offset="0%"
+              stop-color="var(--tui-support-02)"
+            ></stop>
+            <stop
+              offset="45%"
+              stop-color="var(--tui-support-14)"
+            ></stop>
+            <stop
+              offset="100%"
+              stop-color="var(--tui-support-12)"
+            ></stop>
+          </linearGradient>
+        </defs>
+      </svg>
+
       <label
-        *ngIf="value$ | async as value"
+        *tuiLet="(value$ | async)! as value"
         tuiProgressLabel
       >
-        <span class="text">COMPLETED</span>
-        <span class="percent">{{ value }}%</span>
+        <span class="tui-text_h1">{{ value }}</span>
 
         <tui-progress-circle
+          color="url(#gradient)"
           size="xl"
           [max]="max"
           [value]="value"
@@ -34,7 +59,7 @@
       <button
         tuiButton
         type="button"
-        appearance="primary"
+        appearance="secondary"
       >
         <tui-svg
           src="tuiIconClockLarge"
@@ -45,13 +70,13 @@
       <button
         tuiButton
         type="button"
-        appearance="accent"
+        appearance="secondary-destructive"
       >
         <tui-svg
           src="tuiIconSlashLarge"
           class="tui-space_right-2"
         ></tui-svg>
-        Финиш
+        Стоп
       </button>
     </div>
   </div>

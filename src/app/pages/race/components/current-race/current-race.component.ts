@@ -1,6 +1,5 @@
-import { Component, Inject } from "@angular/core";
-import { map, of, startWith, takeWhile, timer } from "rxjs";
-import { TUI_IS_CYPRESS } from "@taiga-ui/cdk";
+import { Component } from "@angular/core";
+import { map, tap, timer } from "rxjs";
 import { RacersService } from "../../services/racers.service";
 
 @Component({
@@ -9,16 +8,20 @@ import { RacersService } from "../../services/racers.service";
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent {
-  readonly max = 100;
-  readonly value$ = this.isCypress
-    ? of(30)
-    : timer(300, 200).pipe(
-      map(i => i + 30),
-      startWith(30),
-      takeWhile(value => value <= this.max)
-    );
+  readonly max = 30;
+  private count = 0;
+  readonly value$ = timer(0, 1000).pipe(
+    map(i => 30 - i + this.count),
+    tap((value) => {
+      if (value === 0) {
+        this.count += 30;
+        const currentList = this.racersService.racers$.value.slice(1);
+        this.racersService.racers$.next(currentList);
+      }
+    })
+  );
 
-  constructor(@Inject(TUI_IS_CYPRESS) private readonly isCypress: boolean, private racersService: RacersService) {
+  constructor(private racersService: RacersService) {
   }
 
   public racers$ = this.racersService.racers$;

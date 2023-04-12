@@ -11,6 +11,7 @@ import { TuiButtonModule, TuiSvgModule } from "@taiga-ui/core";
 import { TuiReorderModule } from "@taiga-ui/addon-table";
 import { RacersService } from "./services/racers.service";
 import { ReactiveFormsModule } from "@angular/forms";
+import { TuiLetModule } from "@taiga-ui/cdk";
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { ReactiveFormsModule } from "@angular/forms";
     TuiSvgModule,
     TuiReorderModule,
     TuiProgressModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TuiLetModule
   ],
   providers: [
     RacersService
