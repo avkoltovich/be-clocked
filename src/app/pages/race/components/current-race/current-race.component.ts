@@ -1,6 +1,7 @@
 import { Component, Inject } from "@angular/core";
 import { map, of, startWith, takeWhile, timer } from "rxjs";
 import { TUI_IS_CYPRESS } from "@taiga-ui/cdk";
+import { RacersService } from "../../services/racers.service";
 
 @Component({
   selector: "app-current-race",
@@ -17,6 +18,8 @@ export class CurrentRaceComponent {
       takeWhile(value => value <= this.max)
     );
 
-  constructor(@Inject(TUI_IS_CYPRESS) private readonly isCypress: boolean) {
+  constructor(@Inject(TUI_IS_CYPRESS) private readonly isCypress: boolean, private racersService: RacersService) {
   }
+
+  public racers$ = this.racersService.racers$;
 }

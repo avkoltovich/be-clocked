@@ -5,13 +5,13 @@
       <p class="current">
         <span class="tui-text_body-xl">Стартует</span>
         <span class="tui-text_h3">
-          Константиновский Константин
+          {{ (racers$ | async)![0] }}
         </span>
       </p>
       <p class="next">
         <span class="tui-text_body-xl">Следующий</span>
         <span class="tui-text_h3">
-          Константиновский Константин
+          {{ (racers$ | async)![1] }}
         </span>
       </p>
     </div>
