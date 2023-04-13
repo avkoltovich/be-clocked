@@ -4,7 +4,7 @@ import { RacersService } from "../../services/racers.service";
 import { TUI_DEFAULT_MATCHER, tuiControlValue } from "@taiga-ui/cdk";
 import { map } from "rxjs";
 
-interface IFinisher {
+export interface IFinisher {
   name: string;
   time: number;
 }
@@ -24,7 +24,7 @@ export class FinishRaceComponent {
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
       const difference = this.racersService.finisherListForSelect.filter((racer) => {
-        return !this.racersService.finishedRacers.includes(racer) && racer !== "Пропуск";
+        return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
@@ -40,6 +40,11 @@ export class FinishRaceComponent {
   );
 
   constructor(private racersService: RacersService) {
+    const finishersFromLS = this.racersService.readFinishersDataFromLS();
+
+    if (finishersFromLS !== null) {
+      this.finishers = finishersFromLS;
+    }
   }
 
   public onFinish() {
@@ -48,7 +53,8 @@ export class FinishRaceComponent {
     this.racerControl.setValue("");
 
     if (currentRacerName !== null && currentRacerName !== "") {
-      this.racersService.finishedRacers.push(currentRacerName);
+      this.racersService.finisherNameList.push(currentRacerName);
+      this.racersService.updateFinisherNameListInLS(this.racersService.finisherNameList);
 
       const finishers = this.finishers.slice();
       const startedData = this.racersService.startedRacers.find((starter) => starter.name === currentRacerName);
@@ -62,6 +68,7 @@ export class FinishRaceComponent {
       finishers.sort((a, b) => a.time - b.time);
 
       this.finishers = finishers.slice();
+      this.racersService.updateFinishersDataInLS(this.finishers);
     }
   }
 

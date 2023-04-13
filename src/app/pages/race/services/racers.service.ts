@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, finalize, map, takeWhile, tap, timer } from "rxjs";
 import { HttpClient } from "@angular/common/http";
+import { IFinisher } from "../components/finish-race/finish-race.component";
 
 interface IRacers {
   racers: string[];
@@ -20,7 +21,7 @@ export class RacersService {
   public currentRacerIndex$ = new BehaviorSubject(0);
 
   public racers$ = new BehaviorSubject<string[]>([]);
-  public finishedRacers: string[] = [];
+  public finisherNameList: string[] = [];
   public startedRacers: IStarter[] = [];
   public finisherListForSelect: string[] = [];
 
@@ -37,10 +38,13 @@ export class RacersService {
           name: this.racers$.value[this.currentRacerIndex$.value],
           time: Date.now()
         });
+        this.updateStartedRacersInLS(this.startedRacers);
         this.finisherListForSelect.push(this.racers$.value[this.currentRacerIndex$.value]);
+        this.updateFinisherListForSelectDataInLS(this.finisherListForSelect);
 
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
+        this.updateCurrentRacerIndexInLS(this.currentRacerIndex$.value);
       }
     }),
     takeWhile((value) => this.racers$.value.length !== this.currentRacerIndex$.value),
@@ -54,6 +58,16 @@ export class RacersService {
   );
 
   constructor(private httpClient: HttpClient) {
+    const finisherNameList = this.readFinisherNameListFromLS();
+    const startedRacers = this.readStartedRacersFromLS();
+    const finisherListForSelect = this.readFinisherListForSelectDataFromLS();
+    const currentRacerIndex = this.readCurrentRacerIndexFromLS();
+
+    if (finisherNameList !== null) this.finisherNameList = finisherNameList;
+    if (startedRacers !== null) this.startedRacers = startedRacers;
+    if (finisherListForSelect !== null) this.finisherListForSelect = finisherListForSelect;
+    if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
+
     if (this.checkRacersDataInLS()) {
       this.racers$.next(this.readRacersDataFromLS());
     } else {
@@ -71,8 +85,48 @@ export class RacersService {
     window.localStorage.setItem("racers", JSON.stringify(value));
   }
 
+  public updateStartedRacersInLS(value: IStarter[]) {
+    window.localStorage.setItem("starters", JSON.stringify(value));
+  }
+
+  public updateFinisherListForSelectDataInLS(value: string[]) {
+    window.localStorage.setItem("finisherListForSelect", JSON.stringify(value));
+  }
+
+  public updateFinishersDataInLS(value: IFinisher[]) {
+    window.localStorage.setItem("finishers", JSON.stringify(value));
+  }
+
+  public updateFinisherNameListInLS(value: string[]) {
+    window.localStorage.setItem("finisherNameList", JSON.stringify(value));
+  }
+
+  public updateCurrentRacerIndexInLS(value: number) {
+    window.localStorage.setItem("currentRacerIndex", JSON.stringify(value));
+  }
+
   public readRacersDataFromLS() {
     return JSON.parse(window.localStorage.getItem("racers")!);
+  }
+
+  public readStartedRacersFromLS() {
+    return JSON.parse(window.localStorage.getItem("starters")!);
+  }
+
+  public readFinisherListForSelectDataFromLS() {
+    return JSON.parse(window.localStorage.getItem("finisherListForSelect")!);
+  }
+
+  public readCurrentRacerIndexFromLS() {
+    return JSON.parse(window.localStorage.getItem("currentRacerIndex")!);
+  }
+
+  public readFinishersDataFromLS() {
+    return JSON.parse(window.localStorage.getItem("finishers")!);
+  }
+
+  public readFinisherNameListFromLS() {
+    return JSON.parse(window.localStorage.getItem("finisherNameList")!);
   }
 
   public checkRacersDataInLS(): boolean {
