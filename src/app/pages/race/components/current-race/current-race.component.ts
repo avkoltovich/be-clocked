@@ -51,4 +51,9 @@ export class CurrentRaceComponent {
 
     this.timerSubscription?.unsubscribe();
   }
+
+  public onReset() {
+    this.racersService.resetLS();
+    location.reload();
+  }
 }

@@ -150,4 +150,8 @@ export class RacersService {
 
     return startTime !== null ? Number.parseInt(startTime) : 0;
   }
+
+  public resetLS() {
+    window.localStorage.clear();
+  }
 }
