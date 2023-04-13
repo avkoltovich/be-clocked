@@ -1,7 +1,7 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Черника 2023. ITT.</h2>
   <div class="grid">
-    <div class="racers">
+    <div class="racers-container">
       <p class="current">
         <span class="tui-text_body-xl">Стартует</span>
         <span class="tui-text_h3 racer">
@@ -15,7 +15,7 @@
         </span>
       </p>
     </div>
-    <div class="timer">
+    <div class="timer-container">
       <svg
         width="0"
         height="0"
@@ -42,6 +42,7 @@
       </svg>
 
       <label
+        class="timer"
         *ngIf="(racers$ | async)!.length > (currentRacerIndex$ | async)!; else emptyList"
         tuiProgressLabel
       >
@@ -55,7 +56,7 @@
         ></tui-progress-circle>
       </label>
     </div>
-    <div class="controls">
+    <div class="controls-container">
       <button
         tuiButton
         type="button"
@@ -64,10 +65,23 @@
         [disabled]="(isRaceStarted$ | async)!"
       >
         <tui-svg
-          src="tuiIconClockLarge"
+          src="tuiIconPlayCircleLarge"
           class="tui-space_right-2"
         ></tui-svg>
         Старт
+      </button>
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        (click)="onCancel()"
+        [disabled]="(isAllMembersStarted$ | async)! || !(isRaceStarted$ | async)"
+      >
+        <tui-svg
+          src="tuiIconFastForwardLarge"
+          class="tui-space_right-2"
+        ></tui-svg>
+        Пропуск
       </button>
       <button
         tuiButton
@@ -77,10 +91,10 @@
         [disabled]="(isAllMembersStarted$ | async)! || !(isRaceStarted$ | async)"
       >
         <tui-svg
-          src="tuiIconSlashLarge"
+          src="tuiIconPauseCircleLarge"
           class="tui-space_right-2"
         ></tui-svg>
-        Отмена
+        Пауза
       </button>
     </div>
   </div>

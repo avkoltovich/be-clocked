@@ -74,4 +74,10 @@ export class FinishRaceComponent {
 
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${mseconds.toString().padStart(3, "0")}`;
   };
+
+  /**
+   * TODO: Сохранять результаты финиша в ЛС, фильтровать участников, если они еще не стартовали
+   * TODO: Добавить логику АНОНИМА с возможностью замены на реального человека
+   * TODO: Сохранение таймера при перезагрузке
+   */
 }

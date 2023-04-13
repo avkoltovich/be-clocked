@@ -4,10 +4,10 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 33%)
+  grid-template-columns: repeat(2, 50%);
 }
 
-.racers {
+.racers-container {
   display: flex;
   flex-direction: column;
   gap: 60px;
@@ -24,22 +24,28 @@
   min-height: 80px;
 }
 
-.timer {
+.timer-container {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.timer {
+  transform: scale(3);
 }
 
 .seconds {
 
 }
 
-.controls {
+.controls-container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
+  padding-top: 60px;
+
+  grid-column: 1 / -1;
 
   & button {
     width: 200px;
