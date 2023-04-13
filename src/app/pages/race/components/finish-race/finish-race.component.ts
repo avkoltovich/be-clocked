@@ -45,18 +45,19 @@ export class FinishRaceComponent {
 
   public onFinish() {
     const currentTime = Date.now();
-    const currentRacer = this.formGroup.controls.racer.value;
+    const currentRacerName = this.formGroup.controls.racer.value;
     this.racerControl.setValue("");
 
-    if (currentRacer !== null && currentRacer !== "") {
-      this.racersService.finishedRacers.push(currentRacer);
+    if (currentRacerName !== null && currentRacerName !== "") {
+      console.log(this.racersService.startedRacers);
+      this.racersService.finishedRacers.push(currentRacerName);
 
       const finishers = this.finishers.slice();
-      const racerIndex = this.racersService.racers$.value.indexOf(currentRacer);
-      const actualTime = currentTime - this.racersService.getStartTimeFromLS() - racerIndex * this.racersService.racerSecondsDelta * 1000;
+      const startedData = this.racersService.startedRacers.find((starter) => starter.name === currentRacerName);
+      const actualTime = currentTime - startedData!.time;
 
       finishers.push({
-        name: currentRacer,
+        name: currentRacerName,
         time: actualTime
       });
 

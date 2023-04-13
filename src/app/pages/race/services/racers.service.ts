@@ -6,6 +6,11 @@ interface IRacers {
   racers: string[];
 }
 
+export interface IStarter {
+  name: string;
+  time: number;
+}
+
 @Injectable({
   providedIn: "root"
 })
@@ -16,6 +21,7 @@ export class RacersService {
 
   public racers$ = new BehaviorSubject<string[]>([]);
   public finishedRacers: string[] = [];
+  public startedRacers: IStarter[] = [];
 
   public racerSecondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
@@ -26,6 +32,11 @@ export class RacersService {
     map(i => this.racerSecondsDelta - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
+        this.startedRacers.push({
+          name: this.racers$.value[this.currentRacerIndex$.value],
+          time: Date.now()
+        });
+        console.log(this.startedRacers);
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
       }
