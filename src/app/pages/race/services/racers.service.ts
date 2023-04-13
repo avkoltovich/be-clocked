@@ -22,6 +22,7 @@ export class RacersService {
   public racers$ = new BehaviorSubject<string[]>([]);
   public finishedRacers: string[] = [];
   public startedRacers: IStarter[] = [];
+  public finisherListForSelect: string[] = [];
 
   public racerSecondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
@@ -36,7 +37,8 @@ export class RacersService {
           name: this.racers$.value[this.currentRacerIndex$.value],
           time: Date.now()
         });
-        console.log(this.startedRacers);
+        this.finisherListForSelect.push(this.racers$.value[this.currentRacerIndex$.value]);
+
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
       }

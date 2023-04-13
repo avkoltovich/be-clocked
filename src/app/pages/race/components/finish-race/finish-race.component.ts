@@ -23,7 +23,7 @@ export class FinishRaceComponent {
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
-      const difference = this.racersService.racers$.value.filter((racer) => {
+      const difference = this.racersService.finisherListForSelect.filter((racer) => {
         return !this.racersService.finishedRacers.includes(racer) && racer !== "Пропуск";
       });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
@@ -34,7 +34,6 @@ export class FinishRaceComponent {
       ) {
         return filtered;
       }
-
 
       return [];
     })
@@ -49,7 +48,6 @@ export class FinishRaceComponent {
     this.racerControl.setValue("");
 
     if (currentRacerName !== null && currentRacerName !== "") {
-      console.log(this.racersService.startedRacers);
       this.racersService.finishedRacers.push(currentRacerName);
 
       const finishers = this.finishers.slice();
