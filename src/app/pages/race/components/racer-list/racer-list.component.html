@@ -11,7 +11,7 @@
       >
         {{ item }}
       </span>
-      <ng-container *ngIf="!(isRaceStarted$ | async)! || i >= (currentRacerIndex$ | async)!">
+      <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
         <button
           tuiIconButton
           appearance="flat"

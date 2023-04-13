@@ -74,7 +74,7 @@
         tuiButton
         type="button"
         appearance="secondary"
-        (click)="onCancel()"
+        (click)="onSkip()"
         [disabled]="(isAllMembersStarted$ | async)! || !(isRaceStarted$ | async)"
       >
         <tui-svg
@@ -87,7 +87,7 @@
         tuiButton
         type="button"
         appearance="secondary-destructive"
-        (click)="onCancel()"
+        (click)="onPause()"
         [disabled]="(isAllMembersStarted$ | async)! || !(isRaceStarted$ | async)"
       >
         <tui-svg

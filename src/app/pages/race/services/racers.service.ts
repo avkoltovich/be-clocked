@@ -19,6 +19,7 @@ export class RacersService {
 
   public racerSecondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
+  public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
 
   public timer$ = timer(0, 1000).pipe(
@@ -29,9 +30,13 @@ export class RacersService {
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
       }
     }),
-    takeWhile(() => this.racers$.value.length !== this.currentRacerIndex$.value),
+    takeWhile((value) => this.racers$.value.length !== this.currentRacerIndex$.value),
     finalize(() => {
-      this.isAllMembersStarted$.next(true);
+      if (this.isRacePaused$.value) {
+        this.timerDelta = 0;
+      } else {
+        this.isAllMembersStarted$.next(true);
+      }
     })
   );
 
