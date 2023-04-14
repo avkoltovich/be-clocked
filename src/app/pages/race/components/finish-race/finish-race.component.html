@@ -77,14 +77,31 @@
       ></button>
     </li>
   </ol>
-  <ol class="tui-list tui-list_ordered tui-list_large">
-    <li
-      *ngFor="let finisher of finishers"
-      class="tui-list__item"
-    >
-      {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-    </li>
-  </ol>
+  <ng-container *ngIf="finishers.length > 0">
+    <h3>Абсолют</h3>
+    <ol class="tui-list tui-list_ordered tui-list_large">
+      <li
+        *ngFor="let finisher of finishers"
+        class="tui-list__item"
+      >
+        {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+      </li>
+    </ol>
+    <ng-container *ngFor="let category of finishersByCategories">
+      <ng-container *ngIf="category.finishers.length > 0">
+        <h3>{{ category.name }}</h3>
+        <ol class="tui-list tui-list_ordered tui-list_large">
+          <li
+            *ngFor="let finisher of category.finishers"
+            class="tui-list__item"
+          >
+            {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+          </li>
+        </ol>
+      </ng-container>
+
+    </ng-container>
+  </ng-container>
 </tui-island>
 
 <ng-template

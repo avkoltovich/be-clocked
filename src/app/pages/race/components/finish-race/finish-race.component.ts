@@ -11,6 +11,11 @@ export interface IFinisher {
   time: number;
 }
 
+export interface IFinishCategory {
+  name: string;
+  finishers: IFinisher[];
+}
+
 @Component({
   selector: "app-finish-race",
   templateUrl: "./finish-race.component.html",
@@ -24,6 +29,7 @@ export class FinishRaceComponent {
     racer: this.racerControl
   });
   public finishers: IFinisher[] = [];
+  public finishersByCategories: IFinishCategory[] = [];
   public anonFinishers: IFinisher[] = [];
   public anonIndex = 0;
   public currentSelectedAnonIndex: number | null = null;
@@ -70,6 +76,8 @@ export class FinishRaceComponent {
     const finishersFromLS = this.racersService.readFinishersDataFromLS();
     const anonFinishersFromLS = this.racersService.readAnonsFromLS();
     const anonIndexFromLS = this.racersService.readCurrentAnonIndexFromLS();
+    const categories = Object.keys(this.racersService.categoriesMap);
+    const finishersByCategories = this.racersService.readFinishersByCategoriesFromLS();
 
     if (finishersFromLS !== null) {
       this.finishers = finishersFromLS;
@@ -81,6 +89,19 @@ export class FinishRaceComponent {
 
     if (anonIndexFromLS !== null) {
       this.anonIndex = anonIndexFromLS;
+    }
+
+    if (categories.length > 0) {
+      categories.forEach((category) => {
+        this.finishersByCategories.push({
+          name: category,
+          finishers: []
+        });
+      });
+    }
+
+    if (finishersByCategories !== null) {
+      this.finishersByCategories = finishersByCategories;
     }
   }
 
@@ -107,6 +128,23 @@ export class FinishRaceComponent {
 
       this.finishers = finishers.slice();
       this.racersService.updateFinishersDataInLS(this.finishers);
+
+      let categoryName = "";
+
+      for (const category in this.racersService.categoriesMap) {
+        if (this.racersService.categoriesMap[category].includes(currentRacerName)) {
+          categoryName = category;
+          break;
+        }
+      }
+
+      const categoryIndex = this.finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
+      this.finishersByCategories[categoryIndex].finishers.push({
+        name: currentRacerName,
+        time: actualTime
+      });
+
+      this.racersService.updateFinishersByCategoriesInLS(this.finishersByCategories);
     }
   }
 

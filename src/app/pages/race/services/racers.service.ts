@@ -1,10 +1,15 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, finalize, map, takeWhile, tap, timer } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { IFinisher } from "../components/finish-race/finish-race.component";
+import { IFinishCategory, IFinisher } from "../components/finish-race/finish-race.component";
 
 interface IRacers {
-  racers: string[];
+  racers: IRacer[];
+}
+
+export interface IRacer {
+  name: string;
+  category: string;
 }
 
 export interface IStarter {
@@ -24,8 +29,9 @@ export class RacersService {
   public finisherNameList: string[] = [];
   public startedRacers: IStarter[] = [];
   public finisherListForSelect: string[] = [];
+  public categoriesMap: Record<string, string[]> = {};
 
-  public racerSecondsDelta = 30;
+  public racerSecondsDelta = 1;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -62,11 +68,13 @@ export class RacersService {
     const startedRacers = this.readStartedRacersFromLS();
     const finisherListForSelect = this.readFinisherListForSelectDataFromLS();
     const currentRacerIndex = this.readCurrentRacerIndexFromLS();
+    const categoriesMap = this.readCategoriesMapFromLS();
 
     if (finisherNameList !== null) this.finisherNameList = finisherNameList;
     if (startedRacers !== null) this.startedRacers = startedRacers;
     if (finisherListForSelect !== null) this.finisherListForSelect = finisherListForSelect;
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
+    if (categoriesMap !== null) this.categoriesMap = categoriesMap;
 
     if (this.checkRacersDataInLS()) {
       this.racers$.next(this.readRacersDataFromLS());
@@ -85,6 +93,10 @@ export class RacersService {
     window.localStorage.setItem("racers", JSON.stringify(value));
   }
 
+  public updateCategoriesMapInLS(value: Record<string, string[]>) {
+    window.localStorage.setItem("categoriesMap", JSON.stringify(value));
+  }
+
   public updateStartedRacersInLS(value: IStarter[]) {
     window.localStorage.setItem("starters", JSON.stringify(value));
   }
@@ -95,6 +107,10 @@ export class RacersService {
 
   public updateFinishersDataInLS(value: IFinisher[]) {
     window.localStorage.setItem("finishers", JSON.stringify(value));
+  }
+
+  public updateFinishersByCategoriesInLS(value: IFinishCategory[]) {
+    window.localStorage.setItem("finishersByCategories", JSON.stringify(value));
   }
 
   public updateAnonsInLS(value: IFinisher[]) {
@@ -117,6 +133,10 @@ export class RacersService {
     return JSON.parse(window.localStorage.getItem("racers")!);
   }
 
+  public readCategoriesMapFromLS() {
+    return JSON.parse(window.localStorage.getItem("categoriesMap")!);
+  }
+
   public readStartedRacersFromLS() {
     return JSON.parse(window.localStorage.getItem("starters")!);
   }
@@ -137,6 +157,10 @@ export class RacersService {
     return JSON.parse(window.localStorage.getItem("finishers")!);
   }
 
+  public readFinishersByCategoriesFromLS() {
+    return JSON.parse(window.localStorage.getItem("finishersByCategories")!);
+  }
+
   public readAnonsFromLS() {
     return JSON.parse(window.localStorage.getItem("anons")!);
   }
@@ -152,7 +176,21 @@ export class RacersService {
   public updateRacersDataFromJSON() {
     this.httpClient.get<IRacers>(this.URL).pipe(
       tap((data: IRacers) => {
-        this.racers$.next(data.racers);
+        const racers: string[] = [];
+        const categoriesMap: Record<string, string[]> = {};
+
+        data.racers.forEach((racer) => {
+          racers.push(racer.name);
+          if (Array.isArray(categoriesMap[racer.category])) {
+            categoriesMap[racer.category].push(racer.name);
+          } else {
+            categoriesMap[racer.category] = [];
+            categoriesMap[racer.category].push(racer.name);
+          }
+        });
+
+        this.updateCategoriesMapInLS(categoriesMap);
+        this.racers$.next(racers);
       })
     ).subscribe();
   }
