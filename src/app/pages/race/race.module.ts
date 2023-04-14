@@ -6,8 +6,21 @@ import { CurrentRaceComponent } from "./components/current-race/current-race.com
 import { FinishRaceComponent } from "./components/finish-race/finish-race.component";
 import { RaceComponent } from "./components/race/race.component";
 import { RaceRoutingModule } from "./race-routing.module";
-import { TuiInputModule, TuiInputNumberModule, TuiIslandModule, TuiProgressModule } from "@taiga-ui/kit";
-import { TuiButtonModule, TuiDataListModule, TuiLinkModule, TuiSvgModule } from "@taiga-ui/core";
+import {
+  TuiDataListWrapperModule,
+  TuiInputModule,
+  TuiInputNumberModule,
+  TuiIslandModule,
+  TuiProgressModule,
+  TuiSelectModule
+} from "@taiga-ui/kit";
+import {
+  TuiButtonModule,
+  TuiDataListModule,
+  TuiLinkModule,
+  TuiSvgModule,
+  TuiTextfieldControllerModule
+} from "@taiga-ui/core";
 import { TuiReorderModule } from "@taiga-ui/addon-table";
 import { RacersService } from "./services/racers.service";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -38,7 +51,10 @@ import { HttpClientModule } from "@angular/common/http";
     TuiDataListModule,
     TuiLinkModule,
     TuiInputNumberModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    TuiSelectModule,
+    TuiDataListWrapperModule,
+    TuiTextfieldControllerModule
   ],
   providers: [
     RacersService
