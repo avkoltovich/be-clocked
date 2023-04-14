@@ -1,6 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { Subscription, tap } from "rxjs";
 import { RacersService } from "../../services/racers.service";
+import { TuiDialogService } from "@taiga-ui/core";
 
 @Component({
   selector: "app-current-race",
@@ -23,7 +24,7 @@ export class CurrentRaceComponent {
   public isRacePaused$ = this.racersService.isRacePaused$;
   public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
 
-  constructor(private racersService: RacersService) {
+  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService) {
 
   }
 
@@ -55,5 +56,9 @@ export class CurrentRaceComponent {
   public onReset() {
     this.racersService.resetLS();
     location.reload();
+  }
+
+  public showDialog(content: any): void {
+    this.dialogs.open(content).subscribe();
   }
 }

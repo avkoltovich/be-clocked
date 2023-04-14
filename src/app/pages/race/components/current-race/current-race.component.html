@@ -100,7 +100,7 @@
         tuiButton
         type="button"
         appearance="flat"
-        (click)="onReset()"
+        (click)="showDialog(reset)"
       >
         <tui-svg
           src="tuiIconRefreshCcwLarge"
@@ -114,4 +114,31 @@
 
 <ng-template #emptyList>
   <p class="tui-text_h3 empty-list">Все участники стартовали</p>
+</ng-template>
+
+<ng-template
+  #reset
+  let-observer
+>
+  <p>Уверены, что хотите сбросить гонку?</p>
+
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="secondary-destructive"
+    class="tui-space_right-3"
+    (click)="onReset()"
+  >
+    Сброс
+  </button>
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="secondary"
+    (click)="observer.complete()"
+  >
+    Отмена
+  </button>
 </ng-template>
