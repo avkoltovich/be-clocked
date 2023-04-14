@@ -1,8 +1,8 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { RacersService } from "../../services/racers.service";
 import { TUI_DEFAULT_MATCHER, tuiControlValue } from "@taiga-ui/cdk";
-import { map } from "rxjs";
+import { map, takeWhile, tap } from "rxjs";
 import { TuiDialogFormService } from "@taiga-ui/kit";
 import { TuiDialogService } from "@taiga-ui/core";
 
@@ -22,7 +22,7 @@ export interface IFinishCategory {
   providers: [TuiDialogFormService],
   styleUrls: ["./finish-race.component.scss"]
 })
-export class FinishRaceComponent {
+export class FinishRaceComponent implements OnInit {
   public racerControl = new FormControl("");
   public anonNameControl = new FormControl("");
   public formGroup = new FormGroup({
@@ -70,13 +70,31 @@ export class FinishRaceComponent {
     })
   );
 
+  public categoriesMap$ = this.racersService.categoriesMap$.pipe(
+    tap((categoriesMap) => {
+      const categories = Object.keys(categoriesMap);
+
+      if (categories.length > 0) {
+        categories.forEach((category) => {
+          this.finishersByCategories.push({
+            name: category,
+            finishers: []
+          });
+        });
+      }
+    }),
+    takeWhile((categoriesMap) => Object.keys(categoriesMap).length === 0)
+  );
+
   constructor(private racersService: RacersService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) {
+  }
+
+  public ngOnInit() {
     const finishersFromLS = this.racersService.readFinishersDataFromLS();
     const anonFinishersFromLS = this.racersService.readAnonsFromLS();
     const anonIndexFromLS = this.racersService.readCurrentAnonIndexFromLS();
-    const categories = Object.keys(this.racersService.categoriesMap);
     const finishersByCategories = this.racersService.readFinishersByCategoriesFromLS();
 
     if (finishersFromLS !== null) {
@@ -91,17 +109,10 @@ export class FinishRaceComponent {
       this.anonIndex = anonIndexFromLS;
     }
 
-    if (categories.length > 0) {
-      categories.forEach((category) => {
-        this.finishersByCategories.push({
-          name: category,
-          finishers: []
-        });
-      });
-    }
-
     if (finishersByCategories !== null) {
       this.finishersByCategories = finishersByCategories;
+    } else {
+      this.categoriesMap$.subscribe();
     }
   }
 
@@ -131,8 +142,8 @@ export class FinishRaceComponent {
 
       let categoryName = "";
 
-      for (const category in this.racersService.categoriesMap) {
-        if (this.racersService.categoriesMap[category].includes(currentRacerName)) {
+      for (const category in this.racersService.categoriesMap$.value) {
+        if (this.racersService.categoriesMap$.value[category].includes(currentRacerName)) {
           categoryName = category;
           break;
         }
@@ -144,6 +155,7 @@ export class FinishRaceComponent {
         time: actualTime
       });
 
+      this.finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
       this.racersService.updateFinishersByCategoriesInLS(this.finishersByCategories);
     }
   }

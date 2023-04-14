@@ -29,9 +29,9 @@ export class RacersService {
   public finisherNameList: string[] = [];
   public startedRacers: IStarter[] = [];
   public finisherListForSelect: string[] = [];
-  public categoriesMap: Record<string, string[]> = {};
+  public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
 
-  public racerSecondsDelta = 1;
+  public racerSecondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -74,7 +74,7 @@ export class RacersService {
     if (startedRacers !== null) this.startedRacers = startedRacers;
     if (finisherListForSelect !== null) this.finisherListForSelect = finisherListForSelect;
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
-    if (categoriesMap !== null) this.categoriesMap = categoriesMap;
+    if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
 
     if (this.checkRacersDataInLS()) {
       this.racers$.next(this.readRacersDataFromLS());
@@ -189,6 +189,7 @@ export class RacersService {
           }
         });
 
+        this.categoriesMap$.next(categoriesMap);
         this.updateCategoriesMapInLS(categoriesMap);
         this.racers$.next(racers);
       })
