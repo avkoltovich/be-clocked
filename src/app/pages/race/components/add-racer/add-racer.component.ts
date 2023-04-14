@@ -16,8 +16,12 @@ export class AddRacerComponent {
   }
 
   public onAddRacer() {
+    const racerName = this.formGroup.controls.racer.value;
+
+    if (racerName === null || racerName === "") return;
+
     const currentList = this.racersService.racers$.value.slice();
-    currentList.push(this.formGroup.controls.racer.value as string);
+    currentList.push(racerName);
     this.racersService.racers$.next(currentList);
 
     this.formGroup.controls.racer.reset();
