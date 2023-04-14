@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
+import { CommonModule, NgOptimizedImage } from "@angular/common";
 import { AddRacerComponent } from "./components/add-racer/add-racer.component";
 import { RacerListComponent } from "./components/racer-list/racer-list.component";
 import { CurrentRaceComponent } from "./components/current-race/current-race.component";
@@ -37,7 +37,8 @@ import { HttpClientModule } from "@angular/common/http";
     HttpClientModule,
     TuiDataListModule,
     TuiLinkModule,
-    TuiInputNumberModule
+    TuiInputNumberModule,
+    NgOptimizedImage
   ],
   providers: [
     RacersService
