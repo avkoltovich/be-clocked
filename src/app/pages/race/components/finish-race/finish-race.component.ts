@@ -119,9 +119,6 @@ export class FinishRaceComponent {
     return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${mseconds.toString().padStart(3, "0")}`;
   };
 
-  /**
-   * TODO: Добавить логику АНОНИМА с возможностью замены на реального человека
-   */
   public onAnonButton() {
     this.anonIndex++;
     const time = Date.now();
@@ -159,6 +156,7 @@ export class FinishRaceComponent {
 
     this.anonFinishers.splice(this.currentSelectedAnonIndex, 1);
     this.currentSelectedAnonIndex = null;
+    this.racersService.updateAnonsInLS(this.anonFinishers);
   }
 
   public removeAnon(i: number) {
