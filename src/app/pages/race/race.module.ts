@@ -6,7 +6,7 @@ import { CurrentRaceComponent } from "./components/current-race/current-race.com
 import { FinishRaceComponent } from "./components/finish-race/finish-race.component";
 import { RaceComponent } from "./components/race/race.component";
 import { RaceRoutingModule } from "./race-routing.module";
-import { TuiInputModule, TuiIslandModule, TuiProgressModule } from "@taiga-ui/kit";
+import { TuiInputModule, TuiInputNumberModule, TuiIslandModule, TuiProgressModule } from "@taiga-ui/kit";
 import { TuiButtonModule, TuiDataListModule, TuiLinkModule, TuiSvgModule } from "@taiga-ui/core";
 import { TuiReorderModule } from "@taiga-ui/addon-table";
 import { RacersService } from "./services/racers.service";
@@ -36,7 +36,8 @@ import { HttpClientModule } from "@angular/common/http";
     TuiLetModule,
     HttpClientModule,
     TuiDataListModule,
-    TuiLinkModule
+    TuiLinkModule,
+    TuiInputNumberModule
   ],
   providers: [
     RacersService

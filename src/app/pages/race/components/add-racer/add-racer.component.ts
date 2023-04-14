@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { RacersService } from "../../services/racers.service";
 
 @Component({
@@ -9,7 +9,8 @@ import { RacersService } from "../../services/racers.service";
 })
 export class AddRacerComponent {
   public formGroup = new FormGroup({
-    racer: new FormControl("")
+    racer: new FormControl("", Validators.required),
+    number: new FormControl("", Validators.required)
   });
 
   constructor(private racersService: RacersService) {
@@ -17,11 +18,13 @@ export class AddRacerComponent {
 
   public onAddRacer() {
     const racerName = this.formGroup.controls.racer.value;
+    const racerNumber = this.formGroup.controls.number.value;
 
     if (racerName === null || racerName === "") return;
 
+
     const currentList = this.racersService.racers$.value.slice();
-    currentList.push(racerName);
+    currentList.push(`${racerName} - ${racerNumber ?? ""}`);
     this.racersService.racers$.next(currentList);
 
     this.formGroup.controls.racer.reset();

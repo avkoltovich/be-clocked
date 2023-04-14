@@ -1,8 +1,15 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Регистрация участника</h2>
   <form class="tui-form__row_multi-fields" [formGroup]="formGroup">
-    <tui-input class="input tui-space_right-3" formControlName="racer">
+    <tui-input class="input-text tui-space_right-3" formControlName="racer">
       Фамилия Имя
+      <input
+        tuiTextfield
+        type="text"
+      >
+    </tui-input>
+    <tui-input class="input-number tui-space_right-3" formControlName="number">
+      Стартовый номер
       <input
         tuiTextfield
         type="text"
@@ -13,6 +20,7 @@
       type="button"
       appearance="secondary"
       (click)="onAddRacer()"
+      [disabled]="formGroup.invalid"
     >
       <tui-svg
         src="tuiIconPlusCircleLarge"
