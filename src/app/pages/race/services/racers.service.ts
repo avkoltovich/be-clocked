@@ -25,7 +25,7 @@ export class RacersService {
   public startedRacers: IStarter[] = [];
   public finisherListForSelect: string[] = [];
 
-  public racerSecondsDelta = 5;
+  public racerSecondsDelta = 30;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
