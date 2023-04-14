@@ -1,9 +1,9 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Финишный протокол</h2>
-  <form class="tui-form__row_multi-fields tui-space_bottom-8" [formGroup]="formGroup">
+  <form class="tui-form__row_multi-fields tui-space_bottom-8 form" [formGroup]="formGroup">
     <tui-input
       *tuiLet="racers$ | async as racers"
-      class="input tui-space_right-3"
+      class="input"
       formControlName="racer"
     >
       Фамилия Имя
@@ -28,6 +28,7 @@
       type="button"
       appearance="secondary"
       (click)="onFinish()"
+      [disabled]="racerControl.value?.length === 0"
     >
       <tui-svg
         src="tuiIconFlagLarge"
@@ -35,7 +36,47 @@
       ></tui-svg>
       Финиш
     </button>
+    <button
+      tuiButton
+      type="button"
+      appearance="flat"
+      (click)="onAnonButton()"
+    >
+      <tui-svg
+        src="tuiIconFlagLarge"
+        class="tui-space_right-2"
+      ></tui-svg>
+      Аноним
+    </button>
   </form>
+  <ol
+    *ngIf="anonFinishers.length > 0"
+    class="tui-list tui-list_ordered tui-list_large tui-space_bottom-8"
+  >
+    <li
+      *ngFor="let anon of anonFinishers; let i = index"
+      class="tui-list__item item"
+    >
+      <button
+        tuiLink
+        type="button"
+        [pseudo]="true"
+        (click)="onAnonInList(content, i)"
+      >
+        {{ anon.name }}
+      </button>
+      <button
+        tuiIconButton
+        appearance="flat"
+        size="s"
+        icon="tuiIconTrash"
+        title="Удалить"
+        shape="rounded"
+        type="button"
+        (click)="removeAnon(i)"
+      ></button>
+    </li>
+  </ol>
   <ol class="tui-list tui-list_ordered tui-list_large">
     <li
       *ngFor="let finisher of finishers"
@@ -45,3 +86,38 @@
     </li>
   </ol>
 </tui-island>
+
+<ng-template
+  #content
+  let-context
+>
+  <tui-input
+    *tuiLet="anonRacers$ | async as anonRacers"
+    class="tui-space_bottom-3"
+    [formControl]="anonNameControl"
+  >
+    Выбрать анонима
+    <input
+      tuiTextfield
+      type="text"
+    >
+    <ng-container *ngIf="anonRacers?.length">
+      <tui-data-list *tuiDataList>
+        <button
+          *ngFor="let anon of anonRacers"
+          tuiOption
+          [value]="anon.toString()"
+        >
+          {{ anon }}
+        </button>
+      </tui-data-list>
+    </ng-container>
+  </tui-input>
+  <button
+    tuiButton
+    appearance="secondary"
+    (click)="onRenameAnon(); context.complete()"
+  >
+    Применить
+  </button>
+</ng-template>

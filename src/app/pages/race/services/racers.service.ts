@@ -97,12 +97,20 @@ export class RacersService {
     window.localStorage.setItem("finishers", JSON.stringify(value));
   }
 
+  public updateAnonsInLS(value: IFinisher[]) {
+    window.localStorage.setItem("anons", JSON.stringify(value));
+  }
+
   public updateFinisherNameListInLS(value: string[]) {
     window.localStorage.setItem("finisherNameList", JSON.stringify(value));
   }
 
   public updateCurrentRacerIndexInLS(value: number) {
     window.localStorage.setItem("currentRacerIndex", JSON.stringify(value));
+  }
+
+  public updateCurrentAnonIndexInLS(value: number) {
+    window.localStorage.setItem("currentAnonIndex", JSON.stringify(value));
   }
 
   public readRacersDataFromLS() {
@@ -121,8 +129,16 @@ export class RacersService {
     return JSON.parse(window.localStorage.getItem("currentRacerIndex")!);
   }
 
+  public readCurrentAnonIndexFromLS() {
+    return JSON.parse(window.localStorage.getItem("currentAnonIndex")!);
+  }
+
   public readFinishersDataFromLS() {
     return JSON.parse(window.localStorage.getItem("finishers")!);
+  }
+
+  public readAnonsFromLS() {
+    return JSON.parse(window.localStorage.getItem("anons")!);
   }
 
   public readFinisherNameListFromLS() {
