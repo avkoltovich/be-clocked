@@ -31,7 +31,7 @@ export class RacersService {
   public finisherListForSelect: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
 
-  public racerSecondsDelta = 5;
+  public racerSecondsDelta = 30;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -194,16 +194,6 @@ export class RacersService {
         this.racers$.next(racers);
       })
     ).subscribe();
-  }
-
-  public storeStartTimeInLS(time: number) {
-    window.localStorage.setItem("startTime", time.toString());
-  }
-
-  public getStartTimeFromLS() {
-    const startTime = window.localStorage.getItem("startTime");
-
-    return startTime !== null ? Number.parseInt(startTime) : 0;
   }
 
   public resetLS() {
