@@ -31,7 +31,7 @@ export class RacersService {
   public finisherListForSelect: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
 
-  public racerSecondsDelta = 30;
+  public racerSecondsDelta = 5;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
