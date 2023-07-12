@@ -28,15 +28,15 @@ export class FinishRaceComponent implements OnInit {
   public formGroup = new FormGroup({
     racer: this.racerControl
   });
-  public finishers: IFinisher[] = [];
-  public finishersByCategories: IFinishCategory[] = [];
-  public anonFinishers: IFinisher[] = [];
-  public anonIndex = 0;
-  public currentSelectedAnonIndex: number | null = null;
+  public finishers: IFinisher[] = this.racersService.finishers;
+  public finishersByCategories: IFinishCategory[] = this.racersService.finishersByCategories;
+  public anonFinishers: IFinisher[] = this.racersService.anonFinishers;
+  public anonIndex = this.racersService.anonIndex;
+  public currentSelectedAnonIndex: number | null = this.racersService.currentSelectedAnonIndex;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
-      const difference = this.racersService.finisherListForSelect.filter((racer) => {
+      const difference = this.racersService.starterNameList.filter((racer) => {
         return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
@@ -54,7 +54,7 @@ export class FinishRaceComponent implements OnInit {
 
   public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
     map(value => {
-      const difference = this.racersService.finisherListForSelect.filter((racer) => {
+      const difference = this.racersService.starterNameList.filter((racer) => {
         return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));

@@ -28,10 +28,16 @@ export class RacersService {
   public racers$ = new BehaviorSubject<string[]>([]);
   public finisherNameList: string[] = [];
   public startedRacers: IStarter[] = [];
-  public finisherListForSelect: string[] = [];
+  public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
 
-  public racerSecondsDelta = 5;
+  public finishers: IFinisher[] = [];
+  public finishersByCategories: IFinishCategory[] = [];
+  public anonFinishers: IFinisher[] = [];
+  public anonIndex = 0;
+  public currentSelectedAnonIndex: number | null = null;
+
+  public racerSecondsDelta = 2;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -45,8 +51,8 @@ export class RacersService {
           time: Date.now()
         });
         this.updateStartedRacersInLS(this.startedRacers);
-        this.finisherListForSelect.push(this.racers$.value[this.currentRacerIndex$.value]);
-        this.updateFinisherListForSelectDataInLS(this.finisherListForSelect);
+        this.starterNameList.push(this.racers$.value[this.currentRacerIndex$.value]);
+        this.updateStarterNameListInLS(this.starterNameList);
 
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
@@ -66,13 +72,13 @@ export class RacersService {
   constructor(private httpClient: HttpClient) {
     const finisherNameList = this.readFinisherNameListFromLS();
     const startedRacers = this.readStartedRacersFromLS();
-    const finisherListForSelect = this.readFinisherListForSelectDataFromLS();
+    const starterNameList = this.readStarterNameListFromLS();
     const currentRacerIndex = this.readCurrentRacerIndexFromLS();
     const categoriesMap = this.readCategoriesMapFromLS();
 
     if (finisherNameList !== null) this.finisherNameList = finisherNameList;
     if (startedRacers !== null) this.startedRacers = startedRacers;
-    if (finisherListForSelect !== null) this.finisherListForSelect = finisherListForSelect;
+    if (starterNameList !== null) this.starterNameList = starterNameList;
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
 
@@ -101,8 +107,8 @@ export class RacersService {
     window.localStorage.setItem("starters", JSON.stringify(value));
   }
 
-  public updateFinisherListForSelectDataInLS(value: string[]) {
-    window.localStorage.setItem("finisherListForSelect", JSON.stringify(value));
+  public updateStarterNameListInLS(value: string[]) {
+    window.localStorage.setItem("starterNameList", JSON.stringify(value));
   }
 
   public updateFinishersDataInLS(value: IFinisher[]) {
@@ -141,8 +147,8 @@ export class RacersService {
     return JSON.parse(window.localStorage.getItem("starters")!);
   }
 
-  public readFinisherListForSelectDataFromLS() {
-    return JSON.parse(window.localStorage.getItem("finisherListForSelect")!);
+  public readStarterNameListFromLS() {
+    return JSON.parse(window.localStorage.getItem("starterNameList")!);
   }
 
   public readCurrentRacerIndexFromLS() {
