@@ -31,12 +31,6 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
 
-  public finishers: IFinisher[] = [];
-  public finishersByCategories: IFinishCategory[] = [];
-  public anonFinishers: IFinisher[] = [];
-  public anonIndex = 0;
-  public currentSelectedAnonIndex: number | null = null;
-
   public racerSecondsDelta = 2;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);

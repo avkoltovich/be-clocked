@@ -28,11 +28,11 @@ export class FinishRaceComponent implements OnInit {
   public formGroup = new FormGroup({
     racer: this.racerControl
   });
-  public finishers: IFinisher[] = this.racersService.finishers;
-  public finishersByCategories: IFinishCategory[] = this.racersService.finishersByCategories;
-  public anonFinishers: IFinisher[] = this.racersService.anonFinishers;
-  public anonIndex = this.racersService.anonIndex;
-  public currentSelectedAnonIndex: number | null = this.racersService.currentSelectedAnonIndex;
+  public finishers: IFinisher[] = [];
+  public finishersByCategories: IFinishCategory[] = [];
+  public anonFinishers: IFinisher[] = [];
+  public anonIndex = 0;
+  public currentSelectedAnonIndex: number | null = null;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
