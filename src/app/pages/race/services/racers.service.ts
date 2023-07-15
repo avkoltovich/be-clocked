@@ -17,11 +17,26 @@ export interface IStarter {
   time: number;
 }
 
+export interface ISyncJSON {
+  name: string;
+  racers: string[];
+  categoriesMap: Record<string, string[]>;
+  starters: IStarter[];
+  starterNameList: string[];
+  currentRacerIndex: number;
+  currentAnonIndex: number;
+  finishers: IFinisher[];
+  finishersByCategories: IFinishCategory[];
+  anons: IFinisher[];
+  finisherNameList: string[];
+}
+
 @Injectable({
   providedIn: "root"
 })
 export class RacersService {
   private URL = "../../../../assets/racers.json";
+  private URL_SYNC_JSON = "../../../../assets/sync-data.json";
   private timerDelta = 0;
   public currentRacerIndex$ = new BehaviorSubject(0);
 
@@ -31,7 +46,7 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
 
-  public racerSecondsDelta = 30;
+  public racerSecondsDelta = 2;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -51,6 +66,7 @@ export class RacersService {
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
         this.updateCurrentRacerIndexInLS(this.currentRacerIndex$.value);
+        console.log(this.collectDataFromLS());
       }
     }),
     takeWhile((value) => this.racers$.value.length !== this.currentRacerIndex$.value),
@@ -77,7 +93,7 @@ export class RacersService {
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
 
     if (this.checkRacersDataInLS()) {
-      this.racers$.next(this.readRacersDataFromLS());
+      this.racers$.next(this.readRacersFromLS());
     } else {
       this.updateRacersDataFromJSON();
     }
@@ -129,7 +145,7 @@ export class RacersService {
     window.localStorage.setItem("currentAnonIndex", JSON.stringify(value));
   }
 
-  public readRacersDataFromLS() {
+  public readRacersFromLS() {
     return JSON.parse(window.localStorage.getItem("racers")!);
   }
 
@@ -153,7 +169,7 @@ export class RacersService {
     return JSON.parse(window.localStorage.getItem("currentAnonIndex")!);
   }
 
-  public readFinishersDataFromLS() {
+  public readFinishersFromLS() {
     return JSON.parse(window.localStorage.getItem("finishers")!);
   }
 
@@ -171,6 +187,52 @@ export class RacersService {
 
   public checkRacersDataInLS(): boolean {
     return window.localStorage.getItem("racers") !== null;
+  }
+
+  public collectDataFromLS() {
+    const racers = this.readRacersFromLS();
+    const categoriesMap = this.readCategoriesMapFromLS();
+    const starters = this.readStartedRacersFromLS();
+    const starterNameList = this.readStarterNameListFromLS();
+    const currentRacerIndex = this.readCurrentRacerIndexFromLS();
+    const currentAnonIndex = this.readCurrentAnonIndexFromLS();
+    const finishers = this.readFinishersFromLS();
+    const finishersByCategories = this.readFinishersByCategoriesFromLS();
+    const anons = this.readAnonsFromLS();
+    const finisherNameList = this.readFinisherNameListFromLS();
+
+    return {
+      name: "Кутаис 2023",
+      racers: racers ? racers : [],
+      categoriesMap: categoriesMap ? categoriesMap : {},
+      starters: starters ? starters : [],
+      starterNameList: starterNameList ? starterNameList : [],
+      currentRacerIndex: currentRacerIndex ? currentRacerIndex : 0,
+      currentAnonIndex: currentAnonIndex ? currentAnonIndex : 0,
+      finishers: finishers ? finishers : [],
+      finishersByCategories: finishersByCategories ? finishersByCategories : [],
+      anons: anons ? anons : [],
+      finisherNameList: finisherNameList ? finisherNameList : []
+    };
+  }
+
+  public setStateFromJSON() {
+    this.httpClient.get<ISyncJSON>(this.URL_SYNC_JSON).pipe(
+      tap((data: ISyncJSON) => {
+        this.updateRacersDataInLS(data.racers);
+        this.updateCategoriesMapInLS(data.categoriesMap);
+        this.updateStartedRacersInLS(data.starters);
+        this.updateStarterNameListInLS(data.starterNameList);
+        this.updateCurrentRacerIndexInLS(data.currentRacerIndex);
+        this.updateCurrentAnonIndexInLS(data.currentAnonIndex);
+        this.updateFinishersDataInLS(data.finishers);
+        this.updateFinishersByCategoriesInLS(data.finishersByCategories);
+        this.updateAnonsInLS(data.anons);
+        this.updateFinisherNameListInLS(data.finisherNameList);
+
+        window.location.reload();
+      })
+    ).subscribe();
   }
 
   public updateRacersDataFromJSON() {

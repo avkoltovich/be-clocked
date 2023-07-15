@@ -2,7 +2,8 @@
   "racers": [
     {
       "name": "Шахов Искандер - 14",
-      "category": "M60"
+      "category": "M60",
+      "startNumber": 14
     },
     {
       "name": "Беспалов Александр - 12",

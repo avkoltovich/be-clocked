@@ -92,7 +92,7 @@ export class FinishRaceComponent implements OnInit {
   }
 
   public ngOnInit() {
-    const finishersFromLS = this.racersService.readFinishersDataFromLS();
+    const finishersFromLS = this.racersService.readFinishersFromLS();
     const anonFinishersFromLS = this.racersService.readAnonsFromLS();
     const anonIndexFromLS = this.racersService.readCurrentAnonIndexFromLS();
     const finishersByCategories = this.racersService.readFinishersByCategoriesFromLS();

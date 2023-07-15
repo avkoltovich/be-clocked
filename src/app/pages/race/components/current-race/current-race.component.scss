@@ -60,6 +60,10 @@
   & button {
     width: 200px;
   }
+
+  & button.icon-button {
+    width: fit-content;
+  }
 }
 
 .empty-list {

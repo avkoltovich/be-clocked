@@ -1,7 +1,8 @@
-import { Component, Inject } from "@angular/core";
+import { Component, ElementRef, Inject, ViewChild } from "@angular/core";
 import { Subscription, tap } from "rxjs";
 import { RacersService } from "../../services/racers.service";
 import { TuiDialogService } from "@taiga-ui/core";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   selector: "app-current-race",
@@ -23,8 +24,11 @@ export class CurrentRaceComponent {
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public isRacePaused$ = this.racersService.isRacePaused$;
   public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
+  public downloadJsonHref: any;
 
-  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService) {
+  @ViewChild("download") downloadLink: ElementRef<HTMLInputElement> | undefined;
+
+  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService, private sanitizer: DomSanitizer) {
 
   }
 
@@ -59,5 +63,17 @@ export class CurrentRaceComponent {
 
   public showDialog(content: any): void {
     this.dialogs.open(content).subscribe();
+  }
+
+  public generateAndDownloadJSON() {
+    var theJSON = JSON.stringify(this.racersService.collectDataFromLS());
+    this.downloadLink?.nativeElement.setAttribute("href", "data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
+    this.downloadLink?.nativeElement.setAttribute("download", "sync-data.json");
+
+    this.downloadLink?.nativeElement.click();
+  }
+
+  public setStateFromJSON() {
+    this.racersService.setStateFromJSON();
   }
 }
