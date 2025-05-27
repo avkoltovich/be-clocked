@@ -1,0 +1,50 @@
+<form class="tui-form__row_multi-fields" [formGroup]="formGroup">
+  <tui-input class="input-text tui-space_right-3" formControlName="racer">
+    Фамилия Имя
+    <input
+      tuiTextfield
+      type="text"
+    >
+  </tui-input>
+  <tui-input class="tui-space_right-3" formControlName="number">
+    Номер
+    <input
+      tuiTextfield
+      type="text"
+    >
+  </tui-input>
+  <tui-input class="input-number tui-space_right-3" formControlName="startNumber">
+    Стартовая позиция
+    <input
+      tuiTextfield
+      type="text"
+    >
+  </tui-input>
+  <tui-select
+    class="input-category tui-space_right-3"
+    formControlName="category"
+  >
+    Категория
+    <input
+      tuiTextfield
+      placeholder="Выберите категорию"
+    />
+    <tui-data-list-wrapper
+      *tuiDataList
+      [items]="categories$ | async"
+    ></tui-data-list-wrapper>
+  </tui-select>
+  <button
+    tuiButton
+    type="button"
+    appearance="secondary"
+    (click)="onAddRacer()"
+    [disabled]="formGroup.invalid"
+  >
+    <tui-svg
+      src="tuiIconPlusCircleLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Добавить
+  </button>
+</form>

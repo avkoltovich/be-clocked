@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import {IRacer, RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {map} from "rxjs";
 
 @Component({
   selector: "app-racer-list",
@@ -22,6 +23,10 @@ export class RacerListComponent {
   }
 
   public editedRacer: null | Record<string, any> = null;
+
+  public categories$ = this.racersService.categoriesMap$.pipe(
+    map((categoriesMap) => Object.keys(categoriesMap))
+  );
 
   /**
    * TODO: Переписать метод таким образом, чтобы вызывалось редактирование имени

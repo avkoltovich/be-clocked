@@ -7,6 +7,7 @@ export interface IRacer {
   name: string;
   category: string;
   number: number;
+  startNumber?: number;
 }
 
 export interface IStarter {

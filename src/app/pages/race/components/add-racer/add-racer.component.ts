@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { RacersService } from "../../services/racers.service";
+import {IRacer, RacersService} from "../../services/racers.service";
 import { map } from "rxjs";
 
 @Component({
@@ -23,28 +23,19 @@ export class AddRacerComponent {
   constructor(private racersService: RacersService) {
   }
 
-  public onAddRacer() {
-    const name = this.formGroup.controls.racer.value;
-    const number = this.formGroup.controls.number.value;
-    const racerStartNumber = Number(this.formGroup.controls.startNumber.value);
-    const category = this.formGroup.controls.category.value;
-
-    if (name === null || name === "") return;
-
+  public onAddRacer(racer: IRacer) {
     const currentList = this.racersService.racers$.value.slice();
 
-    const currentRacer = { name, category: category ?? '', number: Number(number) }
-
-    if (!isNaN(racerStartNumber)) {
-      currentList.splice(racerStartNumber - 1, 0, currentRacer);
+    if (racer.startNumber && !isNaN(racer.startNumber)) {
+      currentList.splice(racer.startNumber - 1, 0, racer);
     } else {
-      currentList.push(currentRacer);
+      currentList.push(racer);
     }
 
     this.racersService.racers$.next(currentList);
 
     const currentCategoryMap = this.racersService.categoriesMap$.value;
-    currentCategoryMap[category!].push(currentRacer);
+    currentCategoryMap[racer.category].push(racer);
 
     this.formGroup.reset();
   }
