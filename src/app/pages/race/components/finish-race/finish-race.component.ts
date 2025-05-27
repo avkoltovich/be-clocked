@@ -142,12 +142,15 @@ export class FinishRaceComponent implements OnInit {
 
       let categoryName = "";
 
-      for (const category in this.racersService.categoriesMap$.value) {
-        if (this.racersService.categoriesMap$.value[category].includes(currentRacerName)) {
-          categoryName = category;
-          break;
-        }
-      }
+      /**
+       * TODO: Починить
+       */
+      // for (const category in this.racersService.categoriesMap$.value) {
+      //   if (this.racersService.categoriesMap$.value[category].includes(currentRacerName)) {
+      //     categoryName = category;
+      //     break;
+      //   }
+      // }
 
       const categoryIndex = this.finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
       this.finishersByCategories[categoryIndex].finishers.push({

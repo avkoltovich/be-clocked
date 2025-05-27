@@ -3,13 +3,10 @@ import { BehaviorSubject, finalize, map, takeWhile, tap, timer } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { IFinishCategory, IFinisher } from "../components/finish-race/finish-race.component";
 
-interface IRacers {
-  racers: IRacer[];
-}
-
 export interface IRacer {
   name: string;
   category: string;
+  number: number;
 }
 
 export interface IStarter {
@@ -40,11 +37,11 @@ export class RacersService {
   private timerDelta = 0;
   public currentRacerIndex$ = new BehaviorSubject(0);
 
-  public racers$ = new BehaviorSubject<string[]>([]);
+  public racers$ = new BehaviorSubject<IRacer[]>([]);
   public finisherNameList: string[] = [];
   public startedRacers: IStarter[] = [];
   public starterNameList: string[] = [];
-  public categoriesMap$ = new BehaviorSubject<Record<string, string[]>>({});
+  public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
   public racerSecondsDelta = 30;
   public isRaceStarted$ = new BehaviorSubject(false);
@@ -56,11 +53,11 @@ export class RacersService {
     tap((value) => {
       if (value === 0) {
         this.startedRacers.push({
-          name: this.racers$.value[this.currentRacerIndex$.value],
+          name: this.racers$.value[this.currentRacerIndex$.value].name,
           time: Date.now()
         });
         this.updateStartedRacersInLS(this.startedRacers);
-        this.starterNameList.push(this.racers$.value[this.currentRacerIndex$.value]);
+        this.starterNameList.push(this.racers$.value[this.currentRacerIndex$.value].name);
         this.updateStarterNameListInLS(this.starterNameList);
 
         this.timerDelta += this.racerSecondsDelta;
@@ -105,11 +102,11 @@ export class RacersService {
     ).subscribe();
   }
 
-  public updateRacersDataInLS(value: string[]) {
+  public updateRacersDataInLS(value: IRacer[]) {
     window.localStorage.setItem("racers", JSON.stringify(value));
   }
 
-  public updateCategoriesMapInLS(value: Record<string, string[]>) {
+  public updateCategoriesMapInLS(value: Record<string, IRacer[]>) {
     window.localStorage.setItem("categoriesMap", JSON.stringify(value));
   }
 
@@ -216,38 +213,41 @@ export class RacersService {
     };
   }
 
-  public setStateFromJSON() {
-    this.httpClient.get<ISyncJSON>(this.URL_SYNC_JSON).pipe(
-      tap((data: ISyncJSON) => {
-        this.updateRacersDataInLS(data.racers);
-        this.updateCategoriesMapInLS(data.categoriesMap);
-        this.updateStartedRacersInLS(data.starters);
-        this.updateStarterNameListInLS(data.starterNameList);
-        this.updateCurrentRacerIndexInLS(data.currentRacerIndex);
-        this.updateCurrentAnonIndexInLS(data.currentAnonIndex);
-        this.updateFinishersDataInLS(data.finishers);
-        this.updateFinishersByCategoriesInLS(data.finishersByCategories);
-        this.updateAnonsInLS(data.anons);
-        this.updateFinisherNameListInLS(data.finisherNameList);
-
-        window.location.reload();
-      })
-    ).subscribe();
-  }
+  /**
+   * TODO: Починить
+   */
+  // public setStateFromJSON() {
+  //   this.httpClient.get<ISyncJSON>(this.URL_SYNC_JSON).pipe(
+  //     tap((data: ISyncJSON) => {
+  //       this.updateRacersDataInLS(data.racers);
+  //       this.updateCategoriesMapInLS(data.categoriesMap);
+  //       this.updateStartedRacersInLS(data.starters);
+  //       this.updateStarterNameListInLS(data.starterNameList);
+  //       this.updateCurrentRacerIndexInLS(data.currentRacerIndex);
+  //       this.updateCurrentAnonIndexInLS(data.currentAnonIndex);
+  //       this.updateFinishersDataInLS(data.finishers);
+  //       this.updateFinishersByCategoriesInLS(data.finishersByCategories);
+  //       this.updateAnonsInLS(data.anons);
+  //       this.updateFinisherNameListInLS(data.finisherNameList);
+  //
+  //       window.location.reload();
+  //     })
+  //   ).subscribe();
+  // }
 
   public updateRacersDataFromJSON() {
-    this.httpClient.get<IRacers>(this.URL).pipe(
-      tap((data: IRacers) => {
-        const racers: string[] = [];
-        const categoriesMap: Record<string, string[]> = {};
+    this.httpClient.get<IRacer[]>(this.URL).pipe(
+      tap((data: IRacer[]) => {
+        const racers: IRacer[] = [];
+        const categoriesMap: Record<string, IRacer[]> = {};
 
-        data.racers.forEach((racer) => {
-          racers.push(racer.name);
+        data.forEach((racer) => {
+          racers.push(racer);
           if (Array.isArray(categoriesMap[racer.category])) {
-            categoriesMap[racer.category].push(racer.name);
+            categoriesMap[racer.category].push(racer);
           } else {
             categoriesMap[racer.category] = [];
-            categoriesMap[racer.category].push(racer.name);
+            categoriesMap[racer.category].push(racer);
           }
         });
 

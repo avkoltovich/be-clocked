@@ -24,25 +24,27 @@ export class AddRacerComponent {
   }
 
   public onAddRacer() {
-    const racerName = this.formGroup.controls.racer.value;
-    const racerNumber = this.formGroup.controls.number.value;
+    const name = this.formGroup.controls.racer.value;
+    const number = this.formGroup.controls.number.value;
     const racerStartNumber = Number(this.formGroup.controls.startNumber.value);
-    const racerCategory = this.formGroup.controls.category.value;
+    const category = this.formGroup.controls.category.value;
 
-    if (racerName === null || racerName === "") return;
+    if (name === null || name === "") return;
 
     const currentList = this.racersService.racers$.value.slice();
 
+    const currentRacer = { name, category: category ?? '', number: Number(number) }
+
     if (!isNaN(racerStartNumber)) {
-      currentList.splice(racerStartNumber - 1, 0, `${racerName} - ${racerNumber ?? ""}`);
+      currentList.splice(racerStartNumber - 1, 0, currentRacer);
     } else {
-      currentList.push(`${racerName} - ${racerNumber ?? ""}`);
+      currentList.push(currentRacer);
     }
 
     this.racersService.racers$.next(currentList);
 
     const currentCategoryMap = this.racersService.categoriesMap$.value;
-    currentCategoryMap[racerCategory!].push(`${racerName} - ${racerNumber ?? ""}`);
+    currentCategoryMap[category!].push(currentRacer);
 
     this.formGroup.reset();
   }

@@ -1,284 +1,283 @@
-{
-  "racers": [
-    {
-      "name": "Лазарева Юлия - 50",
-      "category": "Девушки",
-      "startNumber": 50
-    },
-    {
-      "name": "Кананыхина Александра - 49",
-      "category": "Девушки",
-      "startNumber": 49
-    },
-    {
-      "name": "Евтенко Денис - 48",
-      "category": "МТБ",
-      "startNumber": 48
-    },
-    {
-      "name": "Богдан r2v - 47",
-      "category": "МТБ",
-      "startNumber": 47
-    },
-    {
-      "name": "Рохлин Валентин - 46",
-      "category": "МТБ",
-      "startNumber": 46
-    },
-    {
-      "name": "Кошель Дмитрий - 45",
-      "category": "МТБ",
-      "startNumber": 45
-    },
-    {
-      "name": "Слепкова Кристина - 44",
-      "category": "Девушки",
-      "startNumber": 44
-    },
-    {
-      "name": "Казанцева Виктория - 43",
-      "category": "Девушки",
-      "startNumber": 43
-    },
-    {
-      "name": "Клименко Константин - 42",
-      "category": "Мужчины",
-      "startNumber": 42
-    },
-    {
-      "name": "Штоль Сергей - 41",
-      "category": "M60",
-      "startNumber": 41
-    },
-    {
-      "name": "Паренюк Александр - 40",
-      "category": "M60",
-      "startNumber": 40
-    },
-    {
-      "name": "Шахов Искандар - 39",
-      "category": "M60",
-      "startNumber": 39
-    },
-    {
-      "name": "Тажетдинов Халит - 38",
-      "category": "M75",
-      "startNumber": 38
-    },
-    {
-      "name": "Виноградов Владислав - 37",
-      "category": "Фикс",
-      "startNumber": 37
-    },
-    {
-      "name": "Трушников Алексей - 36",
-      "category": "МТБ",
-      "startNumber": 36
-    },
-    {
-      "name": "Бражинский Никита - 35",
-      "category": "МТБ",
-      "startNumber": 35
-    },
-    {
-      "name": "Котивец Андрей - 34",
-      "category": "Мужчины",
-      "startNumber": 34
-    },
-    {
-      "name": "Балицкий Евгений - 33",
-      "category": "Мужчины",
-      "startNumber": 33
-    },
-    {
-      "name": "Колышкин Руслан - 32",
-      "category": "Мужчины",
-      "startNumber": 32
-    },
-    {
-      "name": "Шурупов Геннадий - 31",
-      "category": "Мужчины",
-      "startNumber": 31
-    },
-    {
-      "name": "Денисенко Сергей - 30",
-      "category": "Мужчины",
-      "startNumber": 30
-    },
-    {
-      "name": "Артур Селимов - 29",
-      "category": "Мужчины",
-      "startNumber": 29
-    },
-    {
-      "name": "Малышкин Денис - 28",
-      "category": "Мужчины",
-      "startNumber": 28
-    },
-    {
-      "name": "Леонов Андрей - 27",
-      "category": "Мужчины",
-      "startNumber": 27
-    },
-    {
-      "name": "Мухаметов Рустам - 26",
-      "category": "Мужчины",
-      "startNumber": 26
-    },
-    {
-      "name": "Пшеничный Алексей - 25",
-      "category": "Мужчины",
-      "startNumber": 25
-    },
-    {
-      "name": "Рожнов Руслан - 24",
-      "category": "Мужчины",
-      "startNumber": 24
-    },
-    {
-      "name": "Пысанко Сергей - 23",
-      "category": "Мужчины",
-      "startNumber": 23
-    },
-    {
-      "name": "Хорольский Евгений - 22",
-      "category": "Мужчины",
-      "startNumber": 22
-    },
-    {
-      "name": "Лихкун Александр - 21",
-      "category": "Мужчины ТТ",
-      "startNumber": 21
-    },
-    {
-      "name": "Чесноков Денис - 20",
-      "category": "Мужчины",
-      "startNumber": 20
-    },
-    {
-      "name": "Кравчук Никита - 19",
-      "category": "Мужчины",
-      "startNumber": 19
-    },
-    {
-      "name": "Алпатов Сергей - 18",
-      "category": "Мужчины",
-      "startNumber": 18
-    },
-    {
-      "name": "Бережнев Александр - 17",
-      "category": "Мужчины",
-      "startNumber": 17
-    },
-    {
-      "name": "Глинчак Олег - 16",
-      "category": "Мужчины",
-      "startNumber": 16
-    },
-    {
-      "name": "Красовский Сергей - 15",
-      "category": "Мужчины",
-      "startNumber": 15
-    },
-    {
-      "name": "Шумилов Сергей - 14",
-      "category": "Мужчины",
-      "startNumber": 14
-    },
-    {
-      "name": "Колесников Михаил - 13",
-      "category": "Мужчины",
-      "startNumber": 13
-    },
-    {
-      "name": "Черепанов Евгений - 12",
-      "category": "Мужчины",
-      "startNumber": 12
-    },
-    {
-      "name": "Белохвосткин Александр - 11",
-      "category": "Мужчины",
-      "startNumber": 11
-    },
-    {
-      "name": "Евенко Егор - 10",
-      "category": "Мужчины",
-      "startNumber": 10
-    },
-    {
-      "name": "Винник Ангелина - 9",
-      "category": "Девушки",
-      "startNumber": 9
-    },
-    {
-      "name": "Колтович Александр - 8",
-      "category": "Мужчины",
-      "startNumber": 8
-    },
-    {
-      "name": "Гребенников Денис - 7",
-      "category": "Мужчины",
-      "startNumber": 7
-    },
-    {
-      "name": "Дубровин Алексей - 6",
-      "category": "Мужчины ТТ",
-      "startNumber": 6
-    },
-    {
-      "name": "Гонохин Александр - 5",
-      "category": "Мужчины ТТ",
-      "startNumber": 5
-    },
-    {
-      "name": "Агасьян Владислав - 4",
-      "category": "Мужчины",
-      "startNumber": 4
-    },
-    {
-      "name": "Золотых Лев - 3",
-      "category": "Мужчины",
-      "startNumber": 3
-    },
-    {
-      "name": "Кузнецов Михаил - 2",
-      "category": "Мужчины",
-      "startNumber": 2
-    },
-    {
-      "name": "Роганов Павел - 1",
-      "category": "Мужчины",
-      "startNumber": 1
-    },
-    {
-      "name": "Слепков Илья - 123",
-      "category": "Мужчины",
-      "startNumber": 123
-    },
-    {
-      "name": "Горик Павел - 124",
-      "category": "Мужчины ТТ",
-      "startNumber": 124
-    },
-    {
-      "name": "Шарахматова Виктория - 125",
-      "category": "Мужчины",
-      "startNumber": 125
-    },
-    {
-      "name": "Марухно Григорий - 126",
-      "category": "Мужчины",
-      "startNumber": 126
-    },
-    {
-      "name": "Мисник Михаил - 127",
-      "category": "Мужчины",
-      "startNumber": 127
-    },
-    {
-      "name": "Оряшин Илья - 128",
-      "category": "Мужчины",
-      "startNumber": 128
-    }
-  ]
-}
+[
+  {
+    "name": "Лазарева Юлия",
+    "category": "Девушки",
+    "number": 50
+  },
+  {
+    "name": "Кананыхина Александра",
+    "category": "Девушки",
+    "number": 49
+  },
+  {
+    "name": "Евтенко Денис",
+    "category": "МТБ",
+    "number": 48
+  },
+  {
+    "name": "Богдан r2v",
+    "category": "МТБ",
+    "number": 47
+  },
+  {
+    "name": "Рохлин Валентин",
+    "category": "МТБ",
+    "number": 46
+  },
+  {
+    "name": "Кошель Дмитрий",
+    "category": "МТБ",
+    "number": 45
+  },
+  {
+    "name": "Слепкова Кристина",
+    "category": "Девушки",
+    "number": 44
+  },
+  {
+    "name": "Казанцева Виктория",
+    "category": "Девушки",
+    "number": 43
+  },
+  {
+    "name": "Клименко Константин",
+    "category": "Мужчины",
+    "number": 42
+  },
+  {
+    "name": "Штоль Сергей",
+    "category": "M60",
+    "number": 41
+  },
+  {
+    "name": "Паренюк Александр",
+    "category": "M60",
+    "number": 40
+  },
+  {
+    "name": "Шахов Искандар",
+    "category": "M60",
+    "number": 39
+  },
+  {
+    "name": "Тажетдинов Халит",
+    "category": "M75",
+    "number": 38
+  },
+  {
+    "name": "Виноградов Владислав",
+    "category": "Фикс",
+    "number": 37
+  },
+  {
+    "name": "Трушников Алексей",
+    "category": "МТБ",
+    "number": 36
+  },
+  {
+    "name": "Бражинский Никита",
+    "category": "МТБ",
+    "number": 35
+  },
+  {
+    "name": "Котивец Андрей",
+    "category": "Мужчины",
+    "number": 34
+  },
+  {
+    "name": "Балицкий Евгений",
+    "category": "Мужчины",
+    "number": 33
+  },
+  {
+    "name": "Колышкин Руслан",
+    "category": "Мужчины",
+    "number": 32
+  },
+  {
+    "name": "Шурупов Геннадий",
+    "category": "Мужчины",
+    "number": 31
+  },
+  {
+    "name": "Денисенко Сергей",
+    "category": "Мужчины",
+    "number": 30
+  },
+  {
+    "name": "Артур Селимов",
+    "category": "Мужчины",
+    "number": 29
+  },
+  {
+    "name": "Малышкин Денис",
+    "category": "Мужчины",
+    "number": 28
+  },
+  {
+    "name": "Леонов Андрей",
+    "category": "Мужчины",
+    "number": 27
+  },
+  {
+    "name": "Мухаметов Рустам",
+    "category": "Мужчины",
+    "number": 26
+  },
+  {
+    "name": "Пшеничный Алексей",
+    "category": "Мужчины",
+    "number": 25
+  },
+  {
+    "name": "Рожнов Руслан",
+    "category": "Мужчины",
+    "number": 24
+  },
+  {
+    "name": "Пысанко Сергей",
+    "category": "Мужчины",
+    "number": 23
+  },
+  {
+    "name": "Хорольский Евгений",
+    "category": "Мужчины",
+    "number": 22
+  },
+  {
+    "name": "Лихкун Александр",
+    "category": "Мужчины ТТ",
+    "number": 21
+  },
+  {
+    "name": "Чесноков Денис",
+    "category": "Мужчины",
+    "number": 20
+  },
+  {
+    "name": "Кравчук Никита",
+    "category": "Мужчины",
+    "number": 19
+  },
+  {
+    "name": "Алпатов Сергей",
+    "category": "Мужчины",
+    "number": 18
+  },
+  {
+    "name": "Бережнев Александр",
+    "category": "Мужчины",
+    "number": 17
+  },
+  {
+    "name": "Глинчак Олег",
+    "category": "Мужчины",
+    "number": 16
+  },
+  {
+    "name": "Красовский Сергей",
+    "category": "Мужчины",
+    "number": 15
+  },
+  {
+    "name": "Шумилов Сергей",
+    "category": "Мужчины",
+    "number": 14
+  },
+  {
+    "name": "Колесников Михаил",
+    "category": "Мужчины",
+    "number": 13
+  },
+  {
+    "name": "Черепанов Евгений",
+    "category": "Мужчины",
+    "number": 12
+  },
+  {
+    "name": "Белохвосткин Александр",
+    "category": "Мужчины",
+    "number": 11
+  },
+  {
+    "name": "Евенко Егор",
+    "category": "Мужчины",
+    "number": 10
+  },
+  {
+    "name": "Винник Ангелина",
+    "category": "Девушки",
+    "number": 9
+  },
+  {
+    "name": "Колтович Александр",
+    "category": "Мужчины",
+    "number": 8
+  },
+  {
+    "name": "Гребенников Денис",
+    "category": "Мужчины",
+    "number": 7
+  },
+  {
+    "name": "Дубровин Алексей",
+    "category": "Мужчины ТТ",
+    "number": 6
+  },
+  {
+    "name": "Гонохин Александр",
+    "category": "Мужчины ТТ",
+    "number": 5
+  },
+  {
+    "name": "Агасьян Владислав",
+    "category": "Мужчины",
+    "number": 4
+  },
+  {
+    "name": "Золотых Лев",
+    "category": "Мужчины",
+    "number": 3
+  },
+  {
+    "name": "Кузнецов Михаил",
+    "category": "Мужчины",
+    "number": 2
+  },
+  {
+    "name": "Роганов Павел",
+    "category": "Мужчины",
+    "number": 1
+  },
+  {
+    "name": "Слепков Илья3",
+    "category": "Мужчины",
+    "number": 123
+  },
+  {
+    "name": "Горик Павел",
+    "category": "Мужчины ТТ",
+    "number": 124
+  },
+  {
+    "name": "Шарахматова Виктория",
+    "category": "Мужчины",
+    "number": 125
+  },
+  {
+    "name": "Марухно Григорий",
+    "category": "Мужчины",
+    "number": 126
+  },
+  {
+    "name": "Мисник Михаил",
+    "category": "Мужчины",
+    "number": 127
+  },
+  {
+    "name": "Оряшин Илья",
+    "category": "Мужчины",
+    "number": 128
+  }
+]
+

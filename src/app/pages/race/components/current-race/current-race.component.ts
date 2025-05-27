@@ -41,10 +41,10 @@ export class CurrentRaceComponent {
     const currentRacers = this.racers$.value.slice();
     const skippedRacer = currentRacers[this.currentRacerIndex$.value];
 
-    if (skippedRacer === "Пропуск") return;
+    if (skippedRacer.name === "Пропуск") return;
 
     currentRacers.push(skippedRacer);
-    currentRacers[this.currentRacerIndex$.value] = "Пропуск";
+    currentRacers[this.currentRacerIndex$.value].name = "Пропуск";
 
     this.racersService.racers$.next(currentRacers);
   }
@@ -73,7 +73,10 @@ export class CurrentRaceComponent {
     this.downloadLink?.nativeElement.click();
   }
 
+  /**
+   * TODO: Починить
+   */
   public setStateFromJSON() {
-    this.racersService.setStateFromJSON();
+    // this.racersService.setStateFromJSON();
   }
 }

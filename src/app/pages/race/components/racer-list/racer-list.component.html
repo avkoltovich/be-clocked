@@ -3,61 +3,82 @@
 
   <ol class="tui-list tui-list_ordered tui-list_large">
     <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
-      <span
-        class="name"
-        [ngClass]="{
+      <form *ngIf="editedRacer !== null && editedRacer['index'] === i; else notEditMode"  class="tui-form__row_multi-fields" [formGroup]="formGroup">
+        <tui-input class="input-text tui-space_right-3" formControlName="racer">
+          Фамилия Имя
+          <input
+            tuiTextfield
+            type="text"
+          >
+        </tui-input>
+        <tui-input class="tui-space_right-3" formControlName="number">
+          Номер
+          <input
+            tuiTextfield
+            type="text"
+          >
+        </tui-input>
+      </form>
+      <ng-template #notEditMode>
+        <span
+          class="name"
+          [ngClass]="{
           current: (currentRacerIndex$ | async) === i && (isRaceStarted$ | async)
         }"
-      >
-        {{ item }}
+        >
+        {{ item.name }}
       </span>
-      <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
-        <button
-          tuiIconButton
-          appearance="flat"
-          size="s"
-          icon="tuiIconArrowUp"
-          title="Выше"
-          shape="rounded"
-          type="button"
-          (click)="up(i)"
-          [disabled]="i === (currentRacerIndex$ | async)!"
-        ></button>
-        <button
-          tuiIconButton
-          appearance="flat"
-          size="s"
-          icon="tuiIconArrowDown"
-          title="Ниже"
-          shape="rounded"
-          type="button"
-          (click)="down(i)"
-          [disabled]="i === (racers$ | async)!.length - 1"
-        ></button>
-        <button
-          tuiIconButton
-          appearance="flat"
-          size="s"
-          icon="tuiIconEdit"
-          title="Редактировать"
-          shape="rounded"
-          type="button"
-          (click)="edit(i, '')"
-        ></button>
-        <button
-          tuiIconButton
-          appearance="flat"
-          size="s"
-          icon="tuiIconTrash"
-          title="Удалить"
-          shape="rounded"
-          type="button"
-          (click)="remove(i)"
-        ></button>
-      </ng-container>
-
+        <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconArrowUp"
+            title="Выше"
+            shape="rounded"
+            type="button"
+            (click)="up(i)"
+            [disabled]="i === (currentRacerIndex$ | async)!"
+          ></button>
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconArrowDown"
+            title="Ниже"
+            shape="rounded"
+            type="button"
+            (click)="down(i)"
+            [disabled]="i === (racers$ | async)!.length - 1"
+          ></button>
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconEdit"
+            title="Редактировать"
+            shape="rounded"
+            type="button"
+            (click)="edit(i, item)"
+          ></button>
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconTrash"
+            title="Удалить"
+            shape="rounded"
+            type="button"
+            (click)="remove(i)"
+          ></button>
+        </ng-container>
+      </ng-template>
     </li>
   </ol>
 
 
 </tui-island>
+
+<ng-template #notEditMode>
+
+</ng-template>

@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
-import { RacersService } from "../../services/racers.service";
+import {IRacer, RacersService} from "../../services/racers.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: "app-racer-list",
@@ -11,15 +12,30 @@ export class RacerListComponent {
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
 
+  public formGroup = new FormGroup({
+    racer: new FormControl("", Validators.required),
+    number: new FormControl("", Validators.required),
+    category: new FormControl("", Validators.required)
+  });
+
   constructor(private racersService: RacersService) {
   }
 
+  public editedRacer: null | Record<string, any> = null;
+
   /**
    * TODO: Переписать метод таким образом, чтобы вызывалось редактирование имени
+   * Также надо переписать хранение данных. Сейчас список отдельно хранится, а мапа с категориями отдельно.
+   * Нужно в список участников добавить всю требуемую инфу. Номер участника, стартовая позиция, категория и прочее
    */
-  public edit(i: number, racer: string) {
+  public edit(i: number, racer: IRacer) {
     const currentList = this.racersService.racers$.value.slice();
-    console.log(i, currentList);
+    this.formGroup.patchValue({...racer, number: racer.number.toString()});
+
+    this.editedRacer = {
+      index: i,
+      racer
+    };
   }
 
   public remove(i: number) {
