@@ -12,6 +12,7 @@ export class AddRacerComponent {
   public formGroup = new FormGroup({
     racer: new FormControl("", Validators.required),
     number: new FormControl("", Validators.required),
+    startNumber: new FormControl(""),
     category: new FormControl("", Validators.required)
   });
 
@@ -25,12 +26,19 @@ export class AddRacerComponent {
   public onAddRacer() {
     const racerName = this.formGroup.controls.racer.value;
     const racerNumber = this.formGroup.controls.number.value;
+    const racerStartNumber = Number(this.formGroup.controls.startNumber.value);
     const racerCategory = this.formGroup.controls.category.value;
 
     if (racerName === null || racerName === "") return;
 
     const currentList = this.racersService.racers$.value.slice();
-    currentList.push(`${racerName} - ${racerNumber ?? ""}`);
+
+    if (!isNaN(racerStartNumber)) {
+      currentList.splice(racerStartNumber - 1, 0, `${racerName} - ${racerNumber ?? ""}`);
+    } else {
+      currentList.push(`${racerName} - ${racerNumber ?? ""}`);
+    }
+
     this.racersService.racers$.next(currentList);
 
     const currentCategoryMap = this.racersService.categoriesMap$.value;
