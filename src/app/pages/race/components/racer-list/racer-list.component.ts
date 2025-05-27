@@ -14,6 +14,14 @@ export class RacerListComponent {
   constructor(private racersService: RacersService) {
   }
 
+  /**
+   * TODO: Переписать метод таким образом, чтобы вызывалось редактирование имени
+   */
+  public edit(i: number, racer: string) {
+    const currentList = this.racersService.racers$.value.slice();
+    console.log(i, currentList);
+  }
+
   public remove(i: number) {
     const currentList = this.racersService.racers$.value.slice();
     currentList.splice(i, 1);
