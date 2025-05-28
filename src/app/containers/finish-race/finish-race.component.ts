@@ -1,21 +1,12 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
-import { RacersService } from "../../services/racers.service";
-import { TUI_DEFAULT_MATCHER, tuiControlValue } from "@taiga-ui/cdk";
-import { map, takeWhile, tap } from "rxjs";
-import { TuiDialogFormService } from "@taiga-ui/kit";
-import { TuiDialogService } from "@taiga-ui/core";
+import {Component, Inject, OnInit} from "@angular/core";
+import {FormControl, FormGroup} from "@angular/forms";
+import {RacersService} from "../../services/racers.service";
+import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
+import {map, takeWhile, tap} from "rxjs";
+import {TuiDialogFormService} from "@taiga-ui/kit";
+import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
-
-export interface IFinisher {
-  name: string;
-  time: number;
-}
-
-export interface IFinishCategory {
-  name: string;
-  finishers: IFinisher[];
-}
+import {IFinishCategory, IFinisher} from "../../models/interfaces";
 
 @Component({
   selector: "app-finish-race",
@@ -35,11 +26,15 @@ export class FinishRaceComponent implements OnInit {
   public anonIndex = 0;
   public currentSelectedAnonIndex: number | null = null;
 
+  /**
+   * TODO: Добавить поиск по номеру
+   */
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
       const difference = this.racersService.starterNameList.filter((racer) => {
         return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
+
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
       if (

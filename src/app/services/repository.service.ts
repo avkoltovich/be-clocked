@@ -1,10 +1,8 @@
-import { Injectable } from '@angular/core';
-import {IFinishCategory, IFinisher} from "../containers/finish-race/finish-race.component";
-import { RepositoryKey } from '../models/enums';
-import {IRacer, IStarter, ISyncJSON} from "./racers.service";
+import {Injectable} from '@angular/core';
+import {RepositoryKey} from '../models/enums';
 import {map, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-
+import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 
 
 @Injectable({
@@ -15,7 +13,8 @@ export class RepositoryService {
   private URL = "../../../../assets/racers.json";
   private URL_SYNC_JSON = "../../../../assets/sync-data.json";
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) {
+  }
 
   /**
    * Update
@@ -178,7 +177,7 @@ export class RepositoryService {
         this.updateCategoriesMap(categoriesMap);
         this.updateRacers(racers);
 
-        return { racers, categoriesMap };
+        return {racers, categoriesMap};
       })
     )
   }

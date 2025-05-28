@@ -1,34 +1,7 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, finalize, map, takeWhile, tap, timer } from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import { IFinishCategory, IFinisher } from "../containers/finish-race/finish-race.component";
+import {Injectable} from "@angular/core";
+import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RepositoryService} from "./repository.service";
-
-export interface IRacer {
-  name: string;
-  category: string;
-  number: number;
-  startNumber?: number;
-}
-
-export interface IStarter {
-  name: string;
-  time: number;
-}
-
-export interface ISyncJSON {
-  name: string;
-  racers: IRacer[];
-  categoriesMap: Record<string, IRacer[]>;
-  starters: IStarter[];
-  starterNameList: string[];
-  currentRacerIndex: number;
-  currentAnonIndex: number;
-  finishers: IFinisher[];
-  finishersByCategories: IFinishCategory[];
-  anons: IFinisher[];
-  finisherNameList: string[];
-}
+import {IRacer, IStarter} from "../models/interfaces";
 
 @Injectable({
   providedIn: "root"
@@ -43,7 +16,7 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = 30;
+  public racerSecondsDelta = 1;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);

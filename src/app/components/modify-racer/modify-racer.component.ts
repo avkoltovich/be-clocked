@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {EMPTY, Observable} from "rxjs";
-import {IRacer} from "../../services/racers.service";
 import {ModifyMode} from "../../models/enums";
+import {IRacer} from "../../models/interfaces";
 
 @Component({
   selector: 'app-modify-racer',

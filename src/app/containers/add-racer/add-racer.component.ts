@@ -1,7 +1,8 @@
 import { Component } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import {IRacer, RacersService} from "../../services/racers.service";
+import {RacersService} from "../../services/racers.service";
 import { map } from "rxjs";
+import {IRacer} from "../../models/interfaces";
 
 @Component({
   selector: "app-add-racer",

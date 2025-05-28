@@ -29,9 +29,12 @@ export class CurrentRaceComponent {
 
   @ViewChild("download") downloadLink: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService, private sanitizer: DomSanitizer, private repositoryService: RepositoryService) {
-
-  }
+  constructor(
+    @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+    private racersService: RacersService,
+    private sanitizer: DomSanitizer,
+    private repositoryService: RepositoryService
+  ) {}
 
   public onStart() {
     this.racersService.isRaceStarted$.next(true);
