@@ -91,7 +91,11 @@ export class RacersService {
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
-    return `${racer.name} — ${racer.number}`
+    if (racer.number !== null) {
+      return `${racer.name} — ${racer.number}`
+    }
+
+    return racer.name;
   }
 
   public splitRacerNameAndNumberString(nameAndNumber: string) {
