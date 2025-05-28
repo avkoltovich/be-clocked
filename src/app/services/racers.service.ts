@@ -67,12 +67,12 @@ export class RacersService {
     if (this.repositoryService.checkRacers()) {
       this.racers$.next(repositoryService.readRacers());
     } else {
-      this.readRacersFromJSON();
+      this.readRacersFromRepository();
     }
   }
 
-  private readRacersFromJSON() {
-    this.repositoryService.readRacersDataFromJSON().pipe(
+  private readRacersFromRepository() {
+    this.repositoryService.readRacersDataFromGoogleSheet().pipe(
       tap(({ racers, categoriesMap }) => {
         this.categoriesMap$.next(categoriesMap);
         this.racers$.next(racers);

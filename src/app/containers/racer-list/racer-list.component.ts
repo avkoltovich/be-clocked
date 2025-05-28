@@ -1,10 +1,11 @@
-import {Component, Inject} from "@angular/core";
+import {Component, Inject, OnInit} from "@angular/core";
 import {RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {map} from "rxjs";
+import {map, tap} from "rxjs";
 import {ModifyMode} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 import {TuiDialogService} from "@taiga-ui/core";
+import {GoogleTableService} from "../../services/google-table.service";
 
 interface ICurrentRacer {
   index: number;
@@ -16,7 +17,7 @@ interface ICurrentRacer {
   templateUrl: "./racer-list.component.html",
   styleUrls: ["./racer-list.component.scss"]
 })
-export class RacerListComponent {
+export class RacerListComponent implements OnInit {
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
@@ -42,7 +43,14 @@ export class RacerListComponent {
   constructor(
     private racersService: RacersService,
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-    ) {
+    private googleTableService: GoogleTableService,
+  ) {
+  }
+
+  public ngOnInit(): void {
+    this.googleTableService.getSheetData().pipe(
+      tap(sheetData => { console.log(sheetData); }),
+    ).subscribe()
   }
 
   private cleanCategoriesMap(racer = this.currentRacer?.racer) {
@@ -68,12 +76,12 @@ export class RacerListComponent {
 
     this.cleanCategoriesMap();
     const currentCategoriesMap = this.racersService.categoriesMap$.value;
-    currentCategoriesMap[this.currentRacer.racer.category].push({ ...racer, startNumber: undefined });
+    currentCategoriesMap[this.currentRacer.racer.category].push({...racer, startNumber: undefined});
 
     this.racersService.updateCategoriesMap(currentCategoriesMap);
 
     const currentList = this.racersService.racers$.value.slice();
-    currentList[this.currentRacer.index] = { ...racer, startNumber: undefined };
+    currentList[this.currentRacer.index] = {...racer, startNumber: undefined};
 
     this.racersService.updateRacers(currentList);
     this.currentRacer = null;
@@ -81,7 +89,7 @@ export class RacerListComponent {
   }
 
   public edit(index: number, racer: IRacer) {
-    this.formValue = {...racer, number: racer.number.toString()};
+    this.formValue = {...racer, number: racer.number?.toString()};
 
     this.currentRacer = {
       index,
@@ -126,6 +134,9 @@ export class RacerListComponent {
     this.racersService.updateRacers(currentList);
   }
 
+  /**
+   * TODO: Добавить функционал, что когда нет номера, появлялась ссылка, как у Анон. После клика вписываем номер.
+   */
   public generateRacerNameAndNumberString(racer: IRacer) {
     return this.racersService.generateRacerNameAndNumberString(racer);
   }

@@ -11,8 +11,17 @@ export interface IFinishCategory {
 export interface IRacer {
   name: string;
   category: string;
-  number: number;
+  number: number | null;
   startNumber?: number;
+}
+
+export interface IRegisterInfoGoogleSheet {
+  Time: string;
+  Name: string;
+  Year: number;
+  City: string;
+  Team: string;
+  Category: string;
 }
 
 export interface IStarter {
