@@ -2,6 +2,12 @@ import { Component } from "@angular/core";
 import {IRacer, RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {map} from "rxjs";
+import {ModifyMode} from "../../../../models/enums";
+
+interface ICurrentRacer {
+  index: number;
+  racer: IRacer;
+}
 
 @Component({
   selector: "app-racer-list",
@@ -19,14 +25,30 @@ export class RacerListComponent {
     category: new FormControl("", Validators.required)
   });
 
+  public formValue = {};
+
   constructor(private racersService: RacersService) {
   }
 
-  public editedRacer: null | Record<string, any> = null;
+  public currentRacer: null | ICurrentRacer = null;
 
   public categories$ = this.racersService.categoriesMap$.pipe(
     map((categoriesMap) => Object.keys(categoriesMap))
   );
+
+  public onCancel() {
+    this.currentRacer = null;
+  }
+
+  public onSave(racer: IRacer) {
+    if (this.currentRacer === null) return;
+
+    const currentList = this.racersService.racers$.value.slice();
+    currentList[this.currentRacer.index] = racer;
+
+    this.racersService.racers$.next(currentList);
+    this.currentRacer = null;
+  }
 
   /**
    * TODO: Переписать метод таким образом, чтобы вызывалось редактирование имени
@@ -35,9 +57,9 @@ export class RacerListComponent {
    */
   public edit(i: number, racer: IRacer) {
     const currentList = this.racersService.racers$.value.slice();
-    this.formGroup.patchValue({...racer, number: racer.number.toString()});
+    this.formValue = {...racer, number: racer.number.toString()};
 
-    this.editedRacer = {
+    this.currentRacer = {
       index: i,
       racer
     };
@@ -64,4 +86,6 @@ export class RacerListComponent {
     currentList[i + 1] = swap;
     this.racersService.racers$.next(currentList);
   }
+
+  protected readonly ModifyMode = ModifyMode;
 }

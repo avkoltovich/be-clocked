@@ -64,7 +64,7 @@
       <button
         tuiButton
         type="button"
-        appearance="secondary"
+        appearance="primary"
         (click)="onStart()"
         [disabled]="(isRaceStarted$ | async)!"
       >
@@ -90,7 +90,7 @@
       <button
         tuiButton
         type="button"
-        appearance="secondary-destructive"
+        appearance="flat"
         (click)="onPause()"
         [disabled]="(isAllMembersStarted$ | async)! || !(isRaceStarted$ | async)"
       >
@@ -103,7 +103,7 @@
       <button
         tuiButton
         type="button"
-        appearance="flat"
+        appearance="secondary-destructive"
         (click)="showDialog(reset)"
       >
         <tui-svg

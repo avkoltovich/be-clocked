@@ -1,5 +1,5 @@
 <form class="tui-form__row_multi-fields" [formGroup]="formGroup">
-  <tui-input class="input-text tui-space_right-3" formControlName="racer">
+  <tui-input class="input-text tui-space_right-3" formControlName="name">
     Фамилия Имя
     <input
       tuiTextfield
@@ -13,7 +13,7 @@
       type="text"
     >
   </tui-input>
-  <tui-input class="input-number tui-space_right-3" formControlName="startNumber">
+  <tui-input *ngIf="mode === ModifyMode.create" class="input-number tui-space_right-3" formControlName="startNumber">
     Стартовая позиция
     <input
       tuiTextfield
@@ -35,16 +35,30 @@
     ></tui-data-list-wrapper>
   </tui-select>
   <button
+    *ngIf="mode === ModifyMode.edit"
+    class="tui-space_right-3"
     tuiButton
     type="button"
     appearance="secondary"
-    (click)="onAddRacer()"
+    (click)="onCancel()"
+  >
+    <tui-svg
+      src="tuiIconXCircleLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Отмена
+  </button>
+  <button
+    tuiButton
+    type="button"
+    appearance="primary"
+    (click)="onChangeRacer()"
     [disabled]="formGroup.invalid"
   >
     <tui-svg
       src="tuiIconPlusCircleLarge"
       class="tui-space_right-2"
     ></tui-svg>
-    Добавить
+    {{ buttonLabelMap[mode] }}
   </button>
 </form>
