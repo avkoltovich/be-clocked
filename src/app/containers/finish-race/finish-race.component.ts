@@ -1,20 +1,12 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
-import { RacersService } from "../../services/racers.service";
-import { TUI_DEFAULT_MATCHER, tuiControlValue } from "@taiga-ui/cdk";
-import { map, takeWhile, tap } from "rxjs";
-import { TuiDialogFormService } from "@taiga-ui/kit";
-import { TuiDialogService } from "@taiga-ui/core";
-
-export interface IFinisher {
-  name: string;
-  time: number;
-}
-
-export interface IFinishCategory {
-  name: string;
-  finishers: IFinisher[];
-}
+import {Component, Inject, OnInit} from "@angular/core";
+import {FormControl, FormGroup} from "@angular/forms";
+import {RacersService} from "../../services/racers.service";
+import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
+import {map, takeWhile, tap} from "rxjs";
+import {TuiDialogFormService} from "@taiga-ui/kit";
+import {TuiDialogService} from "@taiga-ui/core";
+import {RepositoryService} from "../../services/repository.service";
+import {IFinishCategory, IFinisher} from "../../models/interfaces";
 
 @Component({
   selector: "app-finish-race",
@@ -39,6 +31,7 @@ export class FinishRaceComponent implements OnInit {
       const difference = this.racersService.starterNameList.filter((racer) => {
         return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
+
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
       if (
@@ -88,25 +81,26 @@ export class FinishRaceComponent implements OnInit {
 
   constructor(private racersService: RacersService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
-              @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) {
+              @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+              private repositoryService: RepositoryService) {
   }
 
   public ngOnInit() {
-    const finishersFromLS = this.racersService.readFinishersFromLS();
-    const anonFinishersFromLS = this.racersService.readAnonsFromLS();
-    const anonIndexFromLS = this.racersService.readCurrentAnonIndexFromLS();
-    const finishersByCategories = this.racersService.readFinishersByCategoriesFromLS();
+    const finishers = this.repositoryService.readFinishers();
+    const anonFinishers = this.repositoryService.readAnons();
+    const anonIndex = this.repositoryService.readCurrentAnonIndex();
+    const finishersByCategories = this.repositoryService.readFinishersByCategories();
 
-    if (finishersFromLS !== null) {
-      this.finishers = finishersFromLS;
+    if (finishers !== null) {
+      this.finishers = finishers;
     }
 
-    if (anonFinishersFromLS !== null) {
-      this.anonFinishers = anonFinishersFromLS;
+    if (anonFinishers !== null) {
+      this.anonFinishers = anonFinishers;
     }
 
-    if (anonIndexFromLS !== null) {
-      this.anonIndex = anonIndexFromLS;
+    if (anonIndex !== null) {
+      this.anonIndex = anonIndex;
     }
 
     if (finishersByCategories !== null) {
@@ -116,34 +110,35 @@ export class FinishRaceComponent implements OnInit {
     }
   }
 
-  public onFinish(currentTime = Date.now(), currentRacerName = this.formGroup.controls.racer.value) {
+  public onFinish(currentTime = Date.now(), currentRacerNameAndNumber = this.formGroup.controls.racer.value) {
     this.racerControl.setValue("");
 
-    if (currentRacerName !== null && currentRacerName !== "") {
-      this.racersService.finisherNameList.push(currentRacerName);
-      this.racersService.updateFinisherNameListInLS(this.racersService.finisherNameList);
+    if (currentRacerNameAndNumber !== null && currentRacerNameAndNumber !== "") {
+      this.racersService.finisherNameList.push(currentRacerNameAndNumber);
+      this.repositoryService.updateFinisherNameList(this.racersService.finisherNameList);
+      const currentRacer = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
 
       const finishers = this.finishers.slice();
-      const startedData = this.racersService.startedRacers.find((starter) => starter.name === currentRacerName);
+      const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === currentRacer.number);
 
       if (startedData === undefined) return;
 
       const actualTime = currentTime - startedData!.time;
 
       finishers.push({
-        name: currentRacerName,
+        name: currentRacerNameAndNumber,
         time: actualTime
       });
 
       finishers.sort((a, b) => a.time - b.time);
 
       this.finishers = finishers.slice();
-      this.racersService.updateFinishersDataInLS(this.finishers);
+      this.repositoryService.updateFinishers(this.finishers);
 
       let categoryName = "";
 
       for (const category in this.racersService.categoriesMap$.value) {
-        if (this.racersService.categoriesMap$.value[category].includes(currentRacerName)) {
+        if (this.racersService.categoriesMap$.value[category].filter((racer) => racer.number === currentRacer.number).length > 0) {
           categoryName = category;
           break;
         }
@@ -151,12 +146,12 @@ export class FinishRaceComponent implements OnInit {
 
       const categoryIndex = this.finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
       this.finishersByCategories[categoryIndex].finishers.push({
-        name: currentRacerName,
+        name: currentRacerNameAndNumber,
         time: actualTime
       });
 
       this.finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
-      this.racersService.updateFinishersByCategoriesInLS(this.finishersByCategories);
+      this.repositoryService.updateFinishersByCategories(this.finishersByCategories);
     }
   }
 
@@ -179,8 +174,8 @@ export class FinishRaceComponent implements OnInit {
       time
     });
 
-    this.racersService.updateAnonsInLS(this.anonFinishers);
-    this.racersService.updateCurrentAnonIndexInLS(this.anonIndex);
+    this.repositoryService.updateAnons(this.anonFinishers);
+    this.repositoryService.updateCurrentAnonIndex(this.anonIndex);
   }
 
   public onAnonInList(content: any, i: number): void {
@@ -206,11 +201,11 @@ export class FinishRaceComponent implements OnInit {
 
     this.anonFinishers.splice(this.currentSelectedAnonIndex, 1);
     this.currentSelectedAnonIndex = null;
-    this.racersService.updateAnonsInLS(this.anonFinishers);
+    this.repositoryService.updateAnons(this.anonFinishers);
   }
 
   public removeAnon(i: number) {
     this.anonFinishers.splice(i, 1);
-    this.racersService.updateAnonsInLS(this.anonFinishers);
+    this.repositoryService.updateAnons(this.anonFinishers);
   }
 }

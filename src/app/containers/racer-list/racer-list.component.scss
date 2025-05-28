@@ -8,10 +8,23 @@
   min-width: 350px;
 }
 
+.category {
+  display: block;
+  min-width: 130px;
+}
+
 .current {
   font-weight: bold;
 }
 
 .tui-list_ordered .tui-list__item {
   padding-left: 26px;
+}
+
+.input-text {
+  min-width: 400px;
+}
+
+.input-category {
+  min-width: 160px;
 }

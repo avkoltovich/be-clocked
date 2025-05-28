@@ -1,8 +1,9 @@
-import { Component, ElementRef, Inject, ViewChild } from "@angular/core";
-import { Subscription, tap } from "rxjs";
-import { RacersService } from "../../services/racers.service";
-import { TuiDialogService } from "@taiga-ui/core";
-import { DomSanitizer } from "@angular/platform-browser";
+import {Component, ElementRef, Inject, ViewChild} from "@angular/core";
+import {Subscription, tap} from "rxjs";
+import {RacersService} from "../../services/racers.service";
+import {TuiDialogService} from "@taiga-ui/core";
+import {RepositoryService} from "../../services/repository.service";
+import {IRacer} from "../../models/interfaces";
 
 @Component({
   selector: "app-current-race",
@@ -28,9 +29,11 @@ export class CurrentRaceComponent {
 
   @ViewChild("download") downloadLink: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService, private sanitizer: DomSanitizer) {
-
-  }
+  constructor(
+    @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+    private racersService: RacersService,
+    private repositoryService: RepositoryService
+  ) {}
 
   public onStart() {
     this.racersService.isRaceStarted$.next(true);
@@ -41,10 +44,10 @@ export class CurrentRaceComponent {
     const currentRacers = this.racers$.value.slice();
     const skippedRacer = currentRacers[this.currentRacerIndex$.value];
 
-    if (skippedRacer === "Пропуск") return;
+    if (skippedRacer.name === "Пропуск") return;
 
     currentRacers.push(skippedRacer);
-    currentRacers[this.currentRacerIndex$.value] = "Пропуск";
+    currentRacers[this.currentRacerIndex$.value].name = "Пропуск";
 
     this.racersService.racers$.next(currentRacers);
   }
@@ -57,7 +60,7 @@ export class CurrentRaceComponent {
   }
 
   public onReset() {
-    this.racersService.resetLS();
+    this.repositoryService.resetLS();
     location.reload();
   }
 
@@ -66,7 +69,7 @@ export class CurrentRaceComponent {
   }
 
   public generateAndDownloadJSON() {
-    var theJSON = JSON.stringify(this.racersService.collectDataFromLS());
+    var theJSON = JSON.stringify(this.repositoryService.collectRaceData());
     this.downloadLink?.nativeElement.setAttribute("href", "data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
     this.downloadLink?.nativeElement.setAttribute("download", "sync-data.json");
 
@@ -74,6 +77,10 @@ export class CurrentRaceComponent {
   }
 
   public setStateFromJSON() {
-    this.racersService.setStateFromJSON();
+    this.repositoryService.setStateFromJSON();
+  }
+
+  public generateRacerNameAndNumberString(racer: IRacer) {
+    return this.racersService.generateRacerNameAndNumberString(racer);
   }
 }

@@ -1,0 +1,103 @@
+<tui-island size="l">
+  <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
+
+  <ol class="tui-list tui-list_ordered tui-list_large">
+    <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
+      <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode" class="tui-form__row_multi-fields" [formGroup]="formGroup">
+        <app-modify-racer
+          [categories$]="categories$"
+          [formValue]="formValue"
+          [mode]="ModifyMode.edit"
+          (changeRacer)="onSave($event)"
+          (cancel)="onCancel()"
+        />
+      </ng-container>
+      <ng-template #notEditMode>
+        <span
+          class="name"
+          [ngClass]="{
+          current: (currentRacerIndex$ | async) === i && (isRaceStarted$ | async)
+          }"
+        >
+          {{ generateRacerNameAndNumberString(item) }}
+        </span>
+        <span class="category">
+          {{ item.category }}
+        </span>
+        <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconArrowUp"
+            title="Выше"
+            shape="rounded"
+            type="button"
+            (click)="up(i)"
+            [disabled]="i === (currentRacerIndex$ | async)!"
+          ></button>
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconArrowDown"
+            title="Ниже"
+            shape="rounded"
+            type="button"
+            (click)="down(i)"
+            [disabled]="i === (racers$ | async)!.length - 1"
+          ></button>
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconEdit"
+            title="Редактировать"
+            shape="rounded"
+            type="button"
+            (click)="edit(i, item)"
+          ></button>
+          <button
+            tuiIconButton
+            appearance="flat"
+            size="s"
+            icon="tuiIconTrash"
+            title="Удалить"
+            shape="rounded"
+            type="button"
+            (click)="showDialog(reset, i, item)"
+          ></button>
+        </ng-container>
+      </ng-template>
+    </li>
+  </ol>
+
+</tui-island>
+
+<ng-template
+  #reset
+  let-observer
+>
+  <p>Уверены, что хотите удалить участника?</p>
+
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="secondary-destructive"
+    class="tui-space_right-3"
+    (click)="remove(); observer.complete()"
+  >
+    Удалить
+  </button>
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="secondary"
+    (click)="observer.complete()"
+  >
+    Отмена
+  </button>
+</ng-template>
+
