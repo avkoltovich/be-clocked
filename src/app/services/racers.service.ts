@@ -41,7 +41,7 @@ export class RacersService {
         this.repositoryService.updateCurrentRacerIndex(this.currentRacerIndex$.value);
       }
     }),
-    takeWhile((value) => this.racers$.value.length !== this.currentRacerIndex$.value),
+    takeWhile(() => this.racers$.value.length !== this.currentRacerIndex$.value),
     finalize(() => {
       if (this.isRacePaused$.value) {
         this.timerDelta = 0;
