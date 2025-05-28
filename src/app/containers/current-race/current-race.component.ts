@@ -4,6 +4,7 @@ import { RacersService } from "../../services/racers.service";
 import { TuiDialogService } from "@taiga-ui/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import {RepositoryService} from "../../services/repository.service";
+import {IRacer} from "../../models/interfaces";
 
 @Component({
   selector: "app-current-race",
@@ -79,5 +80,9 @@ export class CurrentRaceComponent {
 
   public setStateFromJSON() {
     this.repositoryService.setStateFromJSON();
+  }
+
+  public generateRacerNameAndNumberString(racer: IRacer) {
+    return this.racersService.generateRacerNameAndNumberString(racer);
   }
 }

@@ -33,10 +33,12 @@ export class AddRacerComponent {
       currentList.push(racer);
     }
 
-    this.racersService.racers$.next(currentList);
+    this.racersService.updateRacers(currentList)
 
-    const currentCategoryMap = this.racersService.categoriesMap$.value;
+    const currentCategoryMap = { ...this.racersService.categoriesMap$.value };
     currentCategoryMap[racer.category].push(racer);
+
+    this.racersService.updateCategoriesMap(currentCategoryMap)
 
     this.formGroup.reset();
   }

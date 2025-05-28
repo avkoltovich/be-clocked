@@ -28,14 +28,29 @@ export class RacerListComponent {
 
   public formValue = {};
 
-  constructor(private racersService: RacersService) {
-  }
+  protected readonly ModifyMode = ModifyMode;
 
   public currentRacer: null | ICurrentRacer = null;
 
   public categories$ = this.racersService.categoriesMap$.pipe(
     map((categoriesMap) => Object.keys(categoriesMap))
   );
+
+  constructor(private racersService: RacersService) {
+  }
+
+  private cleanCategoriesMap(racer = this.currentRacer?.racer) {
+    if (racer) {
+      const currenCategory = this.racersService.categoriesMap$.value[racer.category].filter((item) => {
+        return item.number !== racer.number;
+      });
+
+      this.racersService.updateCategoriesMap({
+        ...this.racersService.categoriesMap$.value,
+        [racer.category]: currenCategory
+      });
+    }
+  }
 
   public onCancel() {
     this.currentRacer = null;
@@ -44,20 +59,22 @@ export class RacerListComponent {
   public onSave(racer: IRacer) {
     if (this.currentRacer === null) return;
 
+    if (this.currentRacer.racer.category !== racer.category) {
+      this.cleanCategoriesMap();
+      const currentCategoriesMap = this.racersService.categoriesMap$.value;
+      currentCategoriesMap[this.currentRacer.racer.category].push(racer);
+
+      this.racersService.updateCategoriesMap(currentCategoriesMap);
+    }
+
     const currentList = this.racersService.racers$.value.slice();
     currentList[this.currentRacer.index] = racer;
 
-    this.racersService.racers$.next(currentList);
+    this.racersService.updateRacers(currentList);
     this.currentRacer = null;
   }
 
-  /**
-   * TODO: Переписать метод таким образом, чтобы вызывалось редактирование имени
-   * Также надо переписать хранение данных. Сейчас список отдельно хранится, а мапа с категориями отдельно.
-   * Нужно в список участников добавить всю требуемую инфу. Номер участника, стартовая позиция, категория и прочее
-   */
   public edit(i: number, racer: IRacer) {
-    const currentList = this.racersService.racers$.value.slice();
     this.formValue = {...racer, number: racer.number.toString()};
 
     this.currentRacer = {
@@ -66,10 +83,12 @@ export class RacerListComponent {
     };
   }
 
-  public remove(i: number) {
+  public remove(i: number, racer: IRacer) {
     const currentList = this.racersService.racers$.value.slice();
     currentList.splice(i, 1);
     this.racersService.racers$.next(currentList);
+    this.racersService.updateRacers(currentList);
+    this.cleanCategoriesMap(racer);
   }
 
   public up(i: number) {
@@ -77,7 +96,7 @@ export class RacerListComponent {
     let swap = currentList[i];
     currentList[i] = currentList[i - 1];
     currentList[i - 1] = swap;
-    this.racersService.racers$.next(currentList);
+    this.racersService.updateRacers(currentList);
   }
 
   public down(i: number) {
@@ -85,8 +104,10 @@ export class RacerListComponent {
     let swap = currentList[i];
     currentList[i] = currentList[i + 1];
     currentList[i + 1] = swap;
-    this.racersService.racers$.next(currentList);
+    this.racersService.updateRacers(currentList);
   }
 
-  protected readonly ModifyMode = ModifyMode;
+  public generateRacerNameAndNumberString(racer: IRacer) {
+    return this.racersService.generateRacerNameAndNumberString(racer);
+  }
 }

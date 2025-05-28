@@ -80,6 +80,16 @@ export class RacersService {
     ).subscribe()
   }
 
+  public updateRacers(racers: IRacer[]) {
+    this.racers$.next(racers);
+    this.repositoryService.updateRacers(racers);
+  }
+
+  public updateCategoriesMap(categoriesMap: Record<string, IRacer[]>) {
+    this.categoriesMap$.next(categoriesMap);
+    this.repositoryService.updateCategoriesMap(categoriesMap);
+  }
+
   public generateRacerNameAndNumberString(racer: IRacer) {
     return `${racer.name} — ${racer.number}`
   }

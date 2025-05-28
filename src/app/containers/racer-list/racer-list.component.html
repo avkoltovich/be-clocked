@@ -20,7 +20,7 @@
           current: (currentRacerIndex$ | async) === i && (isRaceStarted$ | async)
           }"
         >
-          {{ item.name + ' — ' + item.number }}
+          {{ generateRacerNameAndNumberString(item) }}
         </span>
         <span class="category">
           {{ item.category }}
@@ -66,7 +66,7 @@
             title="Удалить"
             shape="rounded"
             type="button"
-            (click)="remove(i)"
+            (click)="remove(i, item)"
           ></button>
         </ng-container>
       </ng-template>
