@@ -113,22 +113,23 @@ export class FinishRaceComponent implements OnInit {
     }
   }
 
-  public onFinish(currentTime = Date.now(), currentRacerName = this.formGroup.controls.racer.value) {
+  public onFinish(currentTime = Date.now(), currentRacerNameAndNumber = this.formGroup.controls.racer.value) {
     this.racerControl.setValue("");
 
-    if (currentRacerName !== null && currentRacerName !== "") {
-      this.racersService.finisherNameList.push(currentRacerName);
+    if (currentRacerNameAndNumber !== null && currentRacerNameAndNumber !== "") {
+      this.racersService.finisherNameList.push(currentRacerNameAndNumber);
       this.repositoryService.updateFinisherNameList(this.racersService.finisherNameList);
+      const currentRacer = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
 
       const finishers = this.finishers.slice();
-      const startedData = this.racersService.startedRacers.find((starter) => starter.name === currentRacerName);
+      const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === currentRacer.number);
 
       if (startedData === undefined) return;
 
       const actualTime = currentTime - startedData!.time;
 
       finishers.push({
-        name: currentRacerName,
+        name: currentRacerNameAndNumber,
         time: actualTime
       });
 
@@ -139,19 +140,16 @@ export class FinishRaceComponent implements OnInit {
 
       let categoryName = "";
 
-      /**
-       * TODO: Починить
-       */
-      // for (const category in this.racersService.categoriesMap$.value) {
-      //   if (this.racersService.categoriesMap$.value[category].includes(currentRacerName)) {
-      //     categoryName = category;
-      //     break;
-      //   }
-      // }
+      for (const category in this.racersService.categoriesMap$.value) {
+        if (this.racersService.categoriesMap$.value[category].filter((racer) => racer.number === currentRacer.number).length > 0) {
+          categoryName = category;
+          break;
+        }
+      }
 
       const categoryIndex = this.finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
       this.finishersByCategories[categoryIndex].finishers.push({
-        name: currentRacerName,
+        name: currentRacerNameAndNumber,
         time: actualTime
       });
 

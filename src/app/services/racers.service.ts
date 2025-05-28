@@ -16,7 +16,7 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = 1;
+  public racerSecondsDelta = 30;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -25,12 +25,15 @@ export class RacersService {
     map(i => this.racerSecondsDelta - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
+        const currentRacer = this.racers$.value[this.currentRacerIndex$.value];
+
         this.startedRacers.push({
-          name: this.racers$.value[this.currentRacerIndex$.value].name,
+          racer: currentRacer,
           time: Date.now()
         });
+
         this.repositoryService.updateStartedRacers(this.startedRacers);
-        this.starterNameList.push(this.racers$.value[this.currentRacerIndex$.value].name);
+        this.starterNameList.push(this.generateRacerNameAndNumberString(currentRacer));
         this.repositoryService.updateStarterNameList(this.starterNameList);
 
         this.timerDelta += this.racerSecondsDelta;
@@ -75,5 +78,15 @@ export class RacersService {
         this.racers$.next(racers);
       })
     ).subscribe()
+  }
+
+  public generateRacerNameAndNumberString(racer: IRacer) {
+    return `${racer.name} — ${racer.number}`
+  }
+
+  public splitRacerNameAndNumberString(nameAndNumber: string) {
+    const splitString = nameAndNumber.split(' — ');
+
+    return { name: splitString[0], number: Number(splitString[1]) };
   }
 }

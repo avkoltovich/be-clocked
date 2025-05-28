@@ -16,7 +16,7 @@ export interface IRacer {
 }
 
 export interface IStarter {
-  name: string;
+  racer: IRacer;
   time: number;
 }
 
