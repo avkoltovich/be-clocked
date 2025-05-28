@@ -3,8 +3,7 @@
 
   <ol class="tui-list tui-list_ordered tui-list_large">
     <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
-<!--   Дублирование логики из компонента добавления. Надо сделать режим редактирования   -->
-      <ng-container *ngIf="currentRacer !== null && currentRacer['index'] === i; else notEditMode" class="tui-form__row_multi-fields" [formGroup]="formGroup">
+      <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode" class="tui-form__row_multi-fields" [formGroup]="formGroup">
         <app-modify-racer
           [categories$]="categories$"
           [formValue]="formValue"
@@ -66,16 +65,39 @@
             title="Удалить"
             shape="rounded"
             type="button"
-            (click)="remove(i, item)"
+            (click)="showDialog(reset, i, item)"
           ></button>
         </ng-container>
       </ng-template>
     </li>
   </ol>
 
-
 </tui-island>
 
-<ng-template #notEditMode>
+<ng-template
+  #reset
+  let-observer
+>
+  <p>Уверены, что хотите удалить участника?</p>
 
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="secondary-destructive"
+    class="tui-space_right-3"
+    (click)="remove(); observer.complete()"
+  >
+    Удалить
+  </button>
+  <button
+    tuiButton
+    type="button"
+    size="m"
+    appearance="secondary"
+    (click)="observer.complete()"
+  >
+    Отмена
+  </button>
 </ng-template>
+

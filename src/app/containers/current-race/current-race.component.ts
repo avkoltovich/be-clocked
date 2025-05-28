@@ -1,8 +1,7 @@
-import { Component, ElementRef, Inject, ViewChild } from "@angular/core";
-import { Subscription, tap } from "rxjs";
-import { RacersService } from "../../services/racers.service";
-import { TuiDialogService } from "@taiga-ui/core";
-import { DomSanitizer } from "@angular/platform-browser";
+import {Component, ElementRef, Inject, ViewChild} from "@angular/core";
+import {Subscription, tap} from "rxjs";
+import {RacersService} from "../../services/racers.service";
+import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer} from "../../models/interfaces";
 
@@ -33,7 +32,6 @@ export class CurrentRaceComponent {
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
     private racersService: RacersService,
-    private sanitizer: DomSanitizer,
     private repositoryService: RepositoryService
   ) {}
 

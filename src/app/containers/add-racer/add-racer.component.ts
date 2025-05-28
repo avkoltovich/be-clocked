@@ -28,9 +28,9 @@ export class AddRacerComponent {
     const currentList = this.racersService.racers$.value.slice();
 
     if (racer.startNumber && !isNaN(racer.startNumber)) {
-      currentList.splice(racer.startNumber - 1, 0, racer);
+      currentList.splice(racer.startNumber - 1, 0, { ...racer, startNumber: undefined });
     } else {
-      currentList.push(racer);
+      currentList.push({ ...racer, startNumber: undefined });
     }
 
     this.racersService.updateRacers(currentList)

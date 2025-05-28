@@ -1,9 +1,10 @@
-import { Component } from "@angular/core";
+import {Component, Inject} from "@angular/core";
 import {RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {map} from "rxjs";
 import {ModifyMode} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
+import {TuiDialogService} from "@taiga-ui/core";
 
 interface ICurrentRacer {
   index: number;
@@ -32,11 +33,16 @@ export class RacerListComponent {
 
   public currentRacer: null | ICurrentRacer = null;
 
+  public isEditMode = false;
+
   public categories$ = this.racersService.categoriesMap$.pipe(
     map((categoriesMap) => Object.keys(categoriesMap))
   );
 
-  constructor(private racersService: RacersService) {
+  constructor(
+    private racersService: RacersService,
+    @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+    ) {
   }
 
   private cleanCategoriesMap(racer = this.currentRacer?.racer) {
@@ -54,41 +60,54 @@ export class RacerListComponent {
 
   public onCancel() {
     this.currentRacer = null;
+    this.isEditMode = false;
   }
 
   public onSave(racer: IRacer) {
     if (this.currentRacer === null) return;
 
-    if (this.currentRacer.racer.category !== racer.category) {
-      this.cleanCategoriesMap();
-      const currentCategoriesMap = this.racersService.categoriesMap$.value;
-      currentCategoriesMap[this.currentRacer.racer.category].push(racer);
+    this.cleanCategoriesMap();
+    const currentCategoriesMap = this.racersService.categoriesMap$.value;
+    currentCategoriesMap[this.currentRacer.racer.category].push({ ...racer, startNumber: undefined });
 
-      this.racersService.updateCategoriesMap(currentCategoriesMap);
-    }
+    this.racersService.updateCategoriesMap(currentCategoriesMap);
 
     const currentList = this.racersService.racers$.value.slice();
-    currentList[this.currentRacer.index] = racer;
+    currentList[this.currentRacer.index] = { ...racer, startNumber: undefined };
 
     this.racersService.updateRacers(currentList);
     this.currentRacer = null;
+    this.isEditMode = false;
   }
 
-  public edit(i: number, racer: IRacer) {
+  public edit(index: number, racer: IRacer) {
     this.formValue = {...racer, number: racer.number.toString()};
 
     this.currentRacer = {
-      index: i,
+      index,
       racer
     };
+
+    this.isEditMode = true;
   }
 
-  public remove(i: number, racer: IRacer) {
+  public remove(i = this.currentRacer?.index, racer = this.currentRacer?.racer) {
+    if (i === undefined || racer === undefined) return;
+
     const currentList = this.racersService.racers$.value.slice();
     currentList.splice(i, 1);
     this.racersService.racers$.next(currentList);
     this.racersService.updateRacers(currentList);
     this.cleanCategoriesMap(racer);
+  }
+
+  public showDialog(content: any, index: number, racer: IRacer): void {
+    this.currentRacer = {
+      index,
+      racer
+    };
+
+    this.dialogs.open(content).subscribe();
   }
 
   public up(i: number) {
