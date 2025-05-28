@@ -3,7 +3,8 @@
 
   <ol class="tui-list tui-list_ordered tui-list_large">
     <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
-      <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode" class="tui-form__row_multi-fields" [formGroup]="formGroup">
+      <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode"
+                    class="tui-form__row_multi-fields" [formGroup]="formGroup">
         <app-modify-racer
           [categories$]="categories$"
           [formValue]="formValue"
@@ -20,6 +21,17 @@
           }"
         >
           {{ generateRacerNameAndNumberString(item) }}
+          <ng-container *ngIf="item.number === null">
+            —
+            <button
+              tuiLink
+              type="button"
+              [pseudo]="true"
+              (click)="openSetNumberDialog(setNumber, i, item)"
+            >
+              номер
+            </button>
+          </ng-container>
         </span>
         <span class="category">
           {{ item.category }}
@@ -65,7 +77,7 @@
             title="Удалить"
             shape="rounded"
             type="button"
-            (click)="showDialog(reset, i, item)"
+            (click)="openRemoveDialog(reset, i, item)"
           ></button>
         </ng-container>
       </ng-template>
@@ -99,5 +111,24 @@
   >
     Отмена
   </button>
+</ng-template>
+
+<ng-template
+  #setNumber
+  let-context
+>
+  <div class="dialog-container">
+    <tui-input-number class="tui-space_right-3 input-number" [formControl]="numberControl">
+      Номер
+    </tui-input-number>
+    <button
+      tuiButton
+      appearance="primary"
+      (click)="onSetNumber(); context.complete()"
+      [disabled]="numberControl.invalid"
+    >
+      Применить
+    </button>
+  </div>
 </ng-template>
 
