@@ -26,9 +26,6 @@ export class FinishRaceComponent implements OnInit {
   public anonIndex = 0;
   public currentSelectedAnonIndex: number | null = null;
 
-  /**
-   * TODO: Добавить поиск по номеру
-   */
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
       const difference = this.racersService.starterNameList.filter((racer) => {
