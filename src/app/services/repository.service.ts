@@ -3,6 +3,7 @@ import {RepositoryKey} from '../models/enums';
 import {map, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
+import {GoogleTableService} from "./google-table.service";
 
 
 @Injectable({
@@ -13,7 +14,27 @@ export class RepositoryService {
   private URL = "../../../../assets/racers.json";
   private URL_SYNC_JSON = "../../../../assets/sync-data.json";
 
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private googleTableService: GoogleTableService,
+  ) {
+  }
+
+  private convertCategoryName(registerCategoryName: string): string {
+    switch (registerCategoryName) {
+      case 'МТБ':
+        return 'МТБ'
+      case 'Шоссе (групповой велосипед)':
+        return 'Шоссе'
+      case 'Шоссе (разделочник или групповой с лежаком)':
+        return 'Шоссе ТТ'
+      case 'Девушки':
+        return 'Девушки'
+      case 'Ветераны':
+        return 'Ветераны'
+      default:
+        return 'Без категории'
+    }
   }
 
   /**
@@ -179,6 +200,35 @@ export class RepositoryService {
 
         return {racers, categoriesMap};
       })
+    )
+  }
+
+  public readRacersDataFromGoogleSheet() {
+    return this.googleTableService.getSheetData().pipe(
+      map((data) => {
+        const racers: IRacer[] = [];
+        const categoriesMap: Record<string, IRacer[]> = {};
+
+        data.forEach((registerInfo) => {
+          const racer = {
+            name: registerInfo.Name,
+            category: this.convertCategoryName(registerInfo.Category),
+            number: null
+          }
+          racers.push(racer);
+          if (Array.isArray(categoriesMap[racer.category])) {
+            categoriesMap[racer.category].push(racer);
+          } else {
+            categoriesMap[racer.category] = [];
+            categoriesMap[racer.category].push(racer);
+          }
+        });
+
+        this.updateCategoriesMap(categoriesMap);
+        this.updateRacers(racers);
+
+        return {racers, categoriesMap};
+      }),
     )
   }
 

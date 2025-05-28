@@ -28,3 +28,12 @@
 .input-category {
   min-width: 160px;
 }
+
+.input-number {
+  flex-grow: 1;
+}
+
+.dialog-container {
+  display: flex;
+  width: 100%;
+}

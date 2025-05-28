@@ -67,12 +67,12 @@ export class RacersService {
     if (this.repositoryService.checkRacers()) {
       this.racers$.next(repositoryService.readRacers());
     } else {
-      this.readRacersFromJSON();
+      this.readRacersFromRepository();
     }
   }
 
-  private readRacersFromJSON() {
-    this.repositoryService.readRacersDataFromJSON().pipe(
+  private readRacersFromRepository() {
+    this.repositoryService.readRacersDataFromGoogleSheet().pipe(
       tap(({ racers, categoriesMap }) => {
         this.categoriesMap$.next(categoriesMap);
         this.racers$.next(racers);
@@ -91,7 +91,11 @@ export class RacersService {
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
-    return `${racer.name} — ${racer.number}`
+    if (racer.number !== null) {
+      return `${racer.name} — ${racer.number}`
+    }
+
+    return racer.name;
   }
 
   public splitRacerNameAndNumberString(nameAndNumber: string) {

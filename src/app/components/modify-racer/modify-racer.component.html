@@ -6,13 +6,9 @@
       type="text"
     >
   </tui-input>
-  <tui-input class="tui-space_right-3" formControlName="number">
+  <tui-input-number class="tui-space_right-3" formControlName="number">
     Номер
-    <input
-      tuiTextfield
-      type="text"
-    >
-  </tui-input>
+  </tui-input-number>
   <tui-input *ngIf="mode === ModifyMode.create" class="input-number tui-space_right-3" formControlName="startNumber">
     Стартовая позиция
     <input

@@ -27,6 +27,8 @@ export class RacerListComponent {
     category: new FormControl("", Validators.required)
   });
 
+  public numberControl = new FormControl("", Validators.required);
+
   public formValue = {};
 
   protected readonly ModifyMode = ModifyMode;
@@ -42,7 +44,7 @@ export class RacerListComponent {
   constructor(
     private racersService: RacersService,
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-    ) {
+  ) {
   }
 
   private cleanCategoriesMap(racer = this.currentRacer?.racer) {
@@ -68,12 +70,12 @@ export class RacerListComponent {
 
     this.cleanCategoriesMap();
     const currentCategoriesMap = this.racersService.categoriesMap$.value;
-    currentCategoriesMap[this.currentRacer.racer.category].push({ ...racer, startNumber: undefined });
+    currentCategoriesMap[this.currentRacer.racer.category].push({...racer, startNumber: undefined});
 
     this.racersService.updateCategoriesMap(currentCategoriesMap);
 
     const currentList = this.racersService.racers$.value.slice();
-    currentList[this.currentRacer.index] = { ...racer, startNumber: undefined };
+    currentList[this.currentRacer.index] = {...racer, startNumber: undefined};
 
     this.racersService.updateRacers(currentList);
     this.currentRacer = null;
@@ -81,7 +83,7 @@ export class RacerListComponent {
   }
 
   public edit(index: number, racer: IRacer) {
-    this.formValue = {...racer, number: racer.number.toString()};
+    this.formValue = {...racer, number: racer.number?.toString()};
 
     this.currentRacer = {
       index,
@@ -101,7 +103,7 @@ export class RacerListComponent {
     this.cleanCategoriesMap(racer);
   }
 
-  public showDialog(content: any, index: number, racer: IRacer): void {
+  public openRemoveDialog(content: any, index: number, racer: IRacer): void {
     this.currentRacer = {
       index,
       racer
@@ -128,5 +130,23 @@ export class RacerListComponent {
 
   public generateRacerNameAndNumberString(racer: IRacer) {
     return this.racersService.generateRacerNameAndNumberString(racer);
+  }
+
+  public openSetNumberDialog(content: any, index: number, racer: IRacer) {
+    this.currentRacer = {
+      index,
+      racer
+    };
+
+    this.dialogs.open(content, { size: 's' }).subscribe();
+  }
+
+  public onSetNumber() {
+    if (this.currentRacer === null) return;
+
+    const racer = { ...this.currentRacer.racer, number: Number(this.numberControl.value) };
+    this.numberControl.reset()
+
+    this.onSave(racer)
   }
 }
