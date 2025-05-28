@@ -5,6 +5,7 @@ import { TUI_DEFAULT_MATCHER, tuiControlValue } from "@taiga-ui/cdk";
 import { map, takeWhile, tap } from "rxjs";
 import { TuiDialogFormService } from "@taiga-ui/kit";
 import { TuiDialogService } from "@taiga-ui/core";
+import {RepositoryService} from "../../services/repository.service";
 
 export interface IFinisher {
   name: string;
@@ -88,25 +89,26 @@ export class FinishRaceComponent implements OnInit {
 
   constructor(private racersService: RacersService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
-              @Inject(TuiDialogService) private readonly dialogs: TuiDialogService) {
+              @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+              private repositoryService: RepositoryService) {
   }
 
   public ngOnInit() {
-    const finishersFromLS = this.racersService.readFinishersFromLS();
-    const anonFinishersFromLS = this.racersService.readAnonsFromLS();
-    const anonIndexFromLS = this.racersService.readCurrentAnonIndexFromLS();
-    const finishersByCategories = this.racersService.readFinishersByCategoriesFromLS();
+    const finishers = this.repositoryService.readFinishers();
+    const anonFinishers = this.repositoryService.readAnons();
+    const anonIndex = this.repositoryService.readCurrentAnonIndex();
+    const finishersByCategories = this.repositoryService.readFinishersByCategories();
 
-    if (finishersFromLS !== null) {
-      this.finishers = finishersFromLS;
+    if (finishers !== null) {
+      this.finishers = finishers;
     }
 
-    if (anonFinishersFromLS !== null) {
-      this.anonFinishers = anonFinishersFromLS;
+    if (anonFinishers !== null) {
+      this.anonFinishers = anonFinishers;
     }
 
-    if (anonIndexFromLS !== null) {
-      this.anonIndex = anonIndexFromLS;
+    if (anonIndex !== null) {
+      this.anonIndex = anonIndex;
     }
 
     if (finishersByCategories !== null) {
@@ -121,7 +123,7 @@ export class FinishRaceComponent implements OnInit {
 
     if (currentRacerName !== null && currentRacerName !== "") {
       this.racersService.finisherNameList.push(currentRacerName);
-      this.racersService.updateFinisherNameListInLS(this.racersService.finisherNameList);
+      this.repositoryService.updateFinisherNameList(this.racersService.finisherNameList);
 
       const finishers = this.finishers.slice();
       const startedData = this.racersService.startedRacers.find((starter) => starter.name === currentRacerName);
@@ -138,7 +140,7 @@ export class FinishRaceComponent implements OnInit {
       finishers.sort((a, b) => a.time - b.time);
 
       this.finishers = finishers.slice();
-      this.racersService.updateFinishersDataInLS(this.finishers);
+      this.repositoryService.updateFinishers(this.finishers);
 
       let categoryName = "";
 
@@ -159,7 +161,7 @@ export class FinishRaceComponent implements OnInit {
       });
 
       this.finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
-      this.racersService.updateFinishersByCategoriesInLS(this.finishersByCategories);
+      this.repositoryService.updateFinishersByCategories(this.finishersByCategories);
     }
   }
 
@@ -182,8 +184,8 @@ export class FinishRaceComponent implements OnInit {
       time
     });
 
-    this.racersService.updateAnonsInLS(this.anonFinishers);
-    this.racersService.updateCurrentAnonIndexInLS(this.anonIndex);
+    this.repositoryService.updateAnons(this.anonFinishers);
+    this.repositoryService.updateCurrentAnonIndex(this.anonIndex);
   }
 
   public onAnonInList(content: any, i: number): void {
@@ -209,11 +211,11 @@ export class FinishRaceComponent implements OnInit {
 
     this.anonFinishers.splice(this.currentSelectedAnonIndex, 1);
     this.currentSelectedAnonIndex = null;
-    this.racersService.updateAnonsInLS(this.anonFinishers);
+    this.repositoryService.updateAnons(this.anonFinishers);
   }
 
   public removeAnon(i: number) {
     this.anonFinishers.splice(i, 1);
-    this.racersService.updateAnonsInLS(this.anonFinishers);
+    this.repositoryService.updateAnons(this.anonFinishers);
   }
 }

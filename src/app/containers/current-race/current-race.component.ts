@@ -3,6 +3,7 @@ import { Subscription, tap } from "rxjs";
 import { RacersService } from "../../services/racers.service";
 import { TuiDialogService } from "@taiga-ui/core";
 import { DomSanitizer } from "@angular/platform-browser";
+import {RepositoryService} from "../../services/repository.service";
 
 @Component({
   selector: "app-current-race",
@@ -28,7 +29,7 @@ export class CurrentRaceComponent {
 
   @ViewChild("download") downloadLink: ElementRef<HTMLInputElement> | undefined;
 
-  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService, private sanitizer: DomSanitizer) {
+  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService, private racersService: RacersService, private sanitizer: DomSanitizer, private repositoryService: RepositoryService) {
 
   }
 
@@ -57,7 +58,7 @@ export class CurrentRaceComponent {
   }
 
   public onReset() {
-    this.racersService.resetLS();
+    this.repositoryService.resetLS();
     location.reload();
   }
 
@@ -66,17 +67,14 @@ export class CurrentRaceComponent {
   }
 
   public generateAndDownloadJSON() {
-    var theJSON = JSON.stringify(this.racersService.collectDataFromLS());
+    var theJSON = JSON.stringify(this.repositoryService.collectRaceData());
     this.downloadLink?.nativeElement.setAttribute("href", "data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
     this.downloadLink?.nativeElement.setAttribute("download", "sync-data.json");
 
     this.downloadLink?.nativeElement.click();
   }
 
-  /**
-   * TODO: Починить
-   */
   public setStateFromJSON() {
-    // this.racersService.setStateFromJSON();
+    this.repositoryService.setStateFromJSON();
   }
 }
