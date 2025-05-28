@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, finalize, map, takeWhile, tap, timer } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { IFinishCategory, IFinisher } from "../components/finish-race/finish-race.component";
+import { IFinishCategory, IFinisher } from "../containers/finish-race/finish-race.component";
 
 export interface IRacer {
   name: string;

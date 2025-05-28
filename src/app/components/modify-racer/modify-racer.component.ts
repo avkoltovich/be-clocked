@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {EMPTY, Observable} from "rxjs";
-import {IRacer} from "../../pages/race/services/racers.service";
+import {IRacer} from "../../services/racers.service";
 import {ModifyMode} from "../../models/enums";
 
 @Component({
@@ -48,7 +48,6 @@ export class ModifyRacerComponent implements OnChanges {
   public ngOnChanges(changes: SimpleChanges): void {
     if (changes['formValue'] !== undefined) {
       this.formGroup.patchValue(changes['formValue'].currentValue)
-      console.log(changes['formValue']);
     }
   }
 

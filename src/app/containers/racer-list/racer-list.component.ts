@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import {IRacer, RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {map} from "rxjs";
-import {ModifyMode} from "../../../../models/enums";
+import {ModifyMode} from "../../models/enums";
 
 interface ICurrentRacer {
   index: number;
