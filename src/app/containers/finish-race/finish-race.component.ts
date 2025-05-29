@@ -46,6 +46,24 @@ export class FinishRaceComponent implements OnInit {
     })
   );
 
+  public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
+    map(value => {
+      const difference = this.racersService.starterNameList.filter((racer) => {
+        return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
+      });
+      const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
+
+      if (
+        filtered.length !== 1 ||
+        String(filtered[0]).toLowerCase() !== value.toLowerCase()
+      ) {
+        return filtered;
+      }
+
+      return [];
+    })
+  );
+
   public categoriesMap$ = this.racersService.categoriesMap$.pipe(
     tap((categoriesMap) => {
       const categories = Object.keys(categoriesMap);

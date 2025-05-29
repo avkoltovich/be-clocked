@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Inject, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {catchError, EMPTY, fromEvent, Subscription, switchMap, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
@@ -30,6 +30,8 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild('newRace', {read: TemplateRef})
+  newRace: TemplateRef<any> | undefined;
 
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
@@ -63,8 +65,14 @@ export class CurrentRaceComponent implements AfterViewInit {
         })
       ).subscribe();
     }
-  }
 
+    if (this.repositoryService.checkRacers()) {
+      this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
+    }
+    else {
+      this.onReset();
+    }
+  }
 
   public onStart() {
     this.racersService.isRaceStarted$.next(true);
@@ -91,8 +99,11 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onReset() {
+    this.timerSubscription?.unsubscribe();
+
     this.repositoryService.resetLS();
-    location.reload();
+    this.racersService.resetRace();
+    this.racersService.readRacersFromRepository();
   }
 
   public showDialog(content: any): void {
@@ -112,6 +123,12 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
+    if (racer === undefined || racer === null) return;
+
     return this.racersService.generateRacerNameAndNumberString(racer);
+  }
+
+  public onContinuePrevRace() {
+    this.racersService.updateRacers(this.repositoryService.readRacers())
   }
 }

@@ -16,7 +16,7 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = 30;
+  public racerSecondsDelta = 1;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -64,15 +64,25 @@ export class RacersService {
     if (starterNameList !== null) this.starterNameList = starterNameList;
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
-
-    if (this.repositoryService.checkRacers()) {
-      this.updateRacers(repositoryService.readRacers())
-    } else {
-      this.readRacersFromRepository();
-    }
   }
 
-  private readRacersFromRepository() {
+  public resetRace(): void {
+    this.currentRacerIndex$.next(0);
+    this.racers$.next([]);
+    this.isRaceStarted$.next(false);
+    this.isRacePaused$.next(false);
+    this.isAllMembersStarted$.next(false);
+    this.isAllMembersHasNumbers$.next(false);
+    this.categoriesMap$.next({});
+
+    this.finisherNameList = [];
+    this.startedRacers = [];
+    this.starterNameList = [];
+
+    this.timerDelta = 0;
+  }
+
+  public readRacersFromRepository() {
     this.repositoryService.readRacersDataFromGoogleSheet().pipe(
       tap(({ racers, categoriesMap }) => {
         this.updateRacers(racers);

@@ -28,7 +28,7 @@ export class RacerListComponent {
     category: new FormControl("", Validators.required)
   });
 
-  public numberControl = new FormControl("", Validators.required);
+  public numberControl = new FormControl(null, Validators.required);
 
   public formValue = {};
 
@@ -149,5 +149,13 @@ export class RacerListComponent {
     this.numberControl.reset()
 
     this.onSave(racer)
+  }
+
+  public checkRacerStarted(racer: IRacer) {
+    return this.racersService.starterNameList.includes(this.generateRacerNameAndNumberString(racer));
+  }
+
+  public checkRacerFinished(racer: IRacer) {
+    return this.racersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
   }
 }
