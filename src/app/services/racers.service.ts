@@ -16,7 +16,7 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = 1;
+  public racerSecondsDelta = 30;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
