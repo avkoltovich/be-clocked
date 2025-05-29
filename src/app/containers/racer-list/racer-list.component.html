@@ -88,6 +88,16 @@
             (click)="openRemoveDialog(reset, i, item)"
           ></button>
         </ng-container>
+        <tui-badge
+          *ngIf="checkRacerFinished(item)"
+          status="success"
+          value="Финиш"
+        ></tui-badge>
+        <tui-badge
+          *ngIf="checkRacerStarted(item) && !checkRacerFinished(item)"
+          status="info"
+          value="В пути"
+        ></tui-badge>
       </ng-template>
     </li>
   </ol>

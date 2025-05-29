@@ -7,6 +7,7 @@ import {FinishRaceComponent} from "../../containers/finish-race/finish-race.comp
 import {RaceComponent} from "./race.component";
 import {RaceRoutingModule} from "./race-routing.module";
 import {
+  TuiBadgeModule,
   TuiDataListWrapperModule,
   TuiInputModule,
   TuiInputNumberModule,
@@ -59,6 +60,7 @@ import {ModifyRacerComponent} from "../../components/modify-racer/modify-racer.c
     TuiTextfieldControllerModule,
     TuiNotificationModule,
     TuiHintModule,
+    TuiBadgeModule,
   ],
   providers: [
     RacersService

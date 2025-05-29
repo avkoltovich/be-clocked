@@ -99,6 +99,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onReset() {
+    this.timerSubscription?.unsubscribe();
+
     this.repositoryService.resetLS();
     this.racersService.resetRace();
     this.racersService.readRacersFromRepository();

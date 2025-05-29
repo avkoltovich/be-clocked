@@ -150,4 +150,12 @@ export class RacerListComponent {
 
     this.onSave(racer)
   }
+
+  public checkRacerStarted(racer: IRacer) {
+    return this.racersService.starterNameList.includes(this.generateRacerNameAndNumberString(racer));
+  }
+
+  public checkRacerFinished(racer: IRacer) {
+    return this.racersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
+  }
 }
