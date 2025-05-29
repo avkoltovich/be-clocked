@@ -25,6 +25,7 @@ export class CurrentRaceComponent {
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public isRacePaused$ = this.racersService.isRacePaused$;
   public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
+  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public downloadJsonHref: any;
 
   @ViewChild("download") downloadLink: ElementRef<HTMLInputElement> | undefined;

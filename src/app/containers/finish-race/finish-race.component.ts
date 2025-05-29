@@ -25,6 +25,7 @@ export class FinishRaceComponent implements OnInit {
   public anonFinishers: IFinisher[] = [];
   public anonIndex = 0;
   public currentSelectedAnonIndex: number | null = null;
+  public isRaceStarted$ = this.racersService.isRaceStarted$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
@@ -32,24 +33,6 @@ export class FinishRaceComponent implements OnInit {
         return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
 
-      const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
-
-      if (
-        filtered.length !== 1 ||
-        String(filtered[0]).toLowerCase() !== value.toLowerCase()
-      ) {
-        return filtered;
-      }
-
-      return [];
-    })
-  );
-
-  public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
-    map(value => {
-      const difference = this.racersService.starterNameList.filter((racer) => {
-        return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
-      });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
       if (

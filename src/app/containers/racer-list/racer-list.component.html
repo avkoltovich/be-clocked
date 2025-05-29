@@ -1,6 +1,14 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
+  <tui-notification
+    *ngIf="!(isAllMembersHasNumbers$ | async)"
+    class="tui-space_bottom-5"
+    status="error"
+  >
+    Не у всех участников заполнены номера
+  </tui-notification>
+
   <ol class="tui-list tui-list_ordered tui-list_large">
     <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
       <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode"

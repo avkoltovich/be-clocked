@@ -16,10 +16,11 @@ export class RacersService {
   public starterNameList: string[] = [];
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = 30;
+  public racerSecondsDelta = 1;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
+  public isAllMembersHasNumbers$ = new BehaviorSubject(false);
 
   public timer$ = timer(0, 1000).pipe(
     map(i => this.racerSecondsDelta - i + this.timerDelta),
@@ -65,7 +66,7 @@ export class RacersService {
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
 
     if (this.repositoryService.checkRacers()) {
-      this.racers$.next(repositoryService.readRacers());
+      this.updateRacers(repositoryService.readRacers())
     } else {
       this.readRacersFromRepository();
     }
@@ -74,15 +75,23 @@ export class RacersService {
   private readRacersFromRepository() {
     this.repositoryService.readRacersDataFromGoogleSheet().pipe(
       tap(({ racers, categoriesMap }) => {
-        this.categoriesMap$.next(categoriesMap);
-        this.racers$.next(racers);
+        this.updateRacers(racers);
+        this.updateCategoriesMap(categoriesMap);
       })
     ).subscribe()
+  }
+
+  public checkAllMembersHasNumbers() {
+    let accumulator = true;
+    this.racers$.value.forEach((racer) => accumulator = (racer.number !== null) && accumulator)
+
+    this.isAllMembersHasNumbers$.next(accumulator);
   }
 
   public updateRacers(racers: IRacer[]) {
     this.racers$.next(racers);
     this.repositoryService.updateRacers(racers);
+    this.checkAllMembersHasNumbers();
   }
 
   public updateCategoriesMap(categoriesMap: Record<string, IRacer[]>) {

@@ -44,6 +44,7 @@
       appearance="secondary"
       size="m"
       (click)="onAnonButton()"
+      [disabled]="!(isRaceStarted$ | async)"
     >
       <tui-svg
         src="tuiIconFlagLarge"
@@ -142,7 +143,7 @@
   let-context
 >
   <tui-input
-    *tuiLet="anonRacers$ | async as anonRacers"
+    *tuiLet="racers$ | async as anonRacers"
     class="tui-space_bottom-6"
     tuiTextfieldSize="m"
     [formControl]="anonNameControl"

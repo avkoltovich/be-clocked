@@ -20,6 +20,7 @@ export class RacerListComponent {
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
+  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
 
   public formGroup = new FormGroup({
     racer: new FormControl("", Validators.required),
