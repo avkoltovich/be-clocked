@@ -69,3 +69,11 @@
 .empty-list {
   text-align: center;
 }
+
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}

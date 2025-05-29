@@ -25,6 +25,7 @@ export class CurrentRaceComponent {
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public isRacePaused$ = this.racersService.isRacePaused$;
   public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
+  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public downloadJsonHref: any;
 
   @ViewChild("download") downloadLink: ElementRef<HTMLInputElement> | undefined;
@@ -65,7 +66,7 @@ export class CurrentRaceComponent {
   }
 
   public showDialog(content: any): void {
-    this.dialogs.open(content).subscribe();
+    this.dialogs.open(content, { size: 'auto' }).subscribe();
   }
 
   public generateAndDownloadJSON() {

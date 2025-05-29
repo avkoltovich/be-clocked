@@ -20,6 +20,7 @@ export class RacerListComponent {
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
+  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
 
   public formGroup = new FormGroup({
     racer: new FormControl("", Validators.required),
@@ -109,7 +110,7 @@ export class RacerListComponent {
       racer
     };
 
-    this.dialogs.open(content).subscribe();
+    this.dialogs.open(content, { size: 's' }).subscribe();
   }
 
   public up(i: number) {

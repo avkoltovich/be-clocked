@@ -62,85 +62,87 @@
         ></tui-progress-circle>
       </label>
     </div>
-    <div class="controls-container" *tuiLet="isRaceStarted$ | async as isRaceStarted">
-      <button
-        tuiButton
-        type="button"
-        appearance="primary"
-        (click)="onStart()"
-        [disabled]="isRaceStarted!"
-      >
-        <tui-svg
-          src="tuiIconPlayCircleLarge"
-          class="tui-space_right-2"
-        ></tui-svg>
-        Старт
-      </button>
-      <button
-        tuiButton
-        type="button"
-        appearance="secondary"
-        (click)="onSkip()"
-        [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
-      >
-        <tui-svg
-          src="tuiIconFastForwardLarge"
-          class="tui-space_right-2"
-        ></tui-svg>
-        Пропуск
-      </button>
-      <button
-        tuiButton
-        type="button"
-        appearance="flat"
-        (click)="onPause()"
-        [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
-      >
-        <tui-svg
-          src="tuiIconPauseCircleLarge"
-          class="tui-space_right-2"
-        ></tui-svg>
-        Пауза
-      </button>
-      <button
-        tuiButton
-        type="button"
-        appearance="secondary-destructive"
-        (click)="showDialog(reset)"
-        [disabled]="isRaceStarted!"
-      >
-        <tui-svg
-          src="tuiIconStopCircleLarge"
-          class="tui-space_right-2"
-        ></tui-svg>
-        Сброс
-      </button>
-<!--      <button-->
-<!--        class="icon-button"-->
-<!--        tuiButton-->
-<!--        type="button"-->
-<!--        appearance="flat"-->
-<!--        (click)="generateAndDownloadJSON()"-->
-<!--      >-->
-<!--        <tui-svg-->
-<!--          src="tuiIconDownloadLarge"-->
-<!--          class="tui-space_right-2"-->
-<!--        ></tui-svg>-->
-<!--      </button>-->
-<!--      <button-->
-<!--        class="icon-button"-->
-<!--        tuiButton-->
-<!--        type="button"-->
-<!--        appearance="flat"-->
-<!--        (click)="setStateFromJSON()"-->
-<!--      >-->
-<!--        <tui-svg-->
-<!--          src="tuiIconRefreshCcwLarge"-->
-<!--          class="tui-space_right-2"-->
-<!--        ></tui-svg>-->
-<!--      </button>-->
-      <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
-    </div>
+    <ng-container *tuiLet="isAllMembersHasNumbers$ | async as isAllMembersHasNumbers">
+      <div class="controls-container" *tuiLet="isRaceStarted$ | async as isRaceStarted">
+        <button
+          tuiButton
+          type="button"
+          appearance="primary"
+          (click)="onStart()"
+          [disabled]="isRaceStarted! || !isAllMembersHasNumbers!"
+        >
+          <tui-svg
+            src="tuiIconPlayCircleLarge"
+            class="tui-space_right-2"
+          ></tui-svg>
+          Старт
+        </button>
+        <button
+          tuiButton
+          type="button"
+          appearance="secondary"
+          (click)="onSkip()"
+          [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
+        >
+          <tui-svg
+            src="tuiIconFastForwardLarge"
+            class="tui-space_right-2"
+          ></tui-svg>
+          Пропуск
+        </button>
+        <button
+          tuiButton
+          type="button"
+          appearance="flat"
+          (click)="onPause()"
+          [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
+        >
+          <tui-svg
+            src="tuiIconPauseCircleLarge"
+            class="tui-space_right-2"
+          ></tui-svg>
+          Пауза
+        </button>
+        <button
+          tuiButton
+          type="button"
+          appearance="secondary-destructive"
+          (click)="showDialog(reset)"
+          [disabled]="isRaceStarted!"
+        >
+          <tui-svg
+            src="tuiIconStopCircleLarge"
+            class="tui-space_right-2"
+          ></tui-svg>
+          Сброс
+        </button>
+        <!--      <button-->
+        <!--        class="icon-button"-->
+        <!--        tuiButton-->
+        <!--        type="button"-->
+        <!--        appearance="flat"-->
+        <!--        (click)="generateAndDownloadJSON()"-->
+        <!--      >-->
+        <!--        <tui-svg-->
+        <!--          src="tuiIconDownloadLarge"-->
+        <!--          class="tui-space_right-2"-->
+        <!--        ></tui-svg>-->
+        <!--      </button>-->
+        <!--      <button-->
+        <!--        class="icon-button"-->
+        <!--        tuiButton-->
+        <!--        type="button"-->
+        <!--        appearance="flat"-->
+        <!--        (click)="setStateFromJSON()"-->
+        <!--      >-->
+        <!--        <tui-svg-->
+        <!--          src="tuiIconRefreshCcwLarge"-->
+        <!--          class="tui-space_right-2"-->
+        <!--        ></tui-svg>-->
+        <!--      </button>-->
+        <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
+      </div>
+    </ng-container>
   </div>
 </tui-island>
 
@@ -152,25 +154,27 @@
   #reset
   let-observer
 >
-  <p>Уверены, что хотите сбросить гонку?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Уверены, что хотите сбросить гонку?</p>
 
-  <button
-    tuiButton
-    type="button"
-    size="m"
-    appearance="secondary-destructive"
-    class="tui-space_right-3"
-    (click)="onReset()"
-  >
-    Сброс
-  </button>
-  <button
-    tuiButton
-    type="button"
-    size="m"
-    appearance="secondary"
-    (click)="observer.complete()"
-  >
-    Отмена
-  </button>
+  <div class="button-wrapper">
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="accent"
+      class="tui-space_right-3"
+      (click)="onReset()"
+    >
+      Сброс
+    </button>
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="secondary"
+      (click)="observer.complete()"
+    >
+      Отмена
+    </button>
+  </div>
 </ng-template>

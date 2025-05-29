@@ -15,11 +15,11 @@ import {
   TuiSelectModule
 } from "@taiga-ui/kit";
 import {
-  TuiButtonModule,
-  TuiDataListModule,
-  TuiLinkModule,
-  TuiSvgModule,
-  TuiTextfieldControllerModule
+    TuiButtonModule,
+    TuiDataListModule,
+    TuiLinkModule, TuiNotificationModule,
+    TuiSvgModule,
+    TuiTextfieldControllerModule
 } from "@taiga-ui/core";
 import {TuiReorderModule} from "@taiga-ui/addon-table";
 import {RacersService} from "../../services/racers.service";
@@ -57,6 +57,7 @@ import {ModifyRacerComponent} from "../../components/modify-racer/modify-racer.c
         TuiSelectModule,
         TuiDataListWrapperModule,
         TuiTextfieldControllerModule,
+        TuiNotificationModule,
     ],
   providers: [
     RacersService

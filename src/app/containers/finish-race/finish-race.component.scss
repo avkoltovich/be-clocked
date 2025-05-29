@@ -21,3 +21,11 @@
 .tui-list_ordered .tui-list__item {
   padding-left: 26px;
 }
+
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}

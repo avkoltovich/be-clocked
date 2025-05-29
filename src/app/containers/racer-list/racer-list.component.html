@@ -1,6 +1,14 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
+  <tui-notification
+    *ngIf="!(isAllMembersHasNumbers$ | async)"
+    class="tui-space_bottom-5"
+    status="error"
+  >
+    Не у всех участников заполнены номера
+  </tui-notification>
+
   <ol class="tui-list tui-list_ordered tui-list_large">
     <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
       <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode"
@@ -90,27 +98,29 @@
   #reset
   let-observer
 >
-  <p>Уверены, что хотите удалить участника?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Уверены, что хотите удалить участника?</p>
 
-  <button
-    tuiButton
-    type="button"
-    size="m"
-    appearance="secondary-destructive"
-    class="tui-space_right-3"
-    (click)="remove(); observer.complete()"
-  >
-    Удалить
-  </button>
-  <button
-    tuiButton
-    type="button"
-    size="m"
-    appearance="secondary"
-    (click)="observer.complete()"
-  >
-    Отмена
-  </button>
+  <div class="button-wrapper">
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="accent"
+      class="tui-space_right-3"
+      (click)="remove(); observer.complete()"
+    >
+      Удалить
+    </button>
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="secondary"
+      (click)="observer.complete()"
+    >
+      Отмена
+    </button>
+  </div>
 </ng-template>
 
 <ng-template
@@ -118,12 +128,13 @@
   let-context
 >
   <div class="dialog-container">
-    <tui-input-number class="tui-space_right-3 input-number" [formControl]="numberControl">
+    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="numberControl">
       Номер
     </tui-input-number>
     <button
       tuiButton
       appearance="primary"
+      size="m"
       (click)="onSetNumber(); context.complete()"
       [disabled]="numberControl.invalid"
     >

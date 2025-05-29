@@ -6,7 +6,7 @@ import {map, takeWhile, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
-import {IFinishCategory, IFinisher} from "../../models/interfaces";
+import {IFinishCategory, IFinisher, IRacer} from "../../models/interfaces";
 
 @Component({
   selector: "app-finish-race",
@@ -25,6 +25,7 @@ export class FinishRaceComponent implements OnInit {
   public anonFinishers: IFinisher[] = [];
   public anonIndex = 0;
   public currentSelectedAnonIndex: number | null = null;
+  public isRaceStarted$ = this.racersService.isRaceStarted$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
@@ -32,24 +33,6 @@ export class FinishRaceComponent implements OnInit {
         return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
 
-      const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
-
-      if (
-        filtered.length !== 1 ||
-        String(filtered[0]).toLowerCase() !== value.toLowerCase()
-      ) {
-        return filtered;
-      }
-
-      return [];
-    })
-  );
-
-  public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
-    map(value => {
-      const difference = this.racersService.starterNameList.filter((racer) => {
-        return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
-      });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
       if (
@@ -178,10 +161,10 @@ export class FinishRaceComponent implements OnInit {
     this.repositoryService.updateCurrentAnonIndex(this.anonIndex);
   }
 
-  public onAnonInList(content: any, i: number): void {
+  public openAnonSelectDialog(content: any, i: number): void {
     this.currentSelectedAnonIndex = i;
 
-    this.dialogs.open(content).subscribe({
+    this.dialogs.open(content, { size: 's' }).subscribe({
       complete: () => {
         this.anonNameControl.setValue("");
         this.dialogForm.markAsPristine();
@@ -207,5 +190,9 @@ export class FinishRaceComponent implements OnInit {
   public removeAnon(i: number) {
     this.anonFinishers.splice(i, 1);
     this.repositoryService.updateAnons(this.anonFinishers);
+  }
+
+  public openRemoveDialog(content: any): void {
+    this.dialogs.open(content, { size: 's' }).subscribe();
   }
 }
