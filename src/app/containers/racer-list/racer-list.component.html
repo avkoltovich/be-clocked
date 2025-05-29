@@ -118,12 +118,13 @@
   let-context
 >
   <div class="dialog-container">
-    <tui-input-number class="tui-space_right-3 input-number" [formControl]="numberControl">
+    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="numberControl">
       Номер
     </tui-input-number>
     <button
       tuiButton
       appearance="primary"
+      size="m"
       (click)="onSetNumber(); context.complete()"
       [disabled]="numberControl.invalid"
     >

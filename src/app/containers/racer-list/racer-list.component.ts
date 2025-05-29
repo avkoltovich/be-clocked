@@ -109,7 +109,7 @@ export class RacerListComponent {
       racer
     };
 
-    this.dialogs.open(content).subscribe();
+    this.dialogs.open(content, { size: 's' }).subscribe();
   }
 
   public up(i: number) {
