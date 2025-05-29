@@ -5,6 +5,7 @@
       *tuiLet="racers$ | async as racers"
       class="input"
       formControlName="racer"
+      tuiTextfieldSize="m"
     >
       Фамилия Имя
       <input
@@ -27,6 +28,7 @@
       tuiButton
       type="button"
       appearance="primary"
+      size="m"
       (click)="onFinish()"
       [disabled]="racerControl.value?.length === 0"
     >
@@ -40,6 +42,7 @@
       tuiButton
       type="button"
       appearance="secondary"
+      size="m"
       (click)="onAnonButton()"
     >
       <tui-svg
@@ -61,7 +64,7 @@
         tuiLink
         type="button"
         [pseudo]="true"
-        (click)="onAnonInList(content, i)"
+        (click)="openAnonSelectDialog(content, i)"
       >
         {{ anon.name }}
       </button>
@@ -73,8 +76,38 @@
         title="Удалить"
         shape="rounded"
         type="button"
-        (click)="removeAnon(i)"
+        (click)="openRemoveDialog(reset)"
       ></button>
+
+      <ng-template
+        #reset
+        let-observer
+      >
+        <p class="dialog-description tui-text_h6 tui-space_bottom-10">Уверены, что хотите удалить анонима?</p>
+
+        <div class="button-wrapper">
+          <button
+            tuiButton
+            type="button"
+            size="m"
+            appearance="accent"
+            class="tui-space_right-3"
+            (click)="removeAnon(i); observer.complete()"
+          >
+            Удалить
+          </button>
+          <button
+            tuiButton
+            type="button"
+            size="m"
+            appearance="secondary"
+            (click)="observer.complete()"
+          >
+            Отмена
+          </button>
+        </div>
+      </ng-template>
+
     </li>
   </ol>
   <ng-container *ngIf="finishers.length > 0">
@@ -110,7 +143,8 @@
 >
   <tui-input
     *tuiLet="anonRacers$ | async as anonRacers"
-    class="tui-space_bottom-3"
+    class="tui-space_bottom-6"
+    tuiTextfieldSize="m"
     [formControl]="anonNameControl"
   >
     Выбрать анонима
@@ -130,11 +164,23 @@
       </tui-data-list>
     </ng-container>
   </tui-input>
-  <button
-    tuiButton
-    appearance="primary"
-    (click)="onRenameAnon(); context.complete()"
-  >
-    Применить
-  </button>
+  <div class="button-wrapper">
+    <button
+      tuiButton
+      appearance="primary"
+      size="m"
+      class="tui-space_right-3"
+      (click)="onRenameAnon(); context.complete()"
+    >
+      Выбрать
+    </button>
+    <button
+      tuiButton
+      appearance="secondary"
+      size="m"
+      (click)="context.complete()"
+    >
+      Отмена
+    </button>
+  </div>
 </ng-template>

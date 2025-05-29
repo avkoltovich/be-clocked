@@ -1,19 +1,19 @@
 <form class="tui-form__row_multi-fields" [formGroup]="formGroup">
-  <tui-input class="input-text tui-space_right-3" [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'l'" formControlName="name">
+  <tui-input class="input-text tui-space_right-3" [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'" formControlName="name">
     Фамилия Имя
     <input
       tuiTextfield
       type="text"
     >
   </tui-input>
-  <tui-input class="tui-space_right-3 input-number" formControlName="number" [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'l'">
+  <tui-input class="tui-space_right-3 input-number" formControlName="number" [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'">
     Номер
     <input
       tuiTextfield
       type="text"
     >
   </tui-input>
-  <tui-input *ngIf="mode === ModifyMode.create" class="input-number tui-space_right-3" formControlName="startNumber">
+  <tui-input *ngIf="mode === ModifyMode.create" class="input-number tui-space_right-3" formControlName="startNumber" tuiTextfieldSize="m">
     Стартовая позиция
     <input
       tuiTextfield
@@ -23,12 +23,12 @@
   <tui-select
     class="input-category tui-space_right-3"
     formControlName="category"
-    [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'l'"
+    [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'"
   >
     Категория
     <input
       tuiTextfield
-      [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'l'"
+      [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'"
       placeholder="Выберите категорию"
     />
     <tui-data-list-wrapper
@@ -57,7 +57,7 @@
     appearance="primary"
     (click)="onChangeRacer()"
     [disabled]="formGroup.invalid"
-    [size]="mode === ModifyMode.edit ? 's' : 'l'"
+    [size]="mode === ModifyMode.edit ? 's' : 'm'"
   >
     <tui-svg
       src="tuiIconPlusCircleLarge"

@@ -6,7 +6,7 @@ import {map, takeWhile, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
-import {IFinishCategory, IFinisher} from "../../models/interfaces";
+import {IFinishCategory, IFinisher, IRacer} from "../../models/interfaces";
 
 @Component({
   selector: "app-finish-race",
@@ -178,10 +178,10 @@ export class FinishRaceComponent implements OnInit {
     this.repositoryService.updateCurrentAnonIndex(this.anonIndex);
   }
 
-  public onAnonInList(content: any, i: number): void {
+  public openAnonSelectDialog(content: any, i: number): void {
     this.currentSelectedAnonIndex = i;
 
-    this.dialogs.open(content).subscribe({
+    this.dialogs.open(content, { size: 's' }).subscribe({
       complete: () => {
         this.anonNameControl.setValue("");
         this.dialogForm.markAsPristine();
@@ -207,5 +207,9 @@ export class FinishRaceComponent implements OnInit {
   public removeAnon(i: number) {
     this.anonFinishers.splice(i, 1);
     this.repositoryService.updateAnons(this.anonFinishers);
+  }
+
+  public openRemoveDialog(content: any): void {
+    this.dialogs.open(content, { size: 's' }).subscribe();
   }
 }

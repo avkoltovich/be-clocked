@@ -37,3 +37,11 @@
   display: flex;
   width: 100%;
 }
+
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}

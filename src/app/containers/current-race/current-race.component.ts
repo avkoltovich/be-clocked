@@ -65,7 +65,7 @@ export class CurrentRaceComponent {
   }
 
   public showDialog(content: any): void {
-    this.dialogs.open(content).subscribe();
+    this.dialogs.open(content, { size: 'auto' }).subscribe();
   }
 
   public generateAndDownloadJSON() {
