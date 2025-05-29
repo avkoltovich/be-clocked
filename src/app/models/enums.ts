@@ -14,4 +14,5 @@ export enum RepositoryKey {
   finisherNameList =  "finisherNameList",
   currentRacerIndex = "currentRacerIndex",
   currentAnonIndex =  "currentAnonIndex",
+  raceName =  "raceName",
 }

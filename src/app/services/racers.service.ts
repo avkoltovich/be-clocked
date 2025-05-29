@@ -82,8 +82,17 @@ export class RacersService {
     this.timerDelta = 0;
   }
 
-  public readRacersFromRepository() {
-    this.repositoryService.readRacersDataFromGoogleSheet().pipe(
+  // public readRacersFromRepository() {
+  //   this.repositoryService.readRacersDataFromGoogleSheet().pipe(
+  //     tap(({ racers, categoriesMap }) => {
+  //       this.updateRacers(racers);
+  //       this.updateCategoriesMap(categoriesMap);
+  //     })
+  //   ).subscribe()
+  // }
+
+  public readRacersFromGoogleSheet(url: string) {
+    this.repositoryService.readRacersDataFromGoogleSheet(url).pipe(
       tap(({ racers, categoriesMap }) => {
         this.updateRacers(racers);
         this.updateCategoriesMap(categoriesMap);

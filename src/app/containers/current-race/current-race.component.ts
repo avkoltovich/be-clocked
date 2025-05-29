@@ -4,6 +4,15 @@ import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
+import {FormControl, Validators} from "@angular/forms";
+
+enum Mode {
+  edit = 'edit',
+  pause = 'pause',
+  start = 'start',
+  finish = 'finish',
+  ready = 'ready',
+}
 
 @Component({
   selector: "app-current-race",
@@ -13,12 +22,15 @@ import {IRacer, ISyncJSON} from "../../models/interfaces";
 export class CurrentRaceComponent implements AfterViewInit {
   private timerSubscription: Subscription | null = null;
   readonly max = this.racersService.racerSecondsDelta;
+  readonly Mode = Mode;
   public value = this.racersService.racerSecondsDelta;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.value = value;
     })
   );
+
+  public mode = Mode.edit;
 
   public racers$ = this.racersService.racers$;
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
@@ -27,6 +39,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public downloadJsonHref: any;
+
+  public googleTableUrlControl = new FormControl('', Validators.required);
 
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
@@ -103,10 +117,15 @@ export class CurrentRaceComponent implements AfterViewInit {
 
     this.repositoryService.resetLS();
     this.racersService.resetRace();
-    this.racersService.readRacersFromRepository();
+
+    this.mode = Mode.edit;
   }
 
-  public showDialog(content: any): void {
+  public openResetDialog(content: any): void {
+    this.dialogs.open(content, {size: 'auto'}).subscribe();
+  }
+
+  public openGoogleTableDialog(content: any): void {
     this.dialogs.open(content, {size: 'auto'}).subscribe();
   }
 
@@ -130,5 +149,16 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public onContinuePrevRace() {
     this.racersService.updateRacers(this.repositoryService.readRacers())
+    this.mode = Mode.ready
+  }
+
+  public onGetGoogleTableData() {
+    const url = this.googleTableUrlControl.value;
+
+    if (typeof url === 'string' && url.startsWith('http')) {
+      this.racersService.readRacersFromGoogleSheet(url);
+      this.mode = Mode.ready
+      this.googleTableUrlControl.reset()
+    }
   }
 }

@@ -2,7 +2,7 @@
   <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
   <tui-notification
-    *ngIf="!(isAllMembersHasNumbers$ | async)"
+    *ngIf="!(isAllMembersHasNumbers$ | async) && racers$.value.length > 0"
     class="tui-space_bottom-5"
     status="error"
   >
