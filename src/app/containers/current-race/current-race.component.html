@@ -184,6 +184,35 @@
   </div>
 </ng-template>
 
+<ng-template
+  #newRace
+  let-observer
+>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Найдена предыдущая гонка, хотите продолжить?</p>
+
+  <div class="button-wrapper">
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="primary"
+      class="tui-space_right-3"
+      (click)="onContinuePrevRace(); observer.complete()"
+    >
+      Продолжить
+    </button>
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="secondary"
+      (click)="onNewRace(); observer.complete()"
+    >
+      Новая гонка
+    </button>
+  </div>
+</ng-template>
+
 <ng-template #downloadHint>
   <span><b>Сохранить</b><br> состояние гонки в JSON</span>
 </ng-template>

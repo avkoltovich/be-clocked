@@ -64,15 +64,9 @@ export class RacersService {
     if (starterNameList !== null) this.starterNameList = starterNameList;
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
-
-    if (this.repositoryService.checkRacers()) {
-      this.updateRacers(repositoryService.readRacers())
-    } else {
-      this.readRacersFromRepository();
-    }
   }
 
-  private readRacersFromRepository() {
+  public readRacersFromRepository() {
     this.repositoryService.readRacersDataFromGoogleSheet().pipe(
       tap(({ racers, categoriesMap }) => {
         this.updateRacers(racers);
