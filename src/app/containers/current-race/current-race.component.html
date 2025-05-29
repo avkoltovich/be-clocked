@@ -116,31 +116,36 @@
           ></tui-svg>
           Сброс
         </button>
-        <!--      <button-->
-        <!--        class="icon-button"-->
-        <!--        tuiButton-->
-        <!--        type="button"-->
-        <!--        appearance="flat"-->
-        <!--        (click)="generateAndDownloadJSON()"-->
-        <!--      >-->
-        <!--        <tui-svg-->
-        <!--          src="tuiIconDownloadLarge"-->
-        <!--          class="tui-space_right-2"-->
-        <!--        ></tui-svg>-->
-        <!--      </button>-->
-        <!--      <button-->
-        <!--        class="icon-button"-->
-        <!--        tuiButton-->
-        <!--        type="button"-->
-        <!--        appearance="flat"-->
-        <!--        (click)="setStateFromJSON()"-->
-        <!--      >-->
-        <!--        <tui-svg-->
-        <!--          src="tuiIconRefreshCcwLarge"-->
-        <!--          class="tui-space_right-2"-->
-        <!--        ></tui-svg>-->
-        <!--      </button>-->
+        <button
+          class="icon-button"
+          tuiButton
+          type="button"
+          appearance="flat"
+          tuiHintDirection="bottom"
+          [tuiHint]="downloadHint"
+          (click)="generateAndDownloadJSON()"
+        >
+          <tui-svg
+            src="tuiIconDownloadLarge"
+            class="tui-space_right-2"
+          ></tui-svg>
+        </button>
+        <button
+          class="icon-button"
+          tuiButton
+          type="button"
+          appearance="flat"
+          tuiHintDirection="bottom"
+          [tuiHint]="uploadHint"
+          (click)="fileInput.click()"
+        >
+          <tui-svg
+            src="tuiIconUploadLarge"
+            class="tui-space_right-2"
+          ></tui-svg>
+        </button>
         <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
+        <input type="file" accept=".json" #fileInput style="display: none">
       </div>
     </ng-container>
   </div>
@@ -178,3 +183,12 @@
     </button>
   </div>
 </ng-template>
+
+<ng-template #downloadHint>
+  <span><b>Сохранить</b><br> состояние гонки в JSON</span>
+</ng-template>
+
+<ng-template #uploadHint>
+  <span><b>Восстановить</b><br> состояние гонки из JSON</span>
+</ng-template>
+
