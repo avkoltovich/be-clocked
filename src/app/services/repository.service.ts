@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {RepositoryKey} from '../models/enums';
-import {map, tap} from "rxjs";
-import {HttpClient} from "@angular/common/http";
+import {map} from "rxjs";
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {GoogleTableService} from "./google-table.service";
 
@@ -11,11 +10,7 @@ import {GoogleTableService} from "./google-table.service";
 })
 export class RepositoryService {
 
-  private URL = "../../../../assets/racers.json";
-  private URL_SYNC_JSON = "../../../../assets/sync-data.json";
-
   constructor(
-    private httpClient: HttpClient,
     private googleTableService: GoogleTableService,
   ) {
   }
@@ -146,7 +141,7 @@ export class RepositoryService {
     const finisherNameList = this.readFinisherNameList();
 
     return {
-      name: "Кутаис 2023",
+      name: "Кутаис 2025",
       racers: racers ? racers : [],
       categoriesMap: categoriesMap ? categoriesMap : {},
       starters: starters ? starters : [],
@@ -160,47 +155,19 @@ export class RepositoryService {
     };
   }
 
-  public setStateFromJSON() {
-    this.httpClient.get<ISyncJSON>(this.URL_SYNC_JSON).pipe(
-      tap((data: ISyncJSON) => {
-        this.updateRacers(data.racers);
-        this.updateCategoriesMap(data.categoriesMap);
-        this.updateStartedRacers(data.starters);
-        this.updateStarterNameList(data.starterNameList);
-        this.updateCurrentRacerIndex(data.currentRacerIndex);
-        this.updateCurrentAnonIndex(data.currentAnonIndex);
-        this.updateFinishers(data.finishers);
-        this.updateFinishersByCategories(data.finishersByCategories);
-        this.updateAnons(data.anons);
-        this.updateFinisherNameList(data.finisherNameList);
+  public setStateFromJSON(data: ISyncJSON) {
+    this.updateRacers(data.racers);
+    this.updateCategoriesMap(data.categoriesMap);
+    this.updateStartedRacers(data.starters);
+    this.updateStarterNameList(data.starterNameList);
+    this.updateCurrentRacerIndex(data.currentRacerIndex);
+    this.updateCurrentAnonIndex(data.currentAnonIndex);
+    this.updateFinishers(data.finishers);
+    this.updateFinishersByCategories(data.finishersByCategories);
+    this.updateAnons(data.anons);
+    this.updateFinisherNameList(data.finisherNameList);
 
-        window.location.reload();
-      })
-    ).subscribe();
-  }
-
-  public readRacersDataFromJSON() {
-    return this.httpClient.get<IRacer[]>(this.URL).pipe(
-      map((data: IRacer[]) => {
-        const racers: IRacer[] = [];
-        const categoriesMap: Record<string, IRacer[]> = {};
-
-        data.forEach((racer) => {
-          racers.push(racer);
-          if (Array.isArray(categoriesMap[racer.category])) {
-            categoriesMap[racer.category].push(racer);
-          } else {
-            categoriesMap[racer.category] = [];
-            categoriesMap[racer.category].push(racer);
-          }
-        });
-
-        this.updateCategoriesMap(categoriesMap);
-        this.updateRacers(racers);
-
-        return {racers, categoriesMap};
-      })
-    )
+    window.location.reload();
   }
 
   public readRacersDataFromGoogleSheet() {

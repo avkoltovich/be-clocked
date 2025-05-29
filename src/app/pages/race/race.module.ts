@@ -15,11 +15,11 @@ import {
   TuiSelectModule
 } from "@taiga-ui/kit";
 import {
-    TuiButtonModule,
-    TuiDataListModule,
-    TuiLinkModule, TuiNotificationModule,
-    TuiSvgModule,
-    TuiTextfieldControllerModule
+  TuiButtonModule,
+  TuiDataListModule, TuiHintModule,
+  TuiLinkModule, TuiNotificationModule,
+  TuiSvgModule,
+  TuiTextfieldControllerModule
 } from "@taiga-ui/core";
 import {TuiReorderModule} from "@taiga-ui/addon-table";
 import {RacersService} from "../../services/racers.service";
@@ -38,27 +38,28 @@ import {ModifyRacerComponent} from "../../components/modify-racer/modify-racer.c
     RaceComponent,
     ModifyRacerComponent
   ],
-    imports: [
-        CommonModule,
-        RaceRoutingModule,
-        TuiIslandModule,
-        TuiInputModule,
-        TuiButtonModule,
-        TuiSvgModule,
-        TuiReorderModule,
-        TuiProgressModule,
-        ReactiveFormsModule,
-        TuiLetModule,
-        HttpClientModule,
-        TuiDataListModule,
-        TuiLinkModule,
-        TuiInputNumberModule,
-        NgOptimizedImage,
-        TuiSelectModule,
-        TuiDataListWrapperModule,
-        TuiTextfieldControllerModule,
-        TuiNotificationModule,
-    ],
+  imports: [
+    CommonModule,
+    RaceRoutingModule,
+    TuiIslandModule,
+    TuiInputModule,
+    TuiButtonModule,
+    TuiSvgModule,
+    TuiReorderModule,
+    TuiProgressModule,
+    ReactiveFormsModule,
+    TuiLetModule,
+    HttpClientModule,
+    TuiDataListModule,
+    TuiLinkModule,
+    TuiInputNumberModule,
+    NgOptimizedImage,
+    TuiSelectModule,
+    TuiDataListWrapperModule,
+    TuiTextfieldControllerModule,
+    TuiNotificationModule,
+    TuiHintModule,
+  ],
   providers: [
     RacersService
   ]
