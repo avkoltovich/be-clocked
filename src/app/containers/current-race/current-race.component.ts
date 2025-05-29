@@ -69,6 +69,9 @@ export class CurrentRaceComponent implements AfterViewInit {
     if (this.repositoryService.checkRacers()) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     }
+    else {
+      this.onReset();
+    }
   }
 
   public onStart() {
@@ -97,7 +100,8 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public onReset() {
     this.repositoryService.resetLS();
-    location.reload();
+    this.racersService.resetRace();
+    this.racersService.readRacersFromRepository();
   }
 
   public showDialog(content: any): void {
@@ -117,14 +121,12 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
+    if (racer === undefined || racer === null) return;
+
     return this.racersService.generateRacerNameAndNumberString(racer);
   }
 
   public onContinuePrevRace() {
     this.racersService.updateRacers(this.repositoryService.readRacers())
-  }
-
-  public onNewRace() {
-    this.racersService.readRacersFromRepository()
   }
 }

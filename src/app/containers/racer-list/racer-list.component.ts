@@ -28,7 +28,7 @@ export class RacerListComponent {
     category: new FormControl("", Validators.required)
   });
 
-  public numberControl = new FormControl("", Validators.required);
+  public numberControl = new FormControl(null, Validators.required);
 
   public formValue = {};
 

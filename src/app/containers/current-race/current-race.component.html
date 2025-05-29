@@ -168,7 +168,7 @@
       size="m"
       appearance="accent"
       class="tui-space_right-3"
-      (click)="onReset()"
+      (click)="onReset(); observer.complete()"
     >
       Сброс
     </button>
@@ -206,7 +206,7 @@
       type="button"
       size="m"
       appearance="secondary"
-      (click)="onNewRace(); observer.complete()"
+      (click)="onReset(); observer.complete()"
     >
       Новая гонка
     </button>
