@@ -43,6 +43,7 @@ export class ModifyRacerComponent implements OnChanges {
     if (name === null || name === "") return;
 
     this.changeRacer.emit({ name, startNumber, category: category ?? '', number: Number(number) });
+    this.formGroup.reset();
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
