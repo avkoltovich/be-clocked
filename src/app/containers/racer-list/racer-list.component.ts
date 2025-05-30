@@ -112,7 +112,7 @@ export class RacerListComponent {
       racer
     };
 
-    this.dialogs.open(content, { size: 's' }).subscribe();
+    this.dialogs.open(content, { size: 'auto' }).subscribe();
   }
 
   public up(i: number) {
@@ -141,7 +141,7 @@ export class RacerListComponent {
       racer
     };
 
-    this.dialogs.open(content, { size: 's' }).subscribe();
+    this.dialogs.open(content, { size: 'auto' }).subscribe();
   }
 
   public onSetNumber() {

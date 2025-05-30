@@ -240,7 +240,7 @@
   #reset
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Уверены, что хотите сбросить гонку?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Сбросить гонку?</p>
 
   <div class="button-wrapper">
     <button
@@ -269,7 +269,7 @@
   #newRace
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Найдена предыдущая гонка, хотите продолжить?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Найдена предыдущая гонка, хотите продолжить?</p>
 
   <div class="button-wrapper">
     <button
@@ -298,7 +298,7 @@
   #googleTableDialog
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-6">Введите ссылку на Google Таблицу</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-6 tui-space_top-0">Введите ссылку на Google Таблицу</p>
 
   <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" [formControl]="googleTableUrlFormControl">
     URL
@@ -336,7 +336,9 @@
   #setDelta
   let-context
 >
-  <div class="dialog-container">
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Укажите дельту</p>
+
+  <div class="button-wrapper">
     <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">
       Дельта
     </tui-input-number>
@@ -347,7 +349,7 @@
       (click)="onSetDelta(); context.complete()"
       [disabled]="deltaFormControl.invalid"
     >
-      Применить
+      ОК
     </button>
   </div>
 </ng-template>
