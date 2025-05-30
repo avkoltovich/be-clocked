@@ -1,4 +1,4 @@
-<tui-island size="l">
+<tui-island size="l" *ngIf="(starterNameList$ | async)!.length > 0">
   <h2 class="tui-island__title tui-space_bottom-5">Финишный протокол</h2>
   <form class="tui-form__row_multi-fields tui-space_bottom-8 form" [formGroup]="formGroup">
     <tui-input
@@ -54,11 +54,11 @@
     </button>
   </form>
   <ol
-    *ngIf="anonFinishers.length > 0"
+    *ngIf="anonFinishers$.value.length > 0"
     class="tui-list tui-list_ordered tui-list_large tui-space_bottom-8"
   >
     <li
-      *ngFor="let anon of anonFinishers; let i = index"
+      *ngFor="let anon of anonFinishers$.value; let i = index"
       class="tui-list__item item"
     >
       <button
@@ -111,17 +111,17 @@
 
     </li>
   </ol>
-  <ng-container *ngIf="finishers.length > 0">
+  <ng-container *ngIf="finishers$.value.length > 0">
     <h3>Абсолют</h3>
     <ol class="tui-list tui-list_ordered tui-list_large">
       <li
-        *ngFor="let finisher of finishers"
+        *ngFor="let finisher of finishers$.value"
         class="tui-list__item"
       >
         {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
       </li>
     </ol>
-    <ng-container *ngFor="let category of finishersByCategories">
+    <ng-container *ngFor="let category of finishersByCategories$.value">
       <ng-container *ngIf="category.finishers.length > 0">
         <h3>{{ category.name }}</h3>
         <ol class="tui-list tui-list_ordered tui-list_large">

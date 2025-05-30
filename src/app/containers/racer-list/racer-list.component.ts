@@ -5,6 +5,7 @@ import {map} from "rxjs";
 import {ModifyMode} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 import {TuiDialogService} from "@taiga-ui/core";
+import {FinishersService} from "../../services/finishers.service";
 
 interface ICurrentRacer {
   index: number;
@@ -44,6 +45,7 @@ export class RacerListComponent {
 
   constructor(
     private racersService: RacersService,
+    private finishersService: FinishersService,
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
   ) {
   }
@@ -110,7 +112,7 @@ export class RacerListComponent {
       racer
     };
 
-    this.dialogs.open(content, { size: 's' }).subscribe();
+    this.dialogs.open(content, { size: 'auto' }).subscribe();
   }
 
   public up(i: number) {
@@ -139,7 +141,7 @@ export class RacerListComponent {
       racer
     };
 
-    this.dialogs.open(content, { size: 's' }).subscribe();
+    this.dialogs.open(content, { size: 'auto' }).subscribe();
   }
 
   public onSetNumber() {
@@ -152,10 +154,10 @@ export class RacerListComponent {
   }
 
   public checkRacerStarted(racer: IRacer) {
-    return this.racersService.starterNameList.includes(this.generateRacerNameAndNumberString(racer));
+    return this.racersService.starterNameList$.value.includes(this.generateRacerNameAndNumberString(racer));
   }
 
   public checkRacerFinished(racer: IRacer) {
-    return this.racersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
+    return this.finishersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
   }
 }

@@ -30,7 +30,7 @@ export interface IStarter {
 }
 
 export interface ISyncJSON {
-  name: string;
+  raceName: string;
   racers: IRacer[];
   categoriesMap: Record<string, IRacer[]>;
   starters: IStarter[];
@@ -41,4 +41,5 @@ export interface ISyncJSON {
   finishersByCategories: IFinishCategory[];
   anons: IFinisher[];
   finisherNameList: string[];
+  racersDelta: number;
 }

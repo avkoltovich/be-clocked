@@ -17,6 +17,8 @@ export class ModifyRacerComponent implements OnChanges {
     category: new FormControl("", Validators.required)
   });
 
+  public isAddCategoryMode = false;
+
   @Input() categories$: Observable<string[]> = EMPTY;
 
   @Input() mode: ModifyMode = ModifyMode.create;
@@ -43,6 +45,7 @@ export class ModifyRacerComponent implements OnChanges {
     if (name === null || name === "") return;
 
     this.changeRacer.emit({ name, startNumber, category: category ?? '', number: Number(number) });
+    this.isAddCategoryMode = false;
     this.formGroup.reset();
   }
 

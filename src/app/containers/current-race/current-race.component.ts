@@ -1,9 +1,20 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Inject, TemplateRef, ViewChild} from "@angular/core";
 import {catchError, EMPTY, fromEvent, Subscription, switchMap, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
+import {FormControl, Validators} from "@angular/forms";
+import {FinishersService} from "../../services/finishers.service";
+import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
+
+enum Mode {
+  prepare = 'prepare',
+  pause = 'pause',
+  start = 'start',
+  finish = 'finish',
+  ready = 'ready',
+}
 
 @Component({
   selector: "app-current-race",
@@ -11,14 +22,20 @@ import {IRacer, ISyncJSON} from "../../models/interfaces";
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent implements AfterViewInit {
+  protected readonly SKIPPED_RACER_NAME = SKIPPED_RACER_NAME;
   private timerSubscription: Subscription | null = null;
-  readonly max = this.racersService.racerSecondsDelta;
+  readonly Mode = Mode;
+  public max = this.racersService.racerSecondsDelta;
   public value = this.racersService.racerSecondsDelta;
+  public raceName$ = this.racersService.raceName$;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.value = value;
     })
   );
+
+  public mode = Mode.prepare;
+  public isRaceNameEditing = false;
 
   public racers$ = this.racersService.racers$;
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
@@ -28,6 +45,10 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public downloadJsonHref: any;
 
+  public googleTableUrlFormControl = new FormControl('', Validators.required);
+  public raceNameFormControl = new FormControl('', Validators.required);
+  public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
+
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild('newRace', {read: TemplateRef})
@@ -36,8 +57,13 @@ export class CurrentRaceComponent implements AfterViewInit {
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
     private racersService: RacersService,
-    private repositoryService: RepositoryService
+    private repositoryService: RepositoryService,
+    private finishersService: FinishersService
   ) {
+  }
+
+  private resetDeltaTimer() {
+    this.value = this.racersService.racerSecondsDelta;
   }
 
   public ngAfterViewInit(): void {
@@ -72,6 +98,15 @@ export class CurrentRaceComponent implements AfterViewInit {
     else {
       this.onReset();
     }
+
+    this.racersService.isDeltaChanged$.pipe(
+      tap(() => {
+        const currentDelta = this.racersService.racerSecondsDelta;
+
+        this.max = currentDelta;
+        this.value = currentDelta;
+      })
+    ).subscribe()
   }
 
   public onStart() {
@@ -83,10 +118,10 @@ export class CurrentRaceComponent implements AfterViewInit {
     const currentRacers = this.racers$.value.slice();
     const skippedRacer = currentRacers[this.currentRacerIndex$.value];
 
-    if (skippedRacer.name === "Пропуск") return;
+    if (skippedRacer.name === SKIPPED_RACER_NAME) return;
 
     currentRacers.push(skippedRacer);
-    currentRacers[this.currentRacerIndex$.value].name = "Пропуск";
+    currentRacers[this.currentRacerIndex$.value].name = SKIPPED_RACER_NAME;
 
     this.racersService.racers$.next(currentRacers);
   }
@@ -96,6 +131,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.isRaceStarted$.next(false);
 
     this.timerSubscription?.unsubscribe();
+    this.resetDeltaTimer();
   }
 
   public onReset() {
@@ -103,10 +139,16 @@ export class CurrentRaceComponent implements AfterViewInit {
 
     this.repositoryService.resetLS();
     this.racersService.resetRace();
-    this.racersService.readRacersFromRepository();
+    this.finishersService.resetFinishersData();
+
+    this.mode = Mode.prepare;
   }
 
-  public showDialog(content: any): void {
+  public openResetDialog(content: any): void {
+    this.dialogs.open(content, {size: 'auto'}).subscribe();
+  }
+
+  public openGoogleTableDialog(content: any): void {
     this.dialogs.open(content, {size: 'auto'}).subscribe();
   }
 
@@ -119,7 +161,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public setStateFromJSON(data: ISyncJSON) {
-    this.repositoryService.setStateFromJSON(data);
+    this.racersService.setStateFromJSON(data);
+    this.onContinuePrevRace();
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
@@ -129,6 +172,46 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onContinuePrevRace() {
-    this.racersService.updateRacers(this.repositoryService.readRacers())
+    this.racersService.continuePrevRace();
+    this.mode = Mode.ready
+  }
+
+  public onGetGoogleTableData() {
+    const url = this.googleTableUrlFormControl.value;
+
+    if (typeof url === 'string' && url.startsWith('http')) {
+      this.racersService.readRacersFromGoogleSheet(url);
+      this.mode = Mode.ready
+      this.googleTableUrlFormControl.reset()
+    }
+  }
+
+  public onRaceNameClick(): void {
+    this.raceNameFormControl.patchValue(this.raceName$.value)
+    this.isRaceNameEditing = true
+  }
+
+  public onSetDelta(): void {
+    const delta = this.deltaFormControl.value;
+
+    if (delta === undefined || delta === null) return;
+
+    this.racersService.setRacersDelta(delta);
+    this.max = delta;
+    this.value = delta;
+  }
+
+  public openDeltaDialog(content: any): void {
+    this.dialogs.open(content, {size: 'auto'}).subscribe();
+  }
+
+  public onRaceNameSave() {
+    const raceName = this.raceNameFormControl.value;
+
+    if (raceName !== null) {
+      this.racersService.updateRaceName(raceName);
+      this.raceNameFormControl.reset();
+      this.isRaceNameEditing = false
+    }
   }
 }

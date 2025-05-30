@@ -3,9 +3,6 @@ import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
 import {IRegisterInfoGoogleSheet} from "../models/interfaces";
 
-const SHEET_ID = '1yBdk3nou_ReZQNkARxrJqbqlJEQWSbuvbUGT0KTG-QQ';
-const SHEET_NAME = 'Ответы на форму (1)';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -13,8 +10,19 @@ export class GoogleTableService {
 
   constructor(private http: HttpClient) {}
 
-  getSheetData() {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+  public extractGoogleSheetId(url: string) {
+    // Регулярное выражение для поиска ID
+    const regex = /\/d\/([a-zA-Z0-9-_]+)/;
+
+    // Ищем совпадение в строке
+    const match = url.match(regex);
+
+    // Если найдено совпадение, возвращаем первую группу (ID)
+    return match ? match[1] : null;
+  }
+
+  public getSheetData(sheetId: string) {
+    const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json`;
 
     return this.http.get(url, { responseType: 'text' }).pipe(
       map(response => this.parseGoogleData(response))

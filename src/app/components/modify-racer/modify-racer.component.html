@@ -20,7 +20,20 @@
       type="text"
     >
   </tui-input>
+  <tui-input
+    *ngIf="isAddCategoryMode"
+    class="input-category tui-space_right-3"
+    tuiAutoFocus
+    [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'" formControlName="category"
+  >
+    Категория
+    <input
+      tuiTextfield
+      type="text"
+    >
+  </tui-input>
   <tui-select
+    *ngIf="!isAddCategoryMode"
     class="input-category tui-space_right-3"
     formControlName="category"
     [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'"
@@ -31,10 +44,27 @@
       [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'"
       placeholder="Выберите категорию"
     />
-    <tui-data-list-wrapper
+    <tui-data-list
       *tuiDataList
-      [items]="categories$ | async"
-    ></tui-data-list-wrapper>
+    >
+      <button
+        tuiOption
+        (click)="isAddCategoryMode = true"
+      >
+        <tui-svg
+          src="tuiIconPlusCircleLarge"
+          class="icon tui-space_right-2"
+        ></tui-svg>
+        Добавить
+      </button>
+      <button
+        *ngFor="let item of categories$ | async"
+        tuiOption
+        [value]="item"
+      >
+        {{ item }}
+      </button>
+    </tui-data-list>
   </tui-select>
   <button
     *ngIf="mode === ModifyMode.edit"

@@ -1,7 +1,53 @@
 <tui-island size="l">
   <header class="header">
     <img ngSrc="../../../assets/mini-logo.png" width="50" height="50" alt="БЦКЛД">
-    <h2 class="tui-island__title h2">Кутаис 2025. ITT.</h2>
+    <ng-container *ngIf="isRaceNameEditing; else title">
+      <tui-input class="tui-space_right-1 title-input" tuiTextfieldSize="s" [formControl]="raceNameFormControl">
+        Название гонки
+        <input
+          tuiTextfield
+          type="text"
+        >
+      </tui-input>
+      <button
+        class="tui-space_right-1"
+        tuiButton
+        type="button"
+        appearance="secondary"
+        size="s"
+        (click)="isRaceNameEditing = false"
+      >
+        <tui-svg
+          src="tuiIconXCircleLarge"
+          class="tui-space_right-1"
+        ></tui-svg>
+        Отмена
+      </button>
+      <button
+        tuiButton
+        type="button"
+        appearance="primary"
+        size="s"
+        (click)="onRaceNameSave()"
+      >
+        <tui-svg
+          src="tuiIconPlusCircleLarge"
+          class="tui-space_right-2"
+        ></tui-svg>
+        Сохранить
+      </button>
+    </ng-container>
+    <ng-template #title>
+      <button
+        tuiLink
+        type="button"
+        [pseudo]="true"
+        (click)="onRaceNameClick()"
+      >
+        <h2 class="tui-island__title h2">{{ raceName$ | async }}</h2>
+      </button>
+
+    </ng-template>
   </header>
 
   <div class="grid" *tuiLet="racers$ | async as racers">
@@ -52,7 +98,20 @@
         *ngIf="(racers$ | async)!.length > (currentRacerIndex$ | async)!; else emptyList"
         tuiProgressLabel
       >
-        <span class="tui-text_h1">{{ value }}</span>
+        <ng-container *ngIf="isRaceStarted$.value; else deltaTemp">
+          <span class="tui-text_h1">{{ value }}</span>
+        </ng-container>
+
+        <ng-template #deltaTemp>
+          <button
+            tuiLink
+            type="button"
+            [pseudo]="true"
+            (click)="openDeltaDialog(setDelta)"
+          >
+            <span class="tui-text_h1">{{ value }}</span>
+          </button>
+        </ng-template>
 
         <tui-progress-circle
           color="url(#gradient)"
@@ -64,86 +123,108 @@
     </div>
     <ng-container *tuiLet="isAllMembersHasNumbers$ | async as isAllMembersHasNumbers">
       <div class="controls-container" *tuiLet="isRaceStarted$ | async as isRaceStarted">
-        <button
-          tuiButton
-          type="button"
-          appearance="primary"
-          (click)="onStart()"
-          [disabled]="isRaceStarted! || !isAllMembersHasNumbers!"
-        >
-          <tui-svg
-            src="tuiIconPlayCircleLarge"
-            class="tui-space_right-2"
-          ></tui-svg>
-          Старт
-        </button>
-        <button
-          tuiButton
-          type="button"
-          appearance="secondary"
-          (click)="onSkip()"
-          [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
-        >
-          <tui-svg
-            src="tuiIconFastForwardLarge"
-            class="tui-space_right-2"
-          ></tui-svg>
-          Пропуск
-        </button>
-        <button
-          tuiButton
-          type="button"
-          appearance="flat"
-          (click)="onPause()"
-          [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
-        >
-          <tui-svg
-            src="tuiIconPauseCircleLarge"
-            class="tui-space_right-2"
-          ></tui-svg>
-          Пауза
-        </button>
-        <button
-          tuiButton
-          type="button"
-          appearance="secondary-destructive"
-          (click)="showDialog(reset)"
-          [disabled]="isRaceStarted!"
-        >
-          <tui-svg
-            src="tuiIconStopCircleLarge"
-            class="tui-space_right-2"
-          ></tui-svg>
-          Сброс
-        </button>
-        <button
-          class="icon-button"
-          tuiButton
-          type="button"
-          appearance="flat"
-          tuiHintDirection="bottom"
-          [tuiHint]="downloadHint"
-          (click)="generateAndDownloadJSON()"
-        >
-          <tui-svg
-            src="tuiIconDownloadLarge"
-            class="tui-space_right-2"
-          ></tui-svg>
-        </button>
-        <button
-          class="icon-button"
-          tuiButton
-          type="button"
-          appearance="flat"
-          tuiHintDirection="bottom"
-          [tuiHint]="uploadHint"
-          (click)="fileInput.click()"
-        >
-          <tui-svg
-            src="tuiIconUploadLarge"
-            class="tui-space_right-2"
-          ></tui-svg>
-        </button>
+        <ng-container *ngIf="mode !== Mode.prepare">
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            (click)="onStart()"
+            [disabled]="isRaceStarted! || !isAllMembersHasNumbers!"
+          >
+            <tui-svg
+              src="tuiIconPlayCircleLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            Старт
+          </button>
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary"
+            (click)="onSkip()"
+            [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
+          >
+            <tui-svg
+              src="tuiIconFastForwardLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            {{ SKIPPED_RACER_NAME }}
+          </button>
+          <button
+            tuiButton
+            type="button"
+            appearance="flat"
+            (click)="onPause()"
+            [disabled]="(isAllMembersStarted$ | async)! || !isRaceStarted"
+          >
+            <tui-svg
+              src="tuiIconPauseCircleLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            Пауза
+          </button>
+          <button
+            tuiButton
+            type="button"
+            appearance="secondary-destructive"
+            (click)="openResetDialog(reset)"
+            [disabled]="isRaceStarted! && !isAllMembersStarted$.value"
+          >
+            <tui-svg
+              src="tuiIconStopCircleLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            Сброс
+          </button>
+          <button
+            class="icon-button"
+            tuiButton
+            type="button"
+            appearance="secondary"
+            tuiHintDirection="bottom"
+            [tuiHint]="downloadHint"
+            (click)="generateAndDownloadJSON()"
+          >
+            <tui-svg
+              src="tuiIconDownloadLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            Сохранить
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="mode === Mode.prepare">
+          <button
+            class="icon-button"
+            tuiButton
+            type="button"
+            appearance="secondary"
+            tuiHintDirection="bottom"
+            [tuiHint]="uploadHint"
+            (click)="fileInput.click()"
+          >
+            <tui-svg
+              src="tuiIconUploadLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            Загрузить состояние
+          </button>
+          <button
+            class="icon-button"
+            tuiButton
+            type="button"
+            appearance="secondary"
+            tuiHintDirection="bottom"
+            [tuiHint]="googleTableHint"
+            (click)="openGoogleTableDialog(googleTableDialog)"
+          >
+            <tui-svg
+              src="tuiIconTableLarge"
+              class="tui-space_right-2"
+            ></tui-svg>
+            Получить список участников
+          </button>
+        </ng-container>
         <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
         <input type="file" accept=".json" #fileInput style="display: none">
       </div>
@@ -152,14 +233,14 @@
 </tui-island>
 
 <ng-template #emptyList>
-  <p class="tui-text_h3 empty-list">Все участники стартовали</p>
+  <p *ngIf="mode !== Mode.prepare" class="tui-text_h3 empty-list">Все участники стартовали</p>
 </ng-template>
 
 <ng-template
   #reset
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Уверены, что хотите сбросить гонку?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Сбросить гонку?</p>
 
   <div class="button-wrapper">
     <button
@@ -188,7 +269,7 @@
   #newRace
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-10">Найдена предыдущая гонка, хотите продолжить?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Найдена предыдущая гонка, хотите продолжить?</p>
 
   <div class="button-wrapper">
     <button
@@ -213,11 +294,75 @@
   </div>
 </ng-template>
 
+<ng-template
+  #googleTableDialog
+  let-observer
+>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-6 tui-space_top-0">Введите ссылку на Google Таблицу</p>
+
+  <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" [formControl]="googleTableUrlFormControl">
+    URL
+    <input
+      tuiTextfield
+      type="text"
+    >
+  </tui-input>
+
+  <div class="button-wrapper">
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="primary"
+      class="tui-space_right-3"
+      (click)="onGetGoogleTableData(); observer.complete()"
+      [disabled]="googleTableUrlFormControl.invalid"
+    >
+      Получить список
+    </button>
+    <button
+      tuiButton
+      type="button"
+      size="m"
+      appearance="secondary"
+      (click)="observer.complete()"
+    >
+      Отмена
+    </button>
+  </div>
+</ng-template>
+
+<ng-template
+  #setDelta
+  let-context
+>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Укажите дельту</p>
+
+  <div class="button-wrapper">
+    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">
+      Дельта
+    </tui-input-number>
+    <button
+      tuiButton
+      appearance="primary"
+      size="m"
+      (click)="onSetDelta(); context.complete()"
+      [disabled]="deltaFormControl.invalid"
+    >
+      ОК
+    </button>
+  </div>
+</ng-template>
+
 <ng-template #downloadHint>
-  <span><b>Сохранить</b><br> состояние гонки в JSON</span>
+  <span><b>Сохранить состояние</b><br> состояние гонки в JSON</span>
 </ng-template>
 
 <ng-template #uploadHint>
-  <span><b>Восстановить</b><br> состояние гонки из JSON</span>
+  <span><b>Загрузить состояние</b><br> гонки из JSON</span>
+</ng-template>
+
+<ng-template #googleTableHint>
+  <span><b>Получить список участников</b><br>  из Google Таблицы</span>
 </ng-template>
 

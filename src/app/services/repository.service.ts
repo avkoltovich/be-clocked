@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {RepositoryKey} from '../models/enums';
-import {map} from "rxjs";
+import {map, of} from "rxjs";
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {GoogleTableService} from "./google-table.service";
+import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -76,6 +77,14 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.currentAnonIndex, JSON.stringify(value));
   }
 
+  public updateRaceName(value: string) {
+    window.localStorage.setItem(RepositoryKey.raceName, JSON.stringify(value));
+  }
+
+  public updateRacersDelta(value: number) {
+    window.localStorage.setItem(RepositoryKey.racersDelta, JSON.stringify(value));
+  }
+
   /**
    * Read
    */
@@ -120,6 +129,14 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.finisherNameList)!);
   }
 
+  public readRaceName() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.raceName)!);
+  }
+
+  public readRacersDelta() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.racersDelta)!);
+  }
+
   /**
    * Утилиты
    */
@@ -139,9 +156,11 @@ export class RepositoryService {
     const finishersByCategories = this.readFinishersByCategories();
     const anons = this.readAnons();
     const finisherNameList = this.readFinisherNameList();
+    const raceName = this.readRaceName();
+    const racersDelta = this.readRacersDelta();
 
     return {
-      name: "Кутаис 2025",
+      raceName: raceName ? raceName : DEFAULT_ITT_RACE_NAME,
       racers: racers ? racers : [],
       categoriesMap: categoriesMap ? categoriesMap : {},
       starters: starters ? starters : [],
@@ -151,7 +170,8 @@ export class RepositoryService {
       finishers: finishers ? finishers : [],
       finishersByCategories: finishersByCategories ? finishersByCategories : [],
       anons: anons ? anons : [],
-      finisherNameList: finisherNameList ? finisherNameList : []
+      finisherNameList: finisherNameList ? finisherNameList : [],
+      racersDelta: racersDelta ? racersDelta : RACERS_DELTA
     };
   }
 
@@ -166,12 +186,16 @@ export class RepositoryService {
     this.updateFinishersByCategories(data.finishersByCategories);
     this.updateAnons(data.anons);
     this.updateFinisherNameList(data.finisherNameList);
-
-    window.location.reload();
+    this.updateRaceName(data.raceName);
+    this.updateRacersDelta(data.racersDelta);
   }
 
-  public readRacersDataFromGoogleSheet() {
-    return this.googleTableService.getSheetData().pipe(
+  public readRacersDataFromGoogleSheet(url: string) {
+    const id = this.googleTableService.extractGoogleSheetId(url);
+
+    if (id === null) return of({racers: [], categoriesMap: {}});
+
+    return this.googleTableService.getSheetData(id).pipe(
       map((data) => {
         const racers: IRacer[] = [];
         const categoriesMap: Record<string, IRacer[]> = {};
