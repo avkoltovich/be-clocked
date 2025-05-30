@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {map} from "rxjs";
-import {IRegisterInfoGoogleSheet} from "../models/interfaces";
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +28,7 @@ export class GoogleTableService {
     );
   }
 
-  private parseGoogleData(response: string): IRegisterInfoGoogleSheet[] {
+  private parseGoogleData(response: string): Record<string, any>[] {
     // Удаление префикса безопасности
     const jsonStr = response.match(/.*?({.*})/)?.[1] || '{}';
 

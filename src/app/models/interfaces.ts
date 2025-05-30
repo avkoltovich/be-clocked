@@ -15,15 +15,6 @@ export interface IRacer {
   startNumber?: number;
 }
 
-export interface IRegisterInfoGoogleSheet {
-  Time: string;
-  Name: string;
-  Year: number;
-  City: string;
-  Team: string;
-  Category: string;
-}
-
 export interface IStarter {
   racer: IRacer;
   time: number;

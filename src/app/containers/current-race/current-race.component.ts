@@ -1,10 +1,10 @@
 import {AfterViewInit, Component, ElementRef, Inject, TemplateRef, ViewChild} from "@angular/core";
 import {catchError, EMPTY, fromEvent, Subscription, switchMap, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
-import {TuiDialogService} from "@taiga-ui/core";
+import {TuiAlertService, TuiDialogService, TuiNotification} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
-import {FormControl, Validators} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 
@@ -49,7 +49,11 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public downloadJsonHref: any;
 
-  public googleTableUrlFormControl = new FormControl('', Validators.required);
+  public googleTableForm: FormGroup = new FormGroup({
+    googleTableUrl: new FormControl("", Validators.required),
+    name: new FormControl("", Validators.required),
+    category: new FormControl("", Validators.required),
+  })
   public raceNameFormControl = new FormControl('', Validators.required);
   public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
 
@@ -60,6 +64,7 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+    @Inject(TuiAlertService) private readonly alerts: TuiAlertService,
     private racersService: RacersService,
     private repositoryService: RepositoryService,
     private finishersService: FinishersService
@@ -68,6 +73,13 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   private resetDeltaTimer() {
     this.value = this.racersService.racerSecondsDelta;
+  }
+
+  private checkIsString(...args: any[]) {
+    let isString = true;
+    args.forEach(arg => {isString = isString && typeof arg === "string"})
+
+    return isString;
   }
 
   public ngAfterViewInit(): void {
@@ -181,13 +193,28 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onGetGoogleTableData() {
-    const url = this.googleTableUrlFormControl.value;
+    const url = this.googleTableForm.controls['googleTableUrl'].value;
+    const name = this.googleTableForm.controls['name'].value;
+    const category = this.googleTableForm.controls['category'].value;
 
-    if (typeof url === 'string' && url.startsWith('http')) {
-      this.racersService.readRacersFromGoogleSheet(url);
-      this.mode = Mode.ready
-      this.googleTableUrlFormControl.reset()
+    if (this.checkIsString(url, name, category) && url.startsWith('http')) {
+      this.racersService.readRacersFromGoogleSheet(url, name, category).pipe(
+        tap(({ racers, categoriesMap }) => {
+          if (racers.length === 0 || Object.keys(categoriesMap).length === 0) {
+            this.showGoogleTableAlert();
+          } else {
+            this.mode = Mode.ready;
+            this.googleTableForm.reset();
+          }
+        })
+      ).subscribe();
     }
+  }
+
+  public showGoogleTableAlert(): void {
+    this.alerts
+      .open('Не удалось получить данные из <strong>Google Таблицы</strong>.<br> Проверьте <strong>URL</strong> и название <strong>столбцов</strong>', { label: 'Ошибка!', status: TuiNotification.Error, autoClose: false })
+      .subscribe();
   }
 
   public onRaceNameClick(): void {

@@ -18,18 +18,12 @@ export class RepositoryService {
 
   private convertCategoryName(registerCategoryName: string): string {
     switch (registerCategoryName) {
-      case 'МТБ':
-        return 'МТБ'
       case 'Шоссе (групповой велосипед)':
         return 'Шоссе'
       case 'Шоссе (разделочник или групповой с лежаком)':
         return 'Шоссе ТТ'
-      case 'Девушки':
-        return 'Девушки'
-      case 'Ветераны':
-        return 'Ветераны'
       default:
-        return 'Без категории'
+        return registerCategoryName
     }
   }
 
@@ -190,7 +184,7 @@ export class RepositoryService {
     this.updateRacersDelta(data.racersDelta);
   }
 
-  public readRacersDataFromGoogleSheet(url: string) {
+  public readRacersDataFromGoogleSheet(url: string, cellName: string, cellCategory: string) {
     const id = this.googleTableService.extractGoogleSheetId(url);
 
     if (id === null) return of({racers: [], categoriesMap: {}});
@@ -201,24 +195,32 @@ export class RepositoryService {
         const categoriesMap: Record<string, IRacer[]> = {};
 
         data.forEach((registerInfo) => {
-          const racer = {
-            name: registerInfo.Name,
-            category: this.convertCategoryName(registerInfo.Category),
-            number: null
-          }
-          racers.push(racer);
-          if (Array.isArray(categoriesMap[racer.category])) {
-            categoriesMap[racer.category].push(racer);
-          } else {
-            categoriesMap[racer.category] = [];
-            categoriesMap[racer.category].push(racer);
+          const name = registerInfo[cellName];
+          const category = this.convertCategoryName(registerInfo[cellCategory]);
+
+          if (name && category) {
+            const racer = {
+              name,
+              category: this.convertCategoryName(registerInfo[cellCategory]),
+              number: null
+            }
+            racers.push(racer);
+
+            if (Array.isArray(categoriesMap[racer.category])) {
+              categoriesMap[racer.category].push(racer);
+            } else {
+              categoriesMap[racer.category] = [];
+              categoriesMap[racer.category].push(racer);
+            }
           }
         });
 
-        this.updateCategoriesMap(categoriesMap);
-        this.updateRacers(racers);
+        if (racers.length > 0) {
+          this.updateCategoriesMap(categoriesMap);
+          this.updateRacers(racers);
+        }
 
-        return {racers, categoriesMap};
+        return { racers, categoriesMap };
       }),
     )
   }
