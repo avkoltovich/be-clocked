@@ -36,7 +36,12 @@ export class AddRacerComponent {
     this.racersService.updateRacers(currentList)
 
     const currentCategoryMap = { ...this.racersService.categoriesMap$.value };
-    currentCategoryMap[racer.category].push(racer);
+
+    if (currentCategoryMap[racer.category] !== undefined) {
+      currentCategoryMap[racer.category].push(racer);
+    } else {
+      currentCategoryMap[racer.category] = [racer];
+    }
 
     this.racersService.updateCategoriesMap(currentCategoryMap)
 
