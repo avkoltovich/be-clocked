@@ -37,7 +37,11 @@ export class CurrentRaceComponent implements AfterViewInit {
   public mode = Mode.prepare;
   public isRaceNameEditing = false;
 
-  public racers$ = this.racersService.racers$;
+  public racers$ = this.racersService.racers$.pipe(
+    tap((racers) => {
+      if (racers.length > 0) this.mode = Mode.ready;
+    })
+  );
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
   public isRaceStarted$ = this.racersService.isRaceStarted$;
   public isRacePaused$ = this.racersService.isRacePaused$;
@@ -115,7 +119,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onSkip() {
-    const currentRacers = this.racers$.value.slice();
+    const currentRacers = this.racersService.racers$.value.slice();
     const skippedRacer = currentRacers[this.currentRacerIndex$.value];
 
     if (skippedRacer.name === SKIPPED_RACER_NAME) return;
