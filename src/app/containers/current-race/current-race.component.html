@@ -1,7 +1,53 @@
 <tui-island size="l">
   <header class="header">
     <img ngSrc="../../../assets/mini-logo.png" width="50" height="50" alt="БЦКЛД">
-    <h2 class="tui-island__title h2">Кутаис 2025. ITT.</h2>
+    <ng-container *ngIf="isRaceNameEditing; else title">
+      <tui-input class="tui-space_right-1 title-input" tuiTextfieldSize="s" [formControl]="raceNameFormControl">
+        Название гонки
+        <input
+          tuiTextfield
+          type="text"
+        >
+      </tui-input>
+      <button
+        class="tui-space_right-1"
+        tuiButton
+        type="button"
+        appearance="secondary"
+        size="s"
+        (click)="isRaceNameEditing = false"
+      >
+        <tui-svg
+          src="tuiIconXCircleLarge"
+          class="tui-space_right-1"
+        ></tui-svg>
+        Отмена
+      </button>
+      <button
+        tuiButton
+        type="button"
+        appearance="primary"
+        size="s"
+        (click)="onRaceNameSave()"
+      >
+        <tui-svg
+          src="tuiIconPlusCircleLarge"
+          class="tui-space_right-2"
+        ></tui-svg>
+        Сохранить
+      </button>
+    </ng-container>
+    <ng-template #title>
+      <button
+        tuiLink
+        type="button"
+        [pseudo]="true"
+        (click)="onRaceNameClick()"
+      >
+        <h2 class="tui-island__title h2">{{ raceName$ | async }}</h2>
+      </button>
+
+    </ng-template>
   </header>
 
   <div class="grid" *tuiLet="racers$ | async as racers">
@@ -64,7 +110,7 @@
     </div>
     <ng-container *tuiLet="isAllMembersHasNumbers$ | async as isAllMembersHasNumbers">
       <div class="controls-container" *tuiLet="isRaceStarted$ | async as isRaceStarted">
-        <ng-container *ngIf="mode !== Mode.edit">
+        <ng-container *ngIf="mode !== Mode.prepare">
           <button
             tuiButton
             type="button"
@@ -109,7 +155,7 @@
             type="button"
             appearance="secondary-destructive"
             (click)="openResetDialog(reset)"
-            [disabled]="isRaceStarted!"
+            [disabled]="isRaceStarted! && !isAllMembersStarted$.value"
           >
             <tui-svg
               src="tuiIconStopCircleLarge"
@@ -134,7 +180,7 @@
           </button>
         </ng-container>
 
-        <ng-container *ngIf="mode === Mode.edit">
+        <ng-container *ngIf="mode === Mode.prepare">
           <button
             class="icon-button"
             tuiButton
@@ -174,7 +220,7 @@
 </tui-island>
 
 <ng-template #emptyList>
-  <p class="tui-text_h3 empty-list">Все участники стартовали</p>
+  <p *ngIf="mode !== Mode.prepare" class="tui-text_h3 empty-list">Все участники стартовали</p>
 </ng-template>
 
 <ng-template
@@ -241,7 +287,7 @@
 >
   <p class="dialog-description tui-text_h6 tui-space_bottom-6">Введите ссылку на Google Таблицу</p>
 
-  <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" [formControl]="googleTableUrlControl">
+  <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" [formControl]="googleTableUrlFormControl">
     URL
     <input
       tuiTextfield
@@ -257,7 +303,7 @@
       appearance="primary"
       class="tui-space_right-3"
       (click)="onGetGoogleTableData(); observer.complete()"
-      [disabled]="googleTableUrlControl.invalid"
+      [disabled]="googleTableUrlFormControl.invalid"
     >
       Получить список
     </button>

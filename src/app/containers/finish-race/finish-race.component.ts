@@ -5,8 +5,7 @@ import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
 import {map, takeWhile, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
-import {RepositoryService} from "../../services/repository.service";
-import {IFinishCategory, IFinisher, IRacer} from "../../models/interfaces";
+import {FinishersService} from "../../services/finishers.service";
 
 @Component({
   selector: "app-finish-race",
@@ -20,17 +19,17 @@ export class FinishRaceComponent implements OnInit {
   public formGroup = new FormGroup({
     racer: this.racerControl
   });
-  public finishers: IFinisher[] = [];
-  public finishersByCategories: IFinishCategory[] = [];
-  public anonFinishers: IFinisher[] = [];
-  public anonIndex = 0;
+  public finishers$ = this.finishersService.finishers$;
+  public finishersByCategories$ = this.finishersService.finishersByCategories$;
+  public anonFinishers$ = this.finishersService.anonFinishers$;
+  public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
   public isRaceStarted$ = this.racersService.isRaceStarted$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
       const difference = this.racersService.starterNameList.filter((racer) => {
-        return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
+        return !this.finishersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
 
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
@@ -49,7 +48,7 @@ export class FinishRaceComponent implements OnInit {
   public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
     map(value => {
       const difference = this.racersService.starterNameList.filter((racer) => {
-        return !this.racersService.finisherNameList.includes(racer) && racer !== "Пропуск";
+        return !this.finishersService.finisherNameList.includes(racer) && racer !== "Пропуск";
       });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
@@ -70,56 +69,40 @@ export class FinishRaceComponent implements OnInit {
 
       if (categories.length > 0) {
         categories.forEach((category) => {
-          this.finishersByCategories.push({
+          const finishersByCategory = this.finishersByCategories$.value.slice()
+
+          finishersByCategory.push({
             name: category,
             finishers: []
           });
+
+          this.finishersByCategories$.next(finishersByCategory);
         });
       }
-    }),
-    takeWhile((categoriesMap) => Object.keys(categoriesMap).length === 0)
+    })
   );
 
   constructor(private racersService: RacersService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-              private repositoryService: RepositoryService) {
+              private finishersService: FinishersService) {
   }
 
   public ngOnInit() {
-    const finishers = this.repositoryService.readFinishers();
-    const anonFinishers = this.repositoryService.readAnons();
-    const anonIndex = this.repositoryService.readCurrentAnonIndex();
-    const finishersByCategories = this.repositoryService.readFinishersByCategories();
-
-    if (finishers !== null) {
-      this.finishers = finishers;
-    }
-
-    if (anonFinishers !== null) {
-      this.anonFinishers = anonFinishers;
-    }
-
-    if (anonIndex !== null) {
-      this.anonIndex = anonIndex;
-    }
-
-    if (finishersByCategories !== null) {
-      this.finishersByCategories = finishersByCategories;
-    } else {
-      this.categoriesMap$.subscribe();
-    }
+    this.categoriesMap$.subscribe();
   }
 
   public onFinish(currentTime = Date.now(), currentRacerNameAndNumber = this.formGroup.controls.racer.value) {
     this.racerControl.setValue("");
 
     if (currentRacerNameAndNumber !== null && currentRacerNameAndNumber !== "") {
-      this.racersService.finisherNameList.push(currentRacerNameAndNumber);
-      this.repositoryService.updateFinisherNameList(this.racersService.finisherNameList);
+      const finisherNameList = this.finishersService.finisherNameList.slice();
+      finisherNameList.push(currentRacerNameAndNumber);
+
+      this.finishersService.updateFinisherNameList(finisherNameList);
       const currentRacer = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
 
-      const finishers = this.finishers.slice();
+      const finishers = this.finishers$.value.slice();
       const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === currentRacer.number);
 
       if (startedData === undefined) return;
@@ -133,8 +116,7 @@ export class FinishRaceComponent implements OnInit {
 
       finishers.sort((a, b) => a.time - b.time);
 
-      this.finishers = finishers.slice();
-      this.repositoryService.updateFinishers(this.finishers);
+      this.finishersService.updateFinishers(finishers.slice());
 
       let categoryName = "";
 
@@ -145,14 +127,18 @@ export class FinishRaceComponent implements OnInit {
         }
       }
 
-      const categoryIndex = this.finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
-      this.finishersByCategories[categoryIndex].finishers.push({
+      const finishersByCategories = this.finishersByCategories$.value.slice();
+
+      const categoryIndex = finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
+
+      finishersByCategories[categoryIndex].finishers.push({
         name: currentRacerNameAndNumber,
         time: actualTime
       });
 
-      this.finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
-      this.repositoryService.updateFinishersByCategories(this.finishersByCategories);
+      finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
+
+      this.finishersService.updateFinishersByCategories(finishersByCategories);
     }
   }
 
@@ -166,23 +152,24 @@ export class FinishRaceComponent implements OnInit {
   };
 
   public onAnonButton() {
-    this.anonIndex++;
+    const anonIndex = this.anonIndex$.value + 1;
     const time = Date.now();
-    const name = `Аноним ${this.anonIndex}`;
+    const name = `Аноним ${anonIndex}`;
 
-    this.anonFinishers.push({
+    const anonFinishers = this.anonFinishers$.value.slice();
+
+    anonFinishers.push({
       name,
       time
     });
 
-    this.repositoryService.updateAnons(this.anonFinishers);
-    this.repositoryService.updateCurrentAnonIndex(this.anonIndex);
+    this.finishersService.updateAnonData(anonFinishers, anonIndex);
   }
 
   public openAnonSelectDialog(content: any, i: number): void {
     this.currentSelectedAnonIndex = i;
 
-    this.dialogs.open(content, { size: 's' }).subscribe({
+    this.dialogs.open(content, {size: 's'}).subscribe({
       complete: () => {
         this.anonNameControl.setValue("");
         this.dialogForm.markAsPristine();
@@ -193,24 +180,28 @@ export class FinishRaceComponent implements OnInit {
   public onRenameAnon() {
     if (this.currentSelectedAnonIndex === null) return;
 
+    const anonFinishers = this.anonFinishers$.value.slice();
     const currentNameForAnon = this.anonNameControl.value;
-    const currentSelectedAnon = this.anonFinishers[this.currentSelectedAnonIndex];
+    const currentSelectedAnon = anonFinishers[this.currentSelectedAnonIndex];
 
     if (currentNameForAnon === null || currentNameForAnon === "") return;
 
     this.onFinish(currentSelectedAnon.time, currentNameForAnon);
 
-    this.anonFinishers.splice(this.currentSelectedAnonIndex, 1);
+    anonFinishers.splice(this.currentSelectedAnonIndex, 1);
     this.currentSelectedAnonIndex = null;
-    this.repositoryService.updateAnons(this.anonFinishers);
+
+    this.finishersService.updateAnonData(anonFinishers);
   }
 
   public removeAnon(i: number) {
-    this.anonFinishers.splice(i, 1);
-    this.repositoryService.updateAnons(this.anonFinishers);
+    const anonFinishers = this.anonFinishers$.value.slice();
+
+    anonFinishers.splice(i, 1);
+    this.finishersService.updateAnonData(anonFinishers);
   }
 
   public openRemoveDialog(content: any): void {
-    this.dialogs.open(content, { size: 's' }).subscribe();
+    this.dialogs.open(content, {size: 's'}).subscribe();
   }
 }

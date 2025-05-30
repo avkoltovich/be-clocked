@@ -3,6 +3,7 @@ import {RepositoryKey} from '../models/enums';
 import {map, of} from "rxjs";
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {GoogleTableService} from "./google-table.service";
+import {DEFAULT_ITT_RACE_NAME} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -150,7 +151,7 @@ export class RepositoryService {
     const raceName = this.readRaceName();
 
     return {
-      raceName: raceName ? raceName : '',
+      raceName: raceName ? raceName : DEFAULT_ITT_RACE_NAME,
       racers: racers ? racers : [],
       categoriesMap: categoriesMap ? categoriesMap : {},
       starters: starters ? starters : [],

@@ -1,13 +1,14 @@
-import {AfterViewInit, Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, ElementRef, Inject, TemplateRef, ViewChild} from "@angular/core";
 import {catchError, EMPTY, fromEvent, Subscription, switchMap, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
 import {FormControl, Validators} from "@angular/forms";
+import {FinishersService} from "../../services/finishers.service";
 
 enum Mode {
-  edit = 'edit',
+  prepare = 'prepare',
   pause = 'pause',
   start = 'start',
   finish = 'finish',
@@ -24,13 +25,15 @@ export class CurrentRaceComponent implements AfterViewInit {
   readonly max = this.racersService.racerSecondsDelta;
   readonly Mode = Mode;
   public value = this.racersService.racerSecondsDelta;
+  public raceName$ = this.racersService.raceName$;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.value = value;
     })
   );
 
-  public mode = Mode.edit;
+  public mode = Mode.prepare;
+  public isRaceNameEditing = false;
 
   public racers$ = this.racersService.racers$;
   public currentRacerIndex$ = this.racersService.currentRacerIndex$;
@@ -40,7 +43,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public downloadJsonHref: any;
 
-  public googleTableUrlControl = new FormControl('', Validators.required);
+  public googleTableUrlFormControl = new FormControl('', Validators.required);
+  public raceNameFormControl = new FormControl('', Validators.required);
 
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
@@ -50,7 +54,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
     private racersService: RacersService,
-    private repositoryService: RepositoryService
+    private repositoryService: RepositoryService,
+    private finishersService: FinishersService
   ) {
   }
 
@@ -117,8 +122,9 @@ export class CurrentRaceComponent implements AfterViewInit {
 
     this.repositoryService.resetLS();
     this.racersService.resetRace();
+    this.finishersService.resetFinishersData();
 
-    this.mode = Mode.edit;
+    this.mode = Mode.prepare;
   }
 
   public openResetDialog(content: any): void {
@@ -138,7 +144,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public setStateFromJSON(data: ISyncJSON) {
-    this.repositoryService.setStateFromJSON(data);
+    this.racersService.setStateFromJSON(data);
+    this.onContinuePrevRace();
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
@@ -148,17 +155,34 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onContinuePrevRace() {
-    this.racersService.updateRacers(this.repositoryService.readRacers())
+    this.racersService.continuePrevRace();
     this.mode = Mode.ready
   }
 
   public onGetGoogleTableData() {
-    const url = this.googleTableUrlControl.value;
+    const url = this.googleTableUrlFormControl.value;
 
     if (typeof url === 'string' && url.startsWith('http')) {
       this.racersService.readRacersFromGoogleSheet(url);
       this.mode = Mode.ready
-      this.googleTableUrlControl.reset()
+      this.googleTableUrlFormControl.reset()
     }
   }
+
+  public onRaceNameClick(): void {
+    this.raceNameFormControl.patchValue(this.raceName$.value)
+    this.isRaceNameEditing = true
+  }
+
+  public onRaceNameSave() {
+    const raceName = this.raceNameFormControl.value;
+
+    if (raceName !== null) {
+      this.racersService.updateRaceName(raceName);
+      this.raceNameFormControl.reset();
+      this.isRaceNameEditing = false
+    }
+  }
+
+
 }
