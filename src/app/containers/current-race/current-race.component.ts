@@ -1,12 +1,13 @@
 import {AfterViewInit, Component, ElementRef, Inject, TemplateRef, ViewChild} from "@angular/core";
-import {catchError, EMPTY, fromEvent, Subscription, switchMap, tap} from "rxjs";
+import {catchError, EMPTY, finalize, fromEvent, Subscription, switchMap, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiAlertService, TuiDialogService, TuiNotification} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormControl, Validators} from "@angular/forms";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
+import {GoogleTableService} from "../../services/google-table.service";
 
 enum Mode {
   prepare = 'prepare',
@@ -27,47 +28,58 @@ export class CurrentRaceComponent implements AfterViewInit {
   readonly Mode = Mode;
   public max = this.racersService.racerSecondsDelta;
   public value = this.racersService.racerSecondsDelta;
+
+  /**
+   * Состояние компонента
+   */
+  public mode = Mode.prepare;
+  public isRaceNameEditing = false;
+  public currentStepperIndex = 0;
+
+  /**
+   * Потоки
+   */
+  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
+  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public isRacePaused$ = this.racersService.isRacePaused$;
+  public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
+  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public raceName$ = this.racersService.raceName$;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.value = value;
     })
   );
-
-  public mode = Mode.prepare;
-  public isRaceNameEditing = false;
-
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
       if (racers.length > 0) this.mode = Mode.ready;
     })
   );
-  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
-  public isRacePaused$ = this.racersService.isRacePaused$;
-  public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
-  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
-  public downloadJsonHref: any;
 
-  public googleTableForm: FormGroup = new FormGroup({
-    googleTableUrl: new FormControl("", Validators.required),
-    name: new FormControl("", Validators.required),
-    category: new FormControl("", Validators.required),
-  })
+  public downloadJsonHref: string = '';
   public raceNameFormControl = new FormControl('', Validators.required);
   public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
 
+  /**
+   * Google Таблицы
+   */
+  public googleTableSheetUrlControl = new FormControl("", Validators.required);
+  public googleTableSheetData: Record<string, string>[] = []
+  public googleTableSheetKeys: string[] = [];
+  public googleTableSheetKeyMap: Record<string, string> = {}
+  public isGoogleTableSheetLoading: boolean = false;
+
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
-  @ViewChild('newRace', {read: TemplateRef})
-  newRace: TemplateRef<any> | undefined;
+  @ViewChild('newRace') newRace: TemplateRef<any> | undefined;
 
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
     @Inject(TuiAlertService) private readonly alerts: TuiAlertService,
     private racersService: RacersService,
     private repositoryService: RepositoryService,
-    private finishersService: FinishersService
+    private finishersService: FinishersService,
+    private googleTableService: GoogleTableService,
   ) {
   }
 
@@ -75,11 +87,9 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.value = this.racersService.racerSecondsDelta;
   }
 
-  private checkIsString(...args: any[]) {
-    let isString = true;
-    args.forEach(arg => {isString = isString && typeof arg === "string"})
-
-    return isString;
+  private setDataFromGoogleTable(): void {
+    const { name, category } = this.googleTableSheetKeyMap
+    this.racersService.setRacersFromGoogleSheet(this.googleTableSheetData, name, category);
   }
 
   public ngAfterViewInit(): void {
@@ -125,6 +135,9 @@ export class CurrentRaceComponent implements AfterViewInit {
     ).subscribe()
   }
 
+  /**
+   * TODO: Вынести блок кнопок в отдельный компонент
+   */
   public onStart() {
     this.racersService.isRaceStarted$.next(true);
     this.timerSubscription = this.timer$.subscribe();
@@ -193,27 +206,49 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onGetGoogleTableData() {
-    const url = this.googleTableForm.controls['googleTableUrl'].value;
-    const name = this.googleTableForm.controls['name'].value;
-    const category = this.googleTableForm.controls['category'].value;
+    this.googleTableSheetUrlControl.disable()
+    this.isGoogleTableSheetLoading = true;
 
-    if (this.checkIsString(url, name, category) && url.startsWith('http')) {
-      this.racersService.readRacersFromGoogleSheet(url, name, category).pipe(
-        tap(({ racers, categoriesMap }) => {
-          if (racers.length === 0 || Object.keys(categoriesMap).length === 0) {
-            this.showGoogleTableAlert();
-          } else {
-            this.mode = Mode.ready;
-            this.googleTableForm.reset();
-          }
-        })
-      ).subscribe();
+    const url = this.googleTableSheetUrlControl.value;
+
+    if (typeof url === "string" && url.startsWith('http')) {
+      const id = this.googleTableService.extractGoogleSheetId(url);
+
+      if (id !== null) {
+        this.googleTableService.getSheetData(id).pipe(
+          tap((data) => {
+            if (data && data.length > 0) {
+              this.googleTableSheetData = data;
+              this.googleTableSheetKeys = Object.keys(data[0]);
+            }
+          }),
+          finalize(() => {
+            this.nextStep();
+            this.isGoogleTableSheetLoading = false;
+            this.googleTableSheetUrlControl.enable();
+            this.googleTableSheetUrlControl.reset();
+          })
+        ).subscribe();
+
+        return;
+      }
     }
+
+    this.showGoogleTableAlert();
+    this.isGoogleTableSheetLoading = false;
+    this.googleTableSheetUrlControl.enable();
+  }
+
+  public onGoogleCellClick(index: number, cellName: string) {
+    this.googleTableSheetKeyMap[cellName] = this.googleTableSheetKeys[index];
+    this.googleTableSheetKeys.splice(index, 1);
   }
 
   public showGoogleTableAlert(): void {
     this.alerts
-      .open('Не удалось получить данные из <strong>Google Таблицы</strong>.<br> Проверьте <strong>URL</strong> и название <strong>столбцов</strong>', { label: 'Ошибка!', status: TuiNotification.Error, autoClose: false })
+      .open(
+        'Не удалось получить данные из <strong>Google Таблицы</strong>.<br> Проверьте <strong>URL</strong>',
+        { label: 'Ошибка!', status: TuiNotification.Error, autoClose: false })
       .subscribe();
   }
 
@@ -244,5 +279,15 @@ export class CurrentRaceComponent implements AfterViewInit {
       this.raceNameFormControl.reset();
       this.isRaceNameEditing = false
     }
+  }
+
+  public nextStep(): void {
+    this.currentStepperIndex = this.currentStepperIndex + 1;
+  }
+
+  public completeSteps(): void {
+    this.nextStep();
+    this.setDataFromGoogleTable();
+    this.currentStepperIndex = 0;
   }
 }

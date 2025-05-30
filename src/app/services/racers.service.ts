@@ -79,6 +79,17 @@ export class RacersService {
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
   }
 
+  private convertCategoryName(registerCategoryName: string): string {
+    switch (registerCategoryName) {
+      case 'Шоссе (групповой велосипед)':
+        return 'Шоссе'
+      case 'Шоссе (разделочник или групповой с лежаком)':
+        return 'Шоссе ТТ'
+      default:
+        return registerCategoryName
+    }
+  }
+
   public setStateFromJSON(data: ISyncJSON) {
     this.repositoryService.setStateFromJSON(data);
     this.initRaceData()
@@ -110,15 +121,37 @@ export class RacersService {
     this.isDeltaChanged$.next(true);
   }
 
-  public readRacersFromGoogleSheet(url: string, name: string, category: string) {
-    return this.repositoryService.readRacersDataFromGoogleSheet(url, name, category).pipe(
-      tap(({ racers, categoriesMap }) => {
-        if (racers.length === 0 || Object.keys(categoriesMap).length === 0) return;
+  public setRacersFromGoogleSheet(data: Record<string, any>[], cellName: string, cellCategory: string) {
+    const racers: IRacer[] = [];
+    const categoriesMap: Record<string, IRacer[]> = {};
 
-        this.updateRacers(racers);
-        this.updateCategoriesMap(categoriesMap);
-      })
-    )
+    data.forEach((registerInfo) => {
+      const name = registerInfo[cellName];
+      const category = this.convertCategoryName(registerInfo[cellCategory]);
+
+      if (name && category) {
+        const racer = {
+          name,
+          category: this.convertCategoryName(registerInfo[cellCategory]),
+          number: null
+        }
+        racers.push(racer);
+
+        if (Array.isArray(categoriesMap[racer.category])) {
+          categoriesMap[racer.category].push(racer);
+        } else {
+          categoriesMap[racer.category] = [];
+          categoriesMap[racer.category].push(racer);
+        }
+      }
+    });
+
+    if (racers.length > 0) {
+      this.updateCategoriesMap(categoriesMap);
+      this.updateRacers(racers);
+    }
+
+    return { racers, categoriesMap };
   }
 
   public checkAllMembersHasNumbers() {

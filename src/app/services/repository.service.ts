@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {RepositoryKey} from '../models/enums';
-import {map, of} from "rxjs";
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
-import {GoogleTableService} from "./google-table.service";
 import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
 
 
@@ -10,23 +8,6 @@ import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
   providedIn: 'root'
 })
 export class RepositoryService {
-
-  constructor(
-    private googleTableService: GoogleTableService,
-  ) {
-  }
-
-  private convertCategoryName(registerCategoryName: string): string {
-    switch (registerCategoryName) {
-      case 'Шоссе (групповой велосипед)':
-        return 'Шоссе'
-      case 'Шоссе (разделочник или групповой с лежаком)':
-        return 'Шоссе ТТ'
-      default:
-        return registerCategoryName
-    }
-  }
-
   /**
    * Update
    */
@@ -182,47 +163,6 @@ export class RepositoryService {
     this.updateFinisherNameList(data.finisherNameList);
     this.updateRaceName(data.raceName);
     this.updateRacersDelta(data.racersDelta);
-  }
-
-  public readRacersDataFromGoogleSheet(url: string, cellName: string, cellCategory: string) {
-    const id = this.googleTableService.extractGoogleSheetId(url);
-
-    if (id === null) return of({racers: [], categoriesMap: {}});
-
-    return this.googleTableService.getSheetData(id).pipe(
-      map((data) => {
-        const racers: IRacer[] = [];
-        const categoriesMap: Record<string, IRacer[]> = {};
-
-        data.forEach((registerInfo) => {
-          const name = registerInfo[cellName];
-          const category = this.convertCategoryName(registerInfo[cellCategory]);
-
-          if (name && category) {
-            const racer = {
-              name,
-              category: this.convertCategoryName(registerInfo[cellCategory]),
-              number: null
-            }
-            racers.push(racer);
-
-            if (Array.isArray(categoriesMap[racer.category])) {
-              categoriesMap[racer.category].push(racer);
-            } else {
-              categoriesMap[racer.category] = [];
-              categoriesMap[racer.category].push(racer);
-            }
-          }
-        });
-
-        if (racers.length > 0) {
-          this.updateCategoriesMap(categoriesMap);
-          this.updateRacers(racers);
-        }
-
-        return { racers, categoriesMap };
-      }),
-    )
   }
 
   public resetLS() {

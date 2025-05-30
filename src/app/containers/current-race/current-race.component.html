@@ -269,7 +269,8 @@
   #newRace
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Найдена предыдущая гонка, хотите продолжить?</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Найдена предыдущая гонка, хотите
+    продолжить?</p>
 
   <div class="button-wrapper">
     <button
@@ -298,54 +299,82 @@
   #googleTableDialog
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-6 tui-space_top-0">Введите Google Таблицы</p>
-
-  <form [formGroup]="googleTableForm">
-    <tui-input class="tui-space_bottom-3" [tuiTextfieldSize]="'m'" formControlName="googleTableUrl">
+  <tui-stepper class="tui-space_bottom-6" [(activeItemIndex)]="currentStepperIndex">
+    <button tuiStep disabled [stepState]="currentStepperIndex > 0 ? 'pass' : 'normal'">Ссылка</button>
+    <button tuiStep disabled [stepState]="currentStepperIndex > 1 ? 'pass' : 'normal'">Фамилия имя</button>
+    <button tuiStep disabled [stepState]="currentStepperIndex > 2 ? 'pass' : 'normal'">Категории</button>
+  </tui-stepper>
+  <ng-container *ngIf="currentStepperIndex === 0">
+    <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" [formControl]="googleTableSheetUrlControl">
       URL
       <input
         tuiTextfield
         type="text"
       >
     </tui-input>
-    <tui-input class="tui-space_bottom-3" [tuiTextfieldSize]="'m'" formControlName="name">
-      Название столбца с ФИО
-      <input
-        tuiTextfield
-        type="text"
-      >
-    </tui-input>
-    <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" formControlName="category">
-      Название столбца с категорией
-      <input
-        tuiTextfield
-        type="text"
-      >
-    </tui-input>
-  </form>
 
-  <div class="button-wrapper">
-    <button
-      tuiButton
-      type="button"
-      size="m"
-      appearance="primary"
-      class="tui-space_right-3"
-      (click)="onGetGoogleTableData(); observer.complete()"
-      [disabled]="googleTableForm.invalid"
-    >
-      Получить список
-    </button>
-    <button
-      tuiButton
-      type="button"
-      size="m"
-      appearance="secondary"
-      (click)="observer.complete()"
-    >
-      Отмена
-    </button>
-  </div>
+    <div class="button-wrapper">
+      <tui-loader
+        class="loader"
+        [inheritColor]="true"
+        [overlay]="true"
+        [showLoader]="isGoogleTableSheetLoading"
+      >
+        <button
+          tuiButton
+          type="button"
+          size="m"
+          appearance="primary"
+          class="tui-space_right-3"
+          (click)="onGetGoogleTableData()"
+          [disabled]="googleTableSheetUrlControl.invalid"
+        >
+          Получить список
+        </button>
+      </tui-loader>
+      <button
+        tuiButton
+        type="button"
+        size="m"
+        appearance="secondary"
+        (click)="observer.complete()"
+      >
+        Отмена
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="currentStepperIndex === 1">
+    <p class="tui-space_bottom-6 tui-space_top-0">Выберите название столбца с <b>Фамилией и именем</b></p>
+    <ul>
+      <li *ngFor="let key of googleTableSheetKeys; let i = index">
+        <button
+          tuiLink
+          type="button"
+          [pseudo]="true"
+          (click)="onGoogleCellClick(i, 'name'); nextStep()"
+        >
+          {{ key }}
+        </button>
+      </li>
+    </ul>
+  </ng-container>
+
+  <ng-container *ngIf="currentStepperIndex === 2">
+    <p class="tui-space_bottom-6 tui-space_top-0">Выберите название столбца с <b>категориями</b></p>
+    <ul>
+      <li *ngFor="let key of googleTableSheetKeys; let i = index">
+        <button
+          tuiLink
+          type="button"
+          [pseudo]="true"
+          (click)="onGoogleCellClick(i, 'category'); completeSteps(); observer.complete()"
+        >
+          {{ key }}
+        </button>
+      </li>
+    </ul>
+  </ng-container>
 </ng-template>
 
 <ng-template
