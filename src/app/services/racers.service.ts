@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
+import {BehaviorSubject, finalize, map, Subject, takeWhile, tap, timer} from "rxjs";
 import {RepositoryService} from "./repository.service";
 import {IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";
-import {DEFAULT_ITT_RACE_NAME} from "../constants/itt.constants";
+import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
 
 @Injectable({
   providedIn: "root"
@@ -16,14 +16,15 @@ export class RacersService {
 
   public racers$ = new BehaviorSubject<IRacer[]>([]);
   public startedRacers: IStarter[] = [];
-  public starterNameList: string[] = [];
+  public starterNameList$ = new BehaviorSubject<string[]>([]);
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = 1;
+  public racerSecondsDelta = RACERS_DELTA;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
   public isAllMembersHasNumbers$ = new BehaviorSubject(false);
+  public isDeltaChanged$ = new BehaviorSubject(false);
 
   public timer$ = timer(0, 1000).pipe(
     map(i => this.racerSecondsDelta - i + this.timerDelta),
@@ -36,9 +37,12 @@ export class RacersService {
           time: Date.now()
         });
 
+        const starterNameList = this.starterNameList$.value.slice();
+        starterNameList.push(this.generateRacerNameAndNumberString(currentRacer));
+
         this.repositoryService.updateStartedRacers(this.startedRacers);
-        this.starterNameList.push(this.generateRacerNameAndNumberString(currentRacer));
-        this.repositoryService.updateStarterNameList(this.starterNameList);
+        this.starterNameList$.next(starterNameList);
+        this.repositoryService.updateStarterNameList(this.starterNameList$.value);
 
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
@@ -65,12 +69,14 @@ export class RacersService {
     const currentRacerIndex = this.repositoryService.readCurrentRacerIndex();
     const categoriesMap = this.repositoryService.readCategoriesMap();
     const raceName = this.repositoryService.readRaceName();
+    const racersDelta = this.repositoryService.readRacersDelta();
 
     if (startedRacers !== null) this.startedRacers = startedRacers;
-    if (starterNameList !== null) this.starterNameList = starterNameList;
+    if (starterNameList !== null) this.starterNameList$.next(starterNameList);
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
     if (raceName !== null) this.raceName$.next(raceName);
+    if (racersDelta !== null) this.setRacersDelta(racersDelta);
   }
 
   public setStateFromJSON(data: ISyncJSON) {
@@ -97,9 +103,11 @@ export class RacersService {
     this.raceName$.next(DEFAULT_ITT_RACE_NAME);
 
     this.startedRacers = [];
-    this.starterNameList = [];
+    this.starterNameList$.next([]);
 
     this.timerDelta = 0;
+    this.racerSecondsDelta = RACERS_DELTA;
+    this.isDeltaChanged$.next(true);
   }
 
   public readRacersFromGoogleSheet(url: string) {
@@ -116,6 +124,12 @@ export class RacersService {
     this.racers$.value.forEach((racer) => accumulator = (racer.number !== null) && accumulator)
 
     this.isAllMembersHasNumbers$.next(accumulator);
+  }
+
+  public setRacersDelta(delta: number) {
+    this.racerSecondsDelta = delta;
+    this.repositoryService.updateRacersDelta(delta);
+    this.isDeltaChanged$.next(true);
   }
 
   public updateRacers(racers: IRacer[]) {

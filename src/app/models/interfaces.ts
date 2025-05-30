@@ -41,4 +41,5 @@ export interface ISyncJSON {
   finishersByCategories: IFinishCategory[];
   anons: IFinisher[];
   finisherNameList: string[];
+  racersDelta: number;
 }

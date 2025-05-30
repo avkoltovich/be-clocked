@@ -6,6 +6,7 @@ import {map, takeWhile, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
+import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 
 @Component({
   selector: "app-finish-race",
@@ -25,11 +26,12 @@ export class FinishRaceComponent implements OnInit {
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
   public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public starterNameList$ = this.racersService.starterNameList$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
-      const difference = this.racersService.starterNameList.filter((racer) => {
-        return !this.finishersService.finisherNameList.includes(racer) && racer !== "Пропуск";
+      const difference = this.racersService.starterNameList$.value.filter((racer) => {
+        return !this.finishersService.finisherNameList.includes(racer) && racer !== SKIPPED_RACER_NAME;
       });
 
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
@@ -47,8 +49,8 @@ export class FinishRaceComponent implements OnInit {
 
   public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
     map(value => {
-      const difference = this.racersService.starterNameList.filter((racer) => {
-        return !this.finishersService.finisherNameList.includes(racer) && racer !== "Пропуск";
+      const difference = this.racersService.starterNameList$.value.filter((racer) => {
+        return !this.finishersService.finisherNameList.includes(racer) && racer !== SKIPPED_RACER_NAME;
       });
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 

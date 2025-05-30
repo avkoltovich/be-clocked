@@ -1,4 +1,4 @@
-<tui-island size="l">
+<tui-island size="l" *ngIf="(starterNameList$ | async)!.length > 0">
   <h2 class="tui-island__title tui-space_bottom-5">Финишный протокол</h2>
   <form class="tui-form__row_multi-fields tui-space_bottom-8 form" [formGroup]="formGroup">
     <tui-input

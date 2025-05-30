@@ -154,7 +154,7 @@ export class RacerListComponent {
   }
 
   public checkRacerStarted(racer: IRacer) {
-    return this.racersService.starterNameList.includes(this.generateRacerNameAndNumberString(racer));
+    return this.racersService.starterNameList$.value.includes(this.generateRacerNameAndNumberString(racer));
   }
 
   public checkRacerFinished(racer: IRacer) {

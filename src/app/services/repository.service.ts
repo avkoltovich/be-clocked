@@ -3,7 +3,7 @@ import {RepositoryKey} from '../models/enums';
 import {map, of} from "rxjs";
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {GoogleTableService} from "./google-table.service";
-import {DEFAULT_ITT_RACE_NAME} from "../constants/itt.constants";
+import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -81,6 +81,10 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.raceName, JSON.stringify(value));
   }
 
+  public updateRacersDelta(value: number) {
+    window.localStorage.setItem(RepositoryKey.racersDelta, JSON.stringify(value));
+  }
+
   /**
    * Read
    */
@@ -129,6 +133,10 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.raceName)!);
   }
 
+  public readRacersDelta() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.racersDelta)!);
+  }
+
   /**
    * Утилиты
    */
@@ -149,6 +157,7 @@ export class RepositoryService {
     const anons = this.readAnons();
     const finisherNameList = this.readFinisherNameList();
     const raceName = this.readRaceName();
+    const racersDelta = this.readRacersDelta();
 
     return {
       raceName: raceName ? raceName : DEFAULT_ITT_RACE_NAME,
@@ -161,7 +170,8 @@ export class RepositoryService {
       finishers: finishers ? finishers : [],
       finishersByCategories: finishersByCategories ? finishersByCategories : [],
       anons: anons ? anons : [],
-      finisherNameList: finisherNameList ? finisherNameList : []
+      finisherNameList: finisherNameList ? finisherNameList : [],
+      racersDelta: racersDelta ? racersDelta : RACERS_DELTA
     };
   }
 
@@ -177,6 +187,7 @@ export class RepositoryService {
     this.updateAnons(data.anons);
     this.updateFinisherNameList(data.finisherNameList);
     this.updateRaceName(data.raceName);
+    this.updateRacersDelta(data.racersDelta);
   }
 
   public readRacersDataFromGoogleSheet(url: string) {

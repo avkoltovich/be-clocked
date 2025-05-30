@@ -98,7 +98,20 @@
         *ngIf="(racers$ | async)!.length > (currentRacerIndex$ | async)!; else emptyList"
         tuiProgressLabel
       >
-        <span class="tui-text_h1">{{ value }}</span>
+        <ng-container *ngIf="isRaceStarted$.value; else deltaTemp">
+          <span class="tui-text_h1">{{ value }}</span>
+        </ng-container>
+
+        <ng-template #deltaTemp>
+          <button
+            tuiLink
+            type="button"
+            [pseudo]="true"
+            (click)="openDeltaDialog(setDelta)"
+          >
+            <span class="tui-text_h1">{{ value }}</span>
+          </button>
+        </ng-template>
 
         <tui-progress-circle
           color="url(#gradient)"
@@ -135,7 +148,7 @@
               src="tuiIconFastForwardLarge"
               class="tui-space_right-2"
             ></tui-svg>
-            Пропуск
+            {{ SKIPPED_RACER_NAME }}
           </button>
           <button
             tuiButton
@@ -315,6 +328,26 @@
       (click)="observer.complete()"
     >
       Отмена
+    </button>
+  </div>
+</ng-template>
+
+<ng-template
+  #setDelta
+  let-context
+>
+  <div class="dialog-container">
+    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">
+      Дельта
+    </tui-input-number>
+    <button
+      tuiButton
+      appearance="primary"
+      size="m"
+      (click)="onSetDelta(); context.complete()"
+      [disabled]="deltaFormControl.invalid"
+    >
+      Применить
     </button>
   </div>
 </ng-template>

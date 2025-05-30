@@ -6,6 +6,7 @@ import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
 import {FormControl, Validators} from "@angular/forms";
 import {FinishersService} from "../../services/finishers.service";
+import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA, SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 
 enum Mode {
   prepare = 'prepare',
@@ -21,9 +22,10 @@ enum Mode {
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent implements AfterViewInit {
+  protected readonly SKIPPED_RACER_NAME = SKIPPED_RACER_NAME;
   private timerSubscription: Subscription | null = null;
-  readonly max = this.racersService.racerSecondsDelta;
   readonly Mode = Mode;
+  public max = this.racersService.racerSecondsDelta;
   public value = this.racersService.racerSecondsDelta;
   public raceName$ = this.racersService.raceName$;
   public timer$ = this.racersService.timer$.pipe(
@@ -45,6 +47,7 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public googleTableUrlFormControl = new FormControl('', Validators.required);
   public raceNameFormControl = new FormControl('', Validators.required);
+  public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
 
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
@@ -57,6 +60,10 @@ export class CurrentRaceComponent implements AfterViewInit {
     private repositoryService: RepositoryService,
     private finishersService: FinishersService
   ) {
+  }
+
+  private resetDeltaTimer() {
+    this.value = this.racersService.racerSecondsDelta;
   }
 
   public ngAfterViewInit(): void {
@@ -91,6 +98,15 @@ export class CurrentRaceComponent implements AfterViewInit {
     else {
       this.onReset();
     }
+
+    this.racersService.isDeltaChanged$.pipe(
+      tap(() => {
+        const currentDelta = this.racersService.racerSecondsDelta;
+
+        this.max = currentDelta;
+        this.value = currentDelta;
+      })
+    ).subscribe()
   }
 
   public onStart() {
@@ -102,10 +118,10 @@ export class CurrentRaceComponent implements AfterViewInit {
     const currentRacers = this.racers$.value.slice();
     const skippedRacer = currentRacers[this.currentRacerIndex$.value];
 
-    if (skippedRacer.name === "Пропуск") return;
+    if (skippedRacer.name === SKIPPED_RACER_NAME) return;
 
     currentRacers.push(skippedRacer);
-    currentRacers[this.currentRacerIndex$.value].name = "Пропуск";
+    currentRacers[this.currentRacerIndex$.value].name = SKIPPED_RACER_NAME;
 
     this.racersService.racers$.next(currentRacers);
   }
@@ -115,6 +131,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.isRaceStarted$.next(false);
 
     this.timerSubscription?.unsubscribe();
+    this.resetDeltaTimer();
   }
 
   public onReset() {
@@ -174,6 +191,20 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.isRaceNameEditing = true
   }
 
+  public onSetDelta(): void {
+    const delta = this.deltaFormControl.value;
+
+    if (delta === undefined || delta === null) return;
+
+    this.racersService.setRacersDelta(delta);
+    this.max = delta;
+    this.value = delta;
+  }
+
+  public openDeltaDialog(content: any): void {
+    this.dialogs.open(content, {size: 'auto'}).subscribe();
+  }
+
   public onRaceNameSave() {
     const raceName = this.raceNameFormControl.value;
 
@@ -183,6 +214,4 @@ export class CurrentRaceComponent implements AfterViewInit {
       this.isRaceNameEditing = false
     }
   }
-
-
 }
