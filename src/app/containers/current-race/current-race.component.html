@@ -298,15 +298,31 @@
   #googleTableDialog
   let-observer
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-6 tui-space_top-0">Введите ссылку на Google Таблицу</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-6 tui-space_top-0">Введите Google Таблицы</p>
 
-  <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" [formControl]="googleTableUrlFormControl">
-    URL
-    <input
-      tuiTextfield
-      type="text"
-    >
-  </tui-input>
+  <form [formGroup]="googleTableForm">
+    <tui-input class="tui-space_bottom-3" [tuiTextfieldSize]="'m'" formControlName="googleTableUrl">
+      URL
+      <input
+        tuiTextfield
+        type="text"
+      >
+    </tui-input>
+    <tui-input class="tui-space_bottom-3" [tuiTextfieldSize]="'m'" formControlName="name">
+      Название столбца с ФИО
+      <input
+        tuiTextfield
+        type="text"
+      >
+    </tui-input>
+    <tui-input class="tui-space_bottom-6" [tuiTextfieldSize]="'m'" formControlName="category">
+      Название столбца с категорией
+      <input
+        tuiTextfield
+        type="text"
+      >
+    </tui-input>
+  </form>
 
   <div class="button-wrapper">
     <button
@@ -316,7 +332,7 @@
       appearance="primary"
       class="tui-space_right-3"
       (click)="onGetGoogleTableData(); observer.complete()"
-      [disabled]="googleTableUrlFormControl.invalid"
+      [disabled]="googleTableForm.invalid"
     >
       Получить список
     </button>
