@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject, finalize, map, Subject, takeWhile, tap, timer} from "rxjs";
+import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RepositoryService} from "./repository.service";
 import {IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";

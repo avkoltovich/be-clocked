@@ -2,7 +2,7 @@ import {Component, Inject, OnInit} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
 import {RacersService} from "../../services/racers.service";
 import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
-import {map, takeWhile, tap} from "rxjs";
+import {map, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";

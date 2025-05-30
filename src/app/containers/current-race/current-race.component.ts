@@ -6,7 +6,7 @@ import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
 import {FormControl, Validators} from "@angular/forms";
 import {FinishersService} from "../../services/finishers.service";
-import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA, SKIPPED_RACER_NAME} from "../../constants/itt.constants";
+import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 
 enum Mode {
   prepare = 'prepare',
