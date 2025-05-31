@@ -5,14 +5,15 @@ import {CurrentRaceControlsComponent} from "./current-race-controls/current-race
 import {
   TuiButtonModule,
   TuiDataListModule,
-  TuiHintModule,
+  TuiHintModule, TuiLinkModule,
   TuiSvgModule,
   TuiTextfieldControllerModule
 } from "@taiga-ui/core";
-import {TuiInputModule, TuiSelectModule} from "@taiga-ui/kit";
+import {TuiInputModule, TuiProgressModule, TuiSelectModule} from "@taiga-ui/kit";
 import {ReactiveFormsModule} from "@angular/forms";
-import {TuiAutoFocusModule} from "@taiga-ui/cdk";
+import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import { PrepareRaceControlsComponent } from './prepare-race-controls/prepare-race-controls.component';
+import { IttRaceProgressComponent } from './itt-race-progress/itt-race-progress.component';
 
 
 
@@ -20,7 +21,8 @@ import { PrepareRaceControlsComponent } from './prepare-race-controls/prepare-ra
   declarations: [
     ModifyRacerComponent,
     CurrentRaceControlsComponent,
-    PrepareRaceControlsComponent
+    PrepareRaceControlsComponent,
+    IttRaceProgressComponent
   ],
   imports: [
     CommonModule,
@@ -32,12 +34,16 @@ import { PrepareRaceControlsComponent } from './prepare-race-controls/prepare-ra
     TuiTextfieldControllerModule,
     TuiAutoFocusModule,
     TuiSelectModule,
-    TuiDataListModule
+    TuiDataListModule,
+    TuiLetModule,
+    TuiLinkModule,
+    TuiProgressModule
   ],
-  exports: [
-    ModifyRacerComponent,
-    CurrentRaceControlsComponent,
-    PrepareRaceControlsComponent
-  ]
+    exports: [
+        ModifyRacerComponent,
+        CurrentRaceControlsComponent,
+        PrepareRaceControlsComponent,
+        IttRaceProgressComponent
+    ]
 })
 export class ComponentsModule { }

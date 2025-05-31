@@ -155,7 +155,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
-    if (racer === undefined || racer === null) return;
+    if (racer === undefined || racer === null) return '';
 
     return this.racersService.generateRacerNameAndNumberString(racer);
   }

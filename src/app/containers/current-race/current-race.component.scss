@@ -16,60 +16,6 @@
   min-width: 200px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 60% 40%;
-}
-
-.racers-container {
-  display: flex;
-  flex-direction: column;
-  gap: 60px;
-}
-
-.current, .next {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 650px;
-}
-
-.racer {
-  min-height: 80px;
-}
-
-.timer-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.timer {
-  transform: scale(3);
-}
-
-.controls-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding-top: 60px;
-
-  grid-column: 1 / -1;
-
-  & button {
-    width: 200px;
-  }
-
-  & button.icon-button {
-    width: fit-content;
-  }
-}
-
-.empty-list {
-  text-align: center;
-}
-
 .button-wrapper {
   display: flex;
 

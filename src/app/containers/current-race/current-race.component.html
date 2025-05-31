@@ -50,80 +50,19 @@
     </ng-template>
   </header>
 
-  <div class="grid" *tuiLet="racers$ | async as racers">
-    <div class="racers-container" *tuiLet="currentRacerIndex$ | async as index">
-      <ng-container *ngIf="racers !== null && index !== null && racers[index]">
-        <p class="current">
-          <span class="tui-text_body-xl">Стартует</span>
-          <span class="tui-text_h1 racer">
-          {{ generateRacerNameAndNumberString(racers![index]) }}
-        </span>
-        </p>
-        <p class="next">
-          <span class="tui-text_body-xl">Готовится</span>
-          <span class="tui-text_h4 racer">
-          {{ generateRacerNameAndNumberString(racers![index + 1]) }}
-        </span>
-        </p>
-      </ng-container>
-    </div>
-    <div class="timer-container">
-      <svg
-        width="0"
-        height="0"
-      >
-        <defs>
-          <linearGradient
-            id="gradient"
-            gradientTransform="rotate(95)"
-          >
-            <stop
-              offset="0%"
-              stop-color="var(--tui-support-02)"
-            ></stop>
-            <stop
-              offset="45%"
-              stop-color="var(--tui-support-14)"
-            ></stop>
-            <stop
-              offset="100%"
-              stop-color="var(--tui-support-12)"
-            ></stop>
-          </linearGradient>
-        </defs>
-      </svg>
+  <div *tuiLet="racers$ | async as racers">
+    <app-itt-race-progress
+      [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
+      [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
+      [showRacerNames]="racers![currentRacerIndex$.value] !== undefined"
+      [showTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
+      [showEmptyRacerListNotification]="mode !== Mode.prepare"
+      [deltaEditMode]="isRaceStarted$.value"
+      (delta)="openDeltaDialog(setDelta)"
+    />
 
-      <label
-        class="timer"
-        *ngIf="(racers$ | async)!.length > (currentRacerIndex$ | async)!; else emptyList"
-        tuiProgressLabel
-      >
-        <ng-container *ngIf="isRaceStarted$.value; else deltaTemp">
-          <span class="tui-text_h1">{{ value }}</span>
-        </ng-container>
-
-        <ng-template #deltaTemp>
-          <button
-            tuiLink
-            type="button"
-            [pseudo]="true"
-            (click)="openDeltaDialog(setDelta)"
-          >
-            <span class="tui-text_h1">{{ value }}</span>
-          </button>
-        </ng-template>
-
-        <tui-progress-circle
-          color="url(#gradient)"
-          size="xl"
-          [max]="max"
-          [value]="value"
-        ></tui-progress-circle>
-      </label>
-    </div>
     <app-current-race-controls
       *ngIf="mode !== Mode.prepare"
-      class="controls-container"
       [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value!"
       [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"
@@ -134,17 +73,12 @@
     />
 
     <app-prepare-race-controls
-      class="controls-container"
       *ngIf="mode === Mode.prepare"
       (readJSON)="setStateFromJSON($event)"
       (googleTable)="openGoogleTableDialog(googleTableDialog)"
     />
   </div>
 </tui-island>
-
-<ng-template #emptyList>
-  <p *ngIf="mode !== Mode.prepare" class="tui-text_h3 empty-list">Все участники стартовали</p>
-</ng-template>
 
 <ng-template
   #reset
