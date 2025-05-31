@@ -28,6 +28,7 @@ import {ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import {HttpClientModule} from "@angular/common/http";
 import {ModifyRacerComponent} from "../../components/modify-racer/modify-racer.component";
+import {CurrentRaceControlsComponent} from "../../components/current-race-controls/current-race-controls.component";
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import {ModifyRacerComponent} from "../../components/modify-racer/modify-racer.c
     CurrentRaceComponent,
     FinishRaceComponent,
     RaceComponent,
-    ModifyRacerComponent
+    ModifyRacerComponent,
+    CurrentRaceControlsComponent
   ],
   imports: [
     CommonModule,

@@ -56,7 +56,6 @@ export class CurrentRaceComponent implements AfterViewInit {
     })
   );
 
-  public downloadJsonHref: string = '';
   public raceNameFormControl = new FormControl('', Validators.required);
   public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
 
@@ -135,9 +134,6 @@ export class CurrentRaceComponent implements AfterViewInit {
     ).subscribe()
   }
 
-  /**
-   * TODO: Вынести блок кнопок в отдельный компонент
-   */
   public onStart() {
     this.racersService.isRaceStarted$.next(true);
     this.timerSubscription = this.timer$.subscribe();
@@ -179,14 +175,6 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public openGoogleTableDialog(content: any): void {
     this.dialogs.open(content, {size: 'auto'}).subscribe();
-  }
-
-  public generateAndDownloadJSON() {
-    var theJSON = JSON.stringify(this.repositoryService.collectRaceData());
-    this.downloadLink?.nativeElement.setAttribute("href", "data:text/json;charset=UTF-8," + encodeURIComponent(theJSON));
-    this.downloadLink?.nativeElement.setAttribute("download", "sync-data.json");
-
-    this.downloadLink?.nativeElement.click();
   }
 
   public setStateFromJSON(data: ISyncJSON) {

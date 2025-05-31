@@ -1,0 +1,72 @@
+<button
+  tuiButton
+  type="button"
+  appearance="primary"
+  (click)="onStart()"
+  [disabled]="isStartDisabled"
+>
+  <tui-svg
+    src="tuiIconPlayCircleLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Старт
+</button>
+<button
+  tuiButton
+  type="button"
+  appearance="secondary"
+  (click)="onSkip()"
+  [disabled]="isPauseAndSkipDisabled"
+>
+  <tui-svg
+    src="tuiIconFastForwardLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Пропустить
+</button>
+<button
+  tuiButton
+  type="button"
+  appearance="flat"
+  (click)="onPause()"
+  [disabled]="isPauseAndSkipDisabled"
+>
+  <tui-svg
+    src="tuiIconPauseCircleLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Пауза
+</button>
+<button
+  tuiButton
+  type="button"
+  appearance="secondary-destructive"
+  (click)="onReset()"
+  [disabled]="isResetDisabled"
+>
+  <tui-svg
+    src="tuiIconStopCircleLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Сброс
+</button>
+<button
+  class="icon-button"
+  tuiButton
+  type="button"
+  appearance="secondary"
+  tuiHintDirection="bottom"
+  [tuiHint]="downloadHint"
+  (click)="generateAndDownloadJSON()"
+>
+  <tui-svg
+    src="tuiIconDownloadLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Сохранить
+</button>
+<a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
+
+<ng-template #downloadHint>
+  <span><b>Сохранить состояние</b><br> состояние гонки в JSON</span>
+</ng-template>
