@@ -13,12 +13,16 @@ import {
   TuiInputNumberModule,
   TuiIslandModule,
   TuiProgressModule,
-  TuiSelectModule, TuiStepperModule
+  TuiSelectModule,
+  TuiStepperModule
 } from "@taiga-ui/kit";
 import {
   TuiButtonModule,
-  TuiDataListModule, TuiHintModule,
-  TuiLinkModule, TuiLoaderModule, TuiNotificationModule,
+  TuiDataListModule,
+  TuiHintModule,
+  TuiLinkModule,
+  TuiLoaderModule,
+  TuiNotificationModule,
   TuiSvgModule,
   TuiTextfieldControllerModule
 } from "@taiga-ui/core";
@@ -27,8 +31,7 @@ import {RacersService} from "../../services/racers.service";
 import {ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import {HttpClientModule} from "@angular/common/http";
-import {ModifyRacerComponent} from "../../components/modify-racer/modify-racer.component";
-import {CurrentRaceControlsComponent} from "../../components/current-race-controls/current-race-controls.component";
+import {ComponentsModule} from "../../components/components.module";
 
 
 @NgModule({
@@ -38,10 +41,9 @@ import {CurrentRaceControlsComponent} from "../../components/current-race-contro
     CurrentRaceComponent,
     FinishRaceComponent,
     RaceComponent,
-    ModifyRacerComponent,
-    CurrentRaceControlsComponent
   ],
   imports: [
+    ComponentsModule,
     CommonModule,
     RaceRoutingModule,
     TuiIslandModule,
@@ -53,19 +55,17 @@ import {CurrentRaceControlsComponent} from "../../components/current-race-contro
     ReactiveFormsModule,
     TuiLetModule,
     HttpClientModule,
-    TuiDataListModule,
     TuiLinkModule,
     TuiInputNumberModule,
     NgOptimizedImage,
-    TuiSelectModule,
     TuiDataListWrapperModule,
     TuiTextfieldControllerModule,
     TuiNotificationModule,
     TuiHintModule,
     TuiBadgeModule,
-    TuiAutoFocusModule,
     TuiStepperModule,
     TuiLoaderModule,
+    TuiDataListModule,
   ],
   providers: [
     RacersService
