@@ -13,7 +13,6 @@ import {
   TuiInputNumberModule,
   TuiIslandModule,
   TuiProgressModule,
-  TuiSelectModule,
   TuiStepperModule
 } from "@taiga-ui/kit";
 import {
@@ -29,7 +28,7 @@ import {
 import {TuiReorderModule} from "@taiga-ui/addon-table";
 import {RacersService} from "../../services/racers.service";
 import {ReactiveFormsModule} from "@angular/forms";
-import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
+import {TuiLetModule} from "@taiga-ui/cdk";
 import {HttpClientModule} from "@angular/common/http";
 import {ComponentsModule} from "../../components/components.module";
 

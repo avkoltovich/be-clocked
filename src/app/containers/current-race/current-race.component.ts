@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, ElementRef, Inject, TemplateRef, ViewChild} from "@angular/core";
-import {catchError, EMPTY, finalize, fromEvent, Subscription, switchMap, tap} from "rxjs";
+import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from "@angular/core";
+import {finalize, Subscription, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiAlertService, TuiDialogService, TuiNotification} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
@@ -23,7 +23,6 @@ enum Mode {
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent implements AfterViewInit {
-  protected readonly SKIPPED_RACER_NAME = SKIPPED_RACER_NAME;
   private timerSubscription: Subscription | null = null;
   readonly Mode = Mode;
   public max = this.racersService.racerSecondsDelta;
@@ -68,8 +67,6 @@ export class CurrentRaceComponent implements AfterViewInit {
   public googleTableSheetKeyMap: Record<string, string> = {}
   public isGoogleTableSheetLoading: boolean = false;
 
-  @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
-  @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
   @ViewChild('newRace') newRace: TemplateRef<any> | undefined;
 
   constructor(
@@ -92,31 +89,6 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    /**
-     *  Хэндлер на загрузку состояния из JSON
-     */
-    if (this.fileInput !== undefined) {
-      fromEvent(this.fileInput.nativeElement, 'change').pipe(
-        switchMap(event => {
-          const file = (event.target as HTMLInputElement).files![0];
-          return new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsText(file);
-          });
-        }),
-        tap((jsonString) => {
-          this.setStateFromJSON(JSON.parse(jsonString));
-        }),
-        catchError((error: Error) => {
-          console.warn(error)
-
-          return EMPTY;
-        })
-      ).subscribe();
-    }
-
     if (this.repositoryService.checkRacers()) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     }

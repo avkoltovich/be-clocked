@@ -1,0 +1,39 @@
+<button
+  class="icon-button"
+  tuiButton
+  type="button"
+  appearance="secondary"
+  tuiHintDirection="bottom"
+  [tuiHint]="uploadHint"
+  (click)="fileInput.click()"
+>
+  <tui-svg
+    src="tuiIconUploadLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Загрузить состояние
+</button>
+<button
+  class="icon-button"
+  tuiButton
+  type="button"
+  appearance="secondary"
+  tuiHintDirection="bottom"
+  [tuiHint]="googleTableHint"
+  (click)="onGoogleTableClick()"
+>
+  <tui-svg
+    src="tuiIconTableLarge"
+    class="tui-space_right-2"
+  ></tui-svg>
+  Получить список участников
+</button>
+<input type="file" accept=".json" #fileInput style="display: none">
+
+<ng-template #uploadHint>
+  <span><b>Загрузить состояние</b><br> гонки из JSON</span>
+</ng-template>
+
+<ng-template #googleTableHint>
+  <span><b>Получить список участников</b><br>  из Google Таблицы</span>
+</ng-template>

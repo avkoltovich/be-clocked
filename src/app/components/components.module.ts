@@ -12,13 +12,15 @@ import {
 import {TuiInputModule, TuiSelectModule} from "@taiga-ui/kit";
 import {ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule} from "@taiga-ui/cdk";
+import { PrepareRaceControlsComponent } from './prepare-race-controls/prepare-race-controls.component';
 
 
 
 @NgModule({
   declarations: [
     ModifyRacerComponent,
-    CurrentRaceControlsComponent
+    CurrentRaceControlsComponent,
+    PrepareRaceControlsComponent
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import {TuiAutoFocusModule} from "@taiga-ui/cdk";
   ],
   exports: [
     ModifyRacerComponent,
-    CurrentRaceControlsComponent
+    CurrentRaceControlsComponent,
+    PrepareRaceControlsComponent
   ]
 })
 export class ComponentsModule { }
