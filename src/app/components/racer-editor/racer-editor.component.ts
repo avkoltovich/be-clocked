@@ -5,11 +5,11 @@ import {ModifyMode} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 
 @Component({
-  selector: 'app-modify-racer',
-  templateUrl: './modify-racer.component.html',
-  styleUrls: ['./modify-racer.component.scss']
+  selector: 'app-racer-editor',
+  templateUrl: './racer-editor.component.html',
+  styleUrls: ['./racer-editor.component.scss']
 })
-export class ModifyRacerComponent implements OnChanges {
+export class RacerEditorComponent implements OnChanges {
   public formGroup = new FormGroup({
     name: new FormControl("", Validators.required),
     number: new FormControl("", Validators.required),

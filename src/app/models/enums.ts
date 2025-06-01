@@ -18,7 +18,7 @@ export enum RepositoryKey {
   racersDelta = "racersDelta",
 }
 
-export enum RaceMode {
+export enum RaceStatus {
   prepare = 'prepare',
   pause = 'pause',
   start = 'start',

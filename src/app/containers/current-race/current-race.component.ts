@@ -8,7 +8,7 @@ import {FormControl, Validators} from "@angular/forms";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {GoogleTableService} from "../../services/google-table.service";
-import {RaceMode} from "../../models/enums";
+import {RaceStatus} from "../../models/enums";
 
 @Component({
   selector: "app-current-race",
@@ -17,14 +17,14 @@ import {RaceMode} from "../../models/enums";
 })
 export class CurrentRaceComponent implements AfterViewInit {
   private timerSubscription: Subscription | null = null;
-  readonly Mode = RaceMode;
+  readonly RaceStatus = RaceStatus;
   public max = this.racersService.racerSecondsDelta;
   public value = this.racersService.racerSecondsDelta;
 
   /**
    * Состояние компонента
    */
-  public raceMode = RaceMode.prepare;
+  public raceStatus = RaceStatus.prepare;
   public isRaceNameEditing = false;
   public currentStepperIndex = 0;
 
@@ -44,7 +44,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   );
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
-      if (racers.length > 0) this.raceMode = RaceMode.ready;
+      if (racers.length > 0) this.raceStatus = RaceStatus.ready;
     })
   );
 
@@ -131,7 +131,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.racersService.resetRace();
     this.finishersService.resetFinishersData();
 
-    this.raceMode = RaceMode.prepare;
+    this.raceStatus = RaceStatus.prepare;
   }
 
   public openResetDialog(content: any): void {
@@ -155,7 +155,7 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public onContinuePrevRace() {
     this.racersService.continuePrevRace();
-    this.raceMode = RaceMode.ready
+    this.raceStatus = RaceStatus.ready
   }
 
   public onGetGoogleTableData() {

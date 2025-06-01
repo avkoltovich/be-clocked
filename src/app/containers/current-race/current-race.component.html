@@ -56,13 +56,13 @@
       [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
       [showRacerNames]="racers![currentRacerIndex$.value] !== undefined"
       [showTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-      [showEmptyRacerListNotification]="raceMode !== Mode.prepare"
+      [showEmptyRacerListNotification]="raceStatus !== RaceStatus.prepare"
       [deltaEditMode]="isRaceStarted$.value"
       (delta)="openDeltaDialog(setDelta)"
     />
 
     <app-race-controls
-      [raceMode]="raceMode"
+      [raceStatus]="raceStatus"
       [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value!"
       [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"

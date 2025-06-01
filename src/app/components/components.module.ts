@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {ModifyRacerComponent} from "./modify-racer/modify-racer.component";
+import {RacerEditorComponent} from "./racer-editor/racer-editor.component";
 import {RaceControlsComponent} from "./race-controls/race-controls.component";
 import {
   TuiButtonModule,
@@ -18,7 +18,7 @@ import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.co
 
 @NgModule({
   declarations: [
-    ModifyRacerComponent,
+    RacerEditorComponent,
     RaceControlsComponent,
     IttRaceProgressComponent
   ],
@@ -38,7 +38,7 @@ import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.co
     TuiProgressModule
   ],
     exports: [
-        ModifyRacerComponent,
+        RacerEditorComponent,
         RaceControlsComponent,
         IttRaceProgressComponent
     ]
