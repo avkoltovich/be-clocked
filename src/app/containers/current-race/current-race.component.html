@@ -56,13 +56,13 @@
       [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
       [showRacerNames]="racers![currentRacerIndex$.value] !== undefined"
       [showTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-      [showEmptyRacerListNotification]="mode !== Mode.prepare"
+      [showEmptyRacerListNotification]="raceMode !== Mode.prepare"
       [deltaEditMode]="isRaceStarted$.value"
       (delta)="openDeltaDialog(setDelta)"
     />
 
-    <app-current-race-controls
-      *ngIf="mode !== Mode.prepare"
+    <app-race-controls
+      [raceMode]="raceMode"
       [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value!"
       [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"
@@ -70,10 +70,6 @@
       (skip)="onSkip()"
       (pause)="onPause()"
       (reset)="openResetDialog(reset)"
-    />
-
-    <app-prepare-race-controls
-      *ngIf="mode === Mode.prepare"
       (readJSON)="setStateFromJSON($event)"
       (googleTable)="openGoogleTableDialog(googleTableDialog)"
     />
