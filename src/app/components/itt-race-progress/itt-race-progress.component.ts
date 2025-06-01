@@ -1,5 +1,7 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {RACERS_DELTA} from "../../constants/itt.constants";
+import {Component, EventEmitter, Inject, Input, Output} from '@angular/core';
+import {DEFAULT_DELTA} from "../../constants/itt.constants";
+import {FormControl, Validators} from "@angular/forms";
+import {TuiDialogService} from "@taiga-ui/core";
 
 @Component({
   selector: 'app-itt-race-progress',
@@ -17,15 +19,29 @@ export class IttRaceProgressComponent {
 
   @Input() deltaEditMode = true;
 
-  @Input() currentTimerValue: number = RACERS_DELTA;
+  @Input() currentTimerValue: number = DEFAULT_DELTA;
 
-  @Input() maxTimerValue: number = RACERS_DELTA;
+  @Input() maxTimerValue: number = DEFAULT_DELTA;
 
   @Input() showEmptyRacerListNotification = true;
 
-  @Output() delta = new EventEmitter();
+  @Output() newDelta= new EventEmitter();
 
-  public onDeltaClick() {
-    this.delta.emit();
+  public deltaFormControl = new FormControl(this.currentTimerValue, Validators.required);
+
+  constructor(@Inject(TuiDialogService) private readonly dialogs: TuiDialogService) {
+  }
+
+  public openDeltaDialog(content: any): void {
+    this.deltaFormControl.setValue(this.currentTimerValue);
+    this.dialogs.open(content, {size: 'auto'}).subscribe();
+  }
+
+  public onSetDelta(): void {
+    const newDelta = this.deltaFormControl.value;
+
+    if (newDelta === undefined || newDelta === null) return;
+
+    this.newDelta.emit(newDelta);
   }
 }

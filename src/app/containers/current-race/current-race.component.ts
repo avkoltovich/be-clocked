@@ -1,14 +1,13 @@
 import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from "@angular/core";
-import {finalize, Subscription, tap} from "rxjs";
+import {Subscription, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
-import {TuiAlertService, TuiDialogService, TuiNotification} from "@taiga-ui/core";
+import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
-import {FormControl, Validators} from "@angular/forms";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
-import {GoogleTableService} from "../../services/google-table.service";
 import {RaceStatus} from "../../models/enums";
+import {IGoogleTableData} from "../../components/google-table-stepper/google-table-stepper.component";
 
 @Component({
   selector: "app-current-race",
@@ -18,14 +17,13 @@ import {RaceStatus} from "../../models/enums";
 export class CurrentRaceComponent implements AfterViewInit {
   private timerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
-  public max = this.racersService.racerSecondsDelta;
-  public value = this.racersService.racerSecondsDelta;
+  public maxTimerValue = this.racersService.racerSecondsDelta;
+  public currentTimerValue = this.racersService.racerSecondsDelta;
 
   /**
    * Состояние компонента
    */
   public raceStatus = RaceStatus.prepare;
-  public currentStepperIndex = 0;
 
   /**
    * Потоки
@@ -38,7 +36,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   public raceName$ = this.racersService.raceName$;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
-      this.value = value;
+      this.currentTimerValue = value;
     })
   );
   public racers$ = this.racersService.racers$.pipe(
@@ -47,36 +45,24 @@ export class CurrentRaceComponent implements AfterViewInit {
     })
   );
 
-  public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
-
-  /**
-   * Google Таблицы
-   */
-  public googleTableSheetUrlControl = new FormControl("", Validators.required);
-  public googleTableSheetData: Record<string, string>[] = []
-  public googleTableSheetKeys: string[] = [];
-  public googleTableSheetKeyMap: Record<string, string> = {}
-  public isGoogleTableSheetLoading: boolean = false;
-
   @ViewChild('newRace') newRace: TemplateRef<any> | undefined;
 
   constructor(
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-    @Inject(TuiAlertService) private readonly alerts: TuiAlertService,
     private racersService: RacersService,
     private repositoryService: RepositoryService,
     private finishersService: FinishersService,
-    private googleTableService: GoogleTableService,
   ) {
   }
 
   private resetDeltaTimer() {
-    this.value = this.racersService.racerSecondsDelta;
+    this.currentTimerValue = this.racersService.racerSecondsDelta;
   }
 
-  private setDataFromGoogleTable(): void {
-    const { name, category } = this.googleTableSheetKeyMap
-    this.racersService.setRacersFromGoogleSheet(this.googleTableSheetData, name, category);
+  private setDataFromGoogleTable(data: IGoogleTableData): void {
+    const { tableKeys, tableData } = data
+    const { name, category } = tableKeys;
+    this.racersService.setRacersFromGoogleSheet(tableData, name, category);
   }
 
   public ngAfterViewInit(): void {
@@ -91,8 +77,8 @@ export class CurrentRaceComponent implements AfterViewInit {
       tap(() => {
         const currentDelta = this.racersService.racerSecondsDelta;
 
-        this.max = currentDelta;
-        this.value = currentDelta;
+        this.maxTimerValue = currentDelta;
+        this.currentTimerValue = currentDelta;
       })
     ).subscribe()
   }
@@ -156,78 +142,17 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.raceStatus = RaceStatus.ready
   }
 
-  public onGetGoogleTableData() {
-    this.googleTableSheetUrlControl.disable()
-    this.isGoogleTableSheetLoading = true;
-
-    const url = this.googleTableSheetUrlControl.value;
-
-    if (typeof url === "string" && url.startsWith('http')) {
-      const id = this.googleTableService.extractGoogleSheetId(url);
-
-      if (id !== null) {
-        this.googleTableService.getSheetData(id).pipe(
-          tap((data) => {
-            if (data && data.length > 0) {
-              this.googleTableSheetData = data;
-              this.googleTableSheetKeys = Object.keys(data[0]);
-            }
-          }),
-          finalize(() => {
-            this.nextStep();
-            this.isGoogleTableSheetLoading = false;
-            this.googleTableSheetUrlControl.enable();
-            this.googleTableSheetUrlControl.reset();
-          })
-        ).subscribe();
-
-        return;
-      }
-    }
-
-    this.showGoogleTableAlert();
-    this.isGoogleTableSheetLoading = false;
-    this.googleTableSheetUrlControl.enable();
-  }
-
-  public onGoogleCellClick(index: number, cellName: string) {
-    this.googleTableSheetKeyMap[cellName] = this.googleTableSheetKeys[index];
-    this.googleTableSheetKeys.splice(index, 1);
-  }
-
-  public showGoogleTableAlert(): void {
-    this.alerts
-      .open(
-        'Не удалось получить данные из <strong>Google Таблицы</strong>.<br> Проверьте <strong>URL</strong>',
-        { label: 'Ошибка!', status: TuiNotification.Error, autoClose: false })
-      .subscribe();
-  }
-
-  public onSetDelta(): void {
-    const delta = this.deltaFormControl.value;
-
-    if (delta === undefined || delta === null) return;
-
-    this.racersService.setRacersDelta(delta);
-    this.max = delta;
-    this.value = delta;
-  }
-
-  public openDeltaDialog(content: any): void {
-    this.dialogs.open(content, {size: 'auto'}).subscribe();
+  public onSetDelta(newDelta: number): void {
+    this.racersService.setRacersDelta(newDelta);
+    this.maxTimerValue = newDelta;
+    this.currentTimerValue = newDelta;
   }
 
   public onRaceNameSave(raceName: string) {
     this.racersService.updateRaceName(raceName);
   }
 
-  public nextStep(): void {
-    this.currentStepperIndex = this.currentStepperIndex + 1;
-  }
-
-  public completeSteps(): void {
-    this.nextStep();
-    this.setDataFromGoogleTable();
-    this.currentStepperIndex = 0;
+  public completeSteps(data: IGoogleTableData): void {
+    this.setDataFromGoogleTable(data);
   }
 }

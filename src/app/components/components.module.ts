@@ -6,15 +6,22 @@ import {
   TuiButtonModule,
   TuiDataListModule,
   TuiHintModule,
-  TuiLinkModule,
+  TuiLinkModule, TuiLoaderModule,
   TuiSvgModule,
   TuiTextfieldControllerModule
 } from "@taiga-ui/core";
-import {TuiInputModule, TuiProgressModule, TuiSelectModule} from "@taiga-ui/kit";
+import {
+  TuiInputModule,
+  TuiInputNumberModule,
+  TuiProgressModule,
+  TuiSelectModule,
+  TuiStepperModule
+} from "@taiga-ui/kit";
 import {ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.component';
 import { RaceHeaderComponent } from './race-header/race-header.component';
+import { GoogleTableStepperComponent } from './google-table-stepper/google-table-stepper.component';
 
 
 @NgModule({
@@ -22,7 +29,8 @@ import { RaceHeaderComponent } from './race-header/race-header.component';
     RacerEditorComponent,
     RaceControlsComponent,
     IttRaceProgressComponent,
-    RaceHeaderComponent
+    RaceHeaderComponent,
+    GoogleTableStepperComponent
   ],
   imports: [
     CommonModule,
@@ -38,13 +46,17 @@ import { RaceHeaderComponent } from './race-header/race-header.component';
     TuiLetModule,
     TuiLinkModule,
     TuiProgressModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    TuiLoaderModule,
+    TuiStepperModule,
+    TuiInputNumberModule
   ],
   exports: [
     RacerEditorComponent,
     RaceControlsComponent,
     IttRaceProgressComponent,
-    RaceHeaderComponent
+    RaceHeaderComponent,
+    GoogleTableStepperComponent
   ]
 })
 export class ComponentsModule { }

@@ -1,0 +1,7 @@
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}

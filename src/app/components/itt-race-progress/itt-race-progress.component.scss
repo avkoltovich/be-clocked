@@ -33,3 +33,11 @@
 .timer {
   transform: scale(3);
 }
+
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}
