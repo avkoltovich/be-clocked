@@ -13,17 +13,17 @@ export class IttRaceProgressComponent {
 
   @Input() nextRacer = '';
 
-  @Input() showRacerNames = true;
+  @Input() isShowRacerNames = true;
 
-  @Input() showTimer = true;
+  @Input() isShowTimer = true;
 
-  @Input() deltaEditMode = true;
+  @Input() isDeltaEditMode = true;
 
   @Input() currentTimerValue: number = DEFAULT_DELTA;
 
   @Input() maxTimerValue: number = DEFAULT_DELTA;
 
-  @Input() showEmptyRacerListNotification = true;
+  @Input() isShowEmptyRacerListNotification = true;
 
   @Output() newDelta= new EventEmitter();
 

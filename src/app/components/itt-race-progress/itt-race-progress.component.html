@@ -1,5 +1,5 @@
 <div class="racers-container">
-  <ng-container *ngIf="showRacerNames">
+  <ng-container *ngIf="isShowRacerNames">
     <p class="current">
       <span class="tui-text_body-xl">Стартует</span>
       <span class="tui-text_h1 racer">
@@ -43,10 +43,10 @@
 
   <label
     class="timer"
-    *ngIf="showTimer; else emptyList"
+    *ngIf="isShowTimer; else emptyList"
     tuiProgressLabel
   >
-    <ng-container *ngIf="deltaEditMode; else deltaEditTemplate">
+    <ng-container *ngIf="isDeltaEditMode; else deltaEditTemplate">
       <span class="tui-text_h1">{{ currentTimerValue }}</span>
     </ng-container>
 
@@ -71,7 +71,7 @@
 </div>
 
 <ng-template #emptyList>
-  <p *ngIf="showEmptyRacerListNotification" class="tui-text_h3 empty-list">Все участники стартовали</p>
+  <p *ngIf="isShowEmptyRacerListNotification" class="tui-text_h3 empty-list">Все участники стартовали</p>
 </ng-template>
 
 <ng-template
