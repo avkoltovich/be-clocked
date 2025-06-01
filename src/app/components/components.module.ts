@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {RacerEditorComponent} from "./racer-editor/racer-editor.component";
 import {RaceControlsComponent} from "./race-controls/race-controls.component";
 import {
@@ -14,13 +14,15 @@ import {TuiInputModule, TuiProgressModule, TuiSelectModule} from "@taiga-ui/kit"
 import {ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.component';
+import { RaceHeaderComponent } from './race-header/race-header.component';
 
 
 @NgModule({
   declarations: [
     RacerEditorComponent,
     RaceControlsComponent,
-    IttRaceProgressComponent
+    IttRaceProgressComponent,
+    RaceHeaderComponent
   ],
   imports: [
     CommonModule,
@@ -35,12 +37,14 @@ import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.co
     TuiDataListModule,
     TuiLetModule,
     TuiLinkModule,
-    TuiProgressModule
+    TuiProgressModule,
+    NgOptimizedImage
   ],
-    exports: [
-        RacerEditorComponent,
-        RaceControlsComponent,
-        IttRaceProgressComponent
-    ]
+  exports: [
+    RacerEditorComponent,
+    RaceControlsComponent,
+    IttRaceProgressComponent,
+    RaceHeaderComponent
+  ]
 })
 export class ComponentsModule { }

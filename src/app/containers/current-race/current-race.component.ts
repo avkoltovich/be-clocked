@@ -25,7 +25,6 @@ export class CurrentRaceComponent implements AfterViewInit {
    * Состояние компонента
    */
   public raceStatus = RaceStatus.prepare;
-  public isRaceNameEditing = false;
   public currentStepperIndex = 0;
 
   /**
@@ -48,7 +47,6 @@ export class CurrentRaceComponent implements AfterViewInit {
     })
   );
 
-  public raceNameFormControl = new FormControl('', Validators.required);
   public deltaFormControl = new FormControl(this.racersService.racerSecondsDelta, Validators.required);
 
   /**
@@ -205,11 +203,6 @@ export class CurrentRaceComponent implements AfterViewInit {
       .subscribe();
   }
 
-  public onRaceNameClick(): void {
-    this.raceNameFormControl.patchValue(this.raceName$.value)
-    this.isRaceNameEditing = true
-  }
-
   public onSetDelta(): void {
     const delta = this.deltaFormControl.value;
 
@@ -224,14 +217,8 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.dialogs.open(content, {size: 'auto'}).subscribe();
   }
 
-  public onRaceNameSave() {
-    const raceName = this.raceNameFormControl.value;
-
-    if (raceName !== null) {
-      this.racersService.updateRaceName(raceName);
-      this.raceNameFormControl.reset();
-      this.isRaceNameEditing = false
-    }
+  public onRaceNameSave(raceName: string) {
+    this.racersService.updateRaceName(raceName);
   }
 
   public nextStep(): void {
