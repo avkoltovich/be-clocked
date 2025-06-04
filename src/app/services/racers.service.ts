@@ -3,7 +3,7 @@ import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RepositoryService} from "./repository.service";
 import {IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";
-import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
+import {DEFAULT_ITT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
 
 @Injectable({
   providedIn: "root"
@@ -19,7 +19,7 @@ export class RacersService {
   public starterNameList$ = new BehaviorSubject<string[]>([]);
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = RACERS_DELTA;
+  public racerSecondsDelta = DEFAULT_DELTA;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
@@ -117,7 +117,7 @@ export class RacersService {
     this.starterNameList$.next([]);
 
     this.timerDelta = 0;
-    this.racerSecondsDelta = RACERS_DELTA;
+    this.racerSecondsDelta = DEFAULT_DELTA;
     this.isDeltaChanged$.next(true);
   }
 

@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import {RacersService} from "../../services/racers.service";
 
 @Component({
   selector: "app-race",
@@ -6,5 +7,7 @@ import { Component } from "@angular/core";
   styleUrls: ["./race.component.scss"]
 })
 export class RaceComponent {
+  public starterNameList$ = this.racersService.starterNameList$;
 
+  constructor(private racersService: RacersService) {}
 }

@@ -1,0 +1,117 @@
+<ng-container *ngIf="raceStatus === RaceStatus.ready">
+  <button
+    tuiButton
+    type="button"
+    appearance="primary"
+    (click)="onStart()"
+    [disabled]="isStartDisabled"
+  >
+    <tui-svg
+      src="tuiIconPlayCircleLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Старт
+  </button>
+  <button
+    tuiButton
+    type="button"
+    appearance="secondary"
+    (click)="onSkip()"
+    [disabled]="isPauseAndSkipDisabled"
+  >
+    <tui-svg
+      src="tuiIconFastForwardLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Пропустить
+  </button>
+  <button
+    tuiButton
+    type="button"
+    appearance="flat"
+    (click)="onPause()"
+    [disabled]="isPauseAndSkipDisabled"
+  >
+    <tui-svg
+      src="tuiIconPauseCircleLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Пауза
+  </button>
+  <button
+    tuiButton
+    type="button"
+    appearance="secondary-destructive"
+    (click)="onReset()"
+    [disabled]="isResetDisabled"
+  >
+    <tui-svg
+      src="tuiIconStopCircleLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Сброс
+  </button>
+  <button
+    class="icon-button"
+    tuiButton
+    type="button"
+    appearance="secondary"
+    tuiHintDirection="bottom"
+    [tuiHint]="downloadHint"
+    (click)="generateAndDownloadJSON()"
+  >
+    <tui-svg
+      src="tuiIconDownloadLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Сохранить
+  </button>
+</ng-container>
+
+<ng-container *ngIf="raceStatus === RaceStatus.prepare">
+  <button
+    class="icon-button"
+    tuiButton
+    type="button"
+    appearance="secondary"
+    tuiHintDirection="bottom"
+    [tuiHint]="uploadHint"
+    (click)="fileInput.click()"
+  >
+    <tui-svg
+      src="tuiIconUploadLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Загрузить состояние
+  </button>
+  <button
+    class="icon-button"
+    tuiButton
+    type="button"
+    appearance="secondary"
+    tuiHintDirection="bottom"
+    [tuiHint]="googleTableHint"
+    (click)="onGoogleTableClick()"
+  >
+    <tui-svg
+      src="tuiIconTableLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Получить список участников
+  </button>
+</ng-container>
+
+<input type="file" accept=".json" #fileInput style="display: none">
+<a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
+
+<ng-template #uploadHint>
+  <span><b>Загрузить состояние</b><br> гонки из JSON</span>
+</ng-template>
+
+<ng-template #googleTableHint>
+  <span><b>Получить список участников</b><br>  из Google Таблицы</span>
+</ng-template>
+
+<ng-template #downloadHint>
+  <span><b>Сохранить состояние</b><br> состояние гонки в JSON</span>
+</ng-template>

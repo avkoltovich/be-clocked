@@ -1,0 +1,97 @@
+<div class="racers-container">
+  <ng-container *ngIf="isShowRacerNames">
+    <p class="current">
+      <span class="tui-text_body-xl">Стартует</span>
+      <span class="tui-text_h1 racer">
+          {{ currentRacer }}
+        </span>
+    </p>
+
+    <p class="next">
+      <span class="tui-text_body-xl">Готовится</span>
+      <span class="tui-text_h4 racer">
+          {{ nextRacer }}
+        </span>
+    </p>
+  </ng-container>
+</div>
+<div class="timer-container">
+  <svg
+    width="0"
+    height="0"
+  >
+    <defs>
+      <linearGradient
+        id="gradient"
+        gradientTransform="rotate(95)"
+      >
+        <stop
+          offset="0%"
+          stop-color="var(--tui-support-02)"
+        ></stop>
+        <stop
+          offset="45%"
+          stop-color="var(--tui-support-14)"
+        ></stop>
+        <stop
+          offset="100%"
+          stop-color="var(--tui-support-12)"
+        ></stop>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <label
+    class="timer"
+    *ngIf="isShowTimer; else emptyList"
+    tuiProgressLabel
+  >
+    <ng-container *ngIf="isDeltaEditMode; else deltaEditTemplate">
+      <span class="tui-text_h1">{{ currentTimerValue }}</span>
+    </ng-container>
+
+    <ng-template #deltaEditTemplate>
+      <button
+        tuiLink
+        type="button"
+        [pseudo]="true"
+        (click)="openDeltaDialog(setDelta)"
+      >
+        <span class="tui-text_h1">{{ currentTimerValue }}</span>
+      </button>
+    </ng-template>
+
+    <tui-progress-circle
+      color="url(#gradient)"
+      size="xl"
+      [max]="maxTimerValue"
+      [value]="currentTimerValue"
+    ></tui-progress-circle>
+  </label>
+</div>
+
+<ng-template #emptyList>
+  <p *ngIf="isShowEmptyRacerListNotification" class="tui-text_h3 empty-list">Все участники стартовали</p>
+</ng-template>
+
+<ng-template
+  #setDelta
+  let-context
+>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Укажите дельту</p>
+
+  <div class="button-wrapper">
+    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">
+      Дельта
+    </tui-input-number>
+    <button
+      tuiButton
+      appearance="primary"
+      size="m"
+      (click)="onSetDelta(); context.complete()"
+      [disabled]="deltaFormControl.invalid"
+    >
+      ОК
+    </button>
+  </div>
+</ng-template>

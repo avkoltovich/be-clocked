@@ -1,0 +1,43 @@
+:host {
+  display: grid;
+  grid-template-columns: 60% 40%;
+}
+
+.racers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+.current, .next {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 650px;
+}
+
+.empty-list {
+  text-align: center;
+}
+
+.racer {
+  min-height: 80px;
+}
+
+.timer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.timer {
+  transform: scale(3);
+}
+
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}

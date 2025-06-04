@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-top: 60px;
+
+  grid-column: 1 / -1;
+
+  & button {
+    width: 200px;
+  }
+
+  & button.icon-button {
+    width: fit-content;
+  }
+}

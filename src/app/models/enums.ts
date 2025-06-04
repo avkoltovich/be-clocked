@@ -17,3 +17,11 @@ export enum RepositoryKey {
   raceName =  "raceName",
   racersDelta = "racersDelta",
 }
+
+export enum RaceStatus {
+  prepare = 'prepare',
+  pause = 'pause',
+  start = 'start',
+  finish = 'finish',
+  ready = 'ready',
+}

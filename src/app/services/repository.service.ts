@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {RepositoryKey} from '../models/enums';
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
-import {DEFAULT_ITT_RACE_NAME, RACERS_DELTA} from "../constants/itt.constants";
+import {DEFAULT_ITT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -146,7 +146,7 @@ export class RepositoryService {
       finishersByCategories: finishersByCategories ? finishersByCategories : [],
       anons: anons ? anons : [],
       finisherNameList: finisherNameList ? finisherNameList : [],
-      racersDelta: racersDelta ? racersDelta : RACERS_DELTA
+      racersDelta: racersDelta ? racersDelta : DEFAULT_DELTA
     };
   }
 

@@ -13,7 +13,7 @@
     <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
       <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode"
                     class="tui-form__row_multi-fields" [formGroup]="formGroup">
-        <app-modify-racer
+        <app-racer-editor
           [categories$]="categories$"
           [formValue]="formValue"
           [mode]="ModifyMode.edit"
