@@ -23,7 +23,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   /**
    * Состояние компонента
    */
-  public raceStatus = RaceStatus.prepare;
+  public raceStatus = RaceStatus.PREPARE;
 
   /**
    * Потоки
@@ -41,7 +41,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   );
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
-      if (racers.length > 0) this.raceStatus = RaceStatus.ready;
+      if (racers.length > 0) this.raceStatus = RaceStatus.READY;
     })
   );
 
@@ -115,7 +115,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.racersService.resetRace();
     this.finishersService.resetFinishersData();
 
-    this.raceStatus = RaceStatus.prepare;
+    this.raceStatus = RaceStatus.PREPARE;
   }
 
   public openResetDialog(content: any): void {
@@ -139,7 +139,7 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public onContinuePrevRace() {
     this.racersService.continuePrevRace();
-    this.raceStatus = RaceStatus.ready
+    this.raceStatus = RaceStatus.READY
   }
 
   public onSetDelta(newDelta: number): void {

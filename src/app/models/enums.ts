@@ -1,27 +1,32 @@
 export enum ModifyMode {
-  edit = 'edit',
-  create = 'create',
+  EDIT = 'EDIT',
+  CREATE = 'CREATE',
 }
 
 export enum RepositoryKey {
-  racers = "racers",
-  categoriesMap = "categoriesMap",
-  starters = "starters",
-  starterNameList =  "starterNameList",
-  finishers = "finishers",
-  finishersByCategories = "finishersByCategories",
-  anons = "anons",
-  finisherNameList =  "finisherNameList",
-  currentRacerIndex = "currentRacerIndex",
-  currentAnonIndex =  "currentAnonIndex",
-  raceName =  "raceName",
-  racersDelta = "racersDelta",
+  RACERS = "RACERS",
+  CATEGORIES_MAP = "CATEGORIES_MAP",
+  STARTERS = "STARTERS",
+  STARTER_NAME_LIST =  "STARTER_NAME_LIST",
+  FINISHERS = "FINISHERS",
+  FINISHERS_BY_CATEGORIES = "FINISHERS_BY_CATEGORIES",
+  ANONS = "ANONS",
+  FINISHER_NAME_LIST =  "FINISHER_NAME_LIST",
+  CURRENT_RACER_INDEX = "CURRENT_RACER_INDEX",
+  CURRENT_ANON_INDEX =  "CURRENT_ANON_INDEX",
+  RACE_NAME =  "RACE_NAME",
+  RACERS_DELTA = "RACERS_DELTA",
 }
 
 export enum RaceStatus {
-  prepare = 'prepare',
-  pause = 'pause',
-  start = 'start',
-  finish = 'finish',
-  ready = 'ready',
+  PREPARE = 'PREPARE',
+  PAUSE = 'PAUSE',
+  START = 'START',
+  FINISH = 'FINISH',
+  READY = 'READY',
+}
+
+export enum RaceType {
+  ITT = 'itt',
+  GROUP = 'group',
 }

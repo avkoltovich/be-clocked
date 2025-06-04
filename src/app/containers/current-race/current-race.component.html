@@ -11,7 +11,7 @@
       [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
       [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
       [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-      [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.prepare"
+      [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.PREPARE"
       [isDeltaEditMode]="isRaceStarted$.value"
       [currentTimerValue]="currentTimerValue"
       [maxTimerValue]="maxTimerValue"

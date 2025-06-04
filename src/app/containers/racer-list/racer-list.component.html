@@ -16,7 +16,7 @@
         <app-racer-editor
           [categories$]="categories$"
           [formValue]="formValue"
-          [mode]="ModifyMode.edit"
+          [mode]="ModifyMode.EDIT"
           (changeRacer)="onSave($event)"
           (cancel)="onCancel()"
         />

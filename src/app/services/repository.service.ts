@@ -13,51 +13,51 @@ export class RepositoryService {
    */
 
   public updateRacers(value: IRacer[]) {
-    window.localStorage.setItem(RepositoryKey.racers, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.RACERS, JSON.stringify(value));
   }
 
   public updateCategoriesMap(value: Record<string, IRacer[]>) {
-    window.localStorage.setItem(RepositoryKey.categoriesMap, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.CATEGORIES_MAP, JSON.stringify(value));
   }
 
   public updateStartedRacers(value: IStarter[]) {
-    window.localStorage.setItem(RepositoryKey.starters, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.STARTERS, JSON.stringify(value));
   }
 
   public updateStarterNameList(value: string[]) {
-    window.localStorage.setItem(RepositoryKey.starterNameList, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.STARTER_NAME_LIST, JSON.stringify(value));
   }
 
   public updateFinishers(value: IFinisher[]) {
-    window.localStorage.setItem(RepositoryKey.finishers, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.FINISHERS, JSON.stringify(value));
   }
 
   public updateFinishersByCategories(value: IFinishCategory[]) {
-    window.localStorage.setItem(RepositoryKey.finishersByCategories, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.FINISHERS_BY_CATEGORIES, JSON.stringify(value));
   }
 
   public updateAnons(value: IFinisher[]) {
-    window.localStorage.setItem(RepositoryKey.anons, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.ANONS, JSON.stringify(value));
   }
 
   public updateFinisherNameList(value: string[]) {
-    window.localStorage.setItem(RepositoryKey.finisherNameList, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.FINISHER_NAME_LIST, JSON.stringify(value));
   }
 
   public updateCurrentRacerIndex(value: number) {
-    window.localStorage.setItem(RepositoryKey.currentRacerIndex, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.CURRENT_RACER_INDEX, JSON.stringify(value));
   }
 
   public updateCurrentAnonIndex(value: number) {
-    window.localStorage.setItem(RepositoryKey.currentAnonIndex, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.CURRENT_ANON_INDEX, JSON.stringify(value));
   }
 
   public updateRaceName(value: string) {
-    window.localStorage.setItem(RepositoryKey.raceName, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.RACE_NAME, JSON.stringify(value));
   }
 
   public updateRacersDelta(value: number) {
-    window.localStorage.setItem(RepositoryKey.racersDelta, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.RACERS_DELTA, JSON.stringify(value));
   }
 
   /**
@@ -65,31 +65,31 @@ export class RepositoryService {
    */
 
   public readRacers() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.racers)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACERS)!);
   }
 
   public readCategoriesMap() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.categoriesMap)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.CATEGORIES_MAP)!);
   }
 
   public readStartedRacers() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.starters)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.STARTERS)!);
   }
 
   public readStarterNameList() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.starterNameList)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.STARTER_NAME_LIST)!);
   }
 
   public readCurrentRacerIndex() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.currentRacerIndex)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.CURRENT_RACER_INDEX)!);
   }
 
   public readCurrentAnonIndex() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.currentAnonIndex)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.CURRENT_ANON_INDEX)!);
   }
 
   public readFinishers() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.finishers)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.FINISHERS)!);
   }
 
   public readFinishersByCategories() {
@@ -97,19 +97,19 @@ export class RepositoryService {
   }
 
   public readAnons() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.anons)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.ANONS)!);
   }
 
   public readFinisherNameList() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.finisherNameList)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.FINISHER_NAME_LIST)!);
   }
 
   public readRaceName() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.raceName)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_NAME)!);
   }
 
   public readRacersDelta() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.racersDelta)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACERS_DELTA)!);
   }
 
   /**
@@ -117,7 +117,7 @@ export class RepositoryService {
    */
 
   public checkRacers(): boolean {
-    return window.localStorage.getItem(RepositoryKey.racers) !== null;
+    return window.localStorage.getItem(RepositoryKey.RACERS) !== null;
   }
 
   public collectRaceData() {

@@ -1,19 +1,19 @@
 <form class="tui-form__row_multi-fields" [formGroup]="formGroup">
-  <tui-input class="input-text tui-space_right-3" [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'" formControlName="name">
+  <tui-input class="input-text tui-space_right-3" [tuiTextfieldSize]="mode === ModifyMode.EDIT ? 's' : 'm'" formControlName="name">
     Фамилия Имя
     <input
       tuiTextfield
       type="text"
     >
   </tui-input>
-  <tui-input class="tui-space_right-3 input-number" formControlName="number" [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'">
+  <tui-input class="tui-space_right-3 input-number" formControlName="number" [tuiTextfieldSize]="mode === ModifyMode.EDIT ? 's' : 'm'">
     Номер
     <input
       tuiTextfield
       type="text"
     >
   </tui-input>
-  <tui-input *ngIf="mode === ModifyMode.create" class="input-number tui-space_right-3" formControlName="startNumber" tuiTextfieldSize="m">
+  <tui-input *ngIf="mode === ModifyMode.CREATE" class="input-number tui-space_right-3" formControlName="startNumber" tuiTextfieldSize="m">
     Стартовая позиция
     <input
       tuiTextfield
@@ -21,10 +21,10 @@
     >
   </tui-input>
   <tui-input
-    *ngIf="isAddCategoryMode"
-    class="input-category tui-space_right-3"
-    tuiAutoFocus
-    [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'" formControlName="category"
+          *ngIf="isAddCategoryMode"
+          class="input-category tui-space_right-3"
+          tuiAutoFocus
+          [tuiTextfieldSize]="mode === ModifyMode.EDIT ? 's' : 'm'" formControlName="category"
   >
     Категория
     <input
@@ -36,12 +36,12 @@
     *ngIf="!isAddCategoryMode"
     class="input-category tui-space_right-3"
     formControlName="category"
-    [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'"
+    [tuiTextfieldSize]="mode === ModifyMode.EDIT ? 's' : 'm'"
   >
     Категория
     <input
       tuiTextfield
-      [tuiTextfieldSize]="mode === ModifyMode.edit ? 's' : 'm'"
+      [tuiTextfieldSize]="mode === ModifyMode.EDIT ? 's' : 'm'"
       placeholder="Выберите категорию"
     />
     <tui-data-list
@@ -67,7 +67,7 @@
     </tui-data-list>
   </tui-select>
   <button
-    *ngIf="mode === ModifyMode.edit"
+    *ngIf="mode === ModifyMode.EDIT"
     class="tui-space_right-3"
     tuiButton
     type="button"
@@ -87,7 +87,7 @@
     appearance="primary"
     (click)="onChangeRacer()"
     [disabled]="formGroup.invalid"
-    [size]="mode === ModifyMode.edit ? 's' : 'm'"
+    [size]="mode === ModifyMode.EDIT ? 's' : 'm'"
   >
     <tui-svg
       src="tuiIconPlusCircleLarge"

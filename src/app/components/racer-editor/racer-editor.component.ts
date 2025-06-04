@@ -21,7 +21,7 @@ export class RacerEditorComponent implements OnChanges {
 
   @Input() categories$: Observable<string[]> = EMPTY;
 
-  @Input() mode: ModifyMode = ModifyMode.create;
+  @Input() mode: ModifyMode = ModifyMode.CREATE;
 
   @Input() formValue? = {}
 
@@ -30,8 +30,8 @@ export class RacerEditorComponent implements OnChanges {
   @Output() cancel = new EventEmitter();
 
   public buttonLabelMap = {
-    [ModifyMode.create]: 'Добавить',
-    [ModifyMode.edit]: 'Сохранить',
+    [ModifyMode.CREATE]: 'Добавить',
+    [ModifyMode.EDIT]: 'Сохранить',
   }
 
   protected readonly ModifyMode = ModifyMode;

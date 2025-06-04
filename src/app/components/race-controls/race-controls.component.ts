@@ -13,7 +13,7 @@ export class RaceControlsComponent implements AfterViewInit {
 
   public downloadJsonHref: string = '';
 
-  @Input() raceStatus: RaceStatus = RaceStatus.prepare;
+  @Input() raceStatus: RaceStatus = RaceStatus.PREPARE;
 
   @Input() isPauseAndSkipDisabled = true;
 
