@@ -2,5 +2,6 @@
   <app-current-race></app-current-race>
   <app-add-racer></app-add-racer>
   <app-racer-list></app-racer-list>
-  <app-finish-race></app-finish-race>
+  <app-finish-race *ngIf="(starterNameList$ | async)!.length > 0"></app-finish-race>
+  <app-footer></app-footer>
 </div>

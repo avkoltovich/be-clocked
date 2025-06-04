@@ -12,7 +12,7 @@ import {
 } from "@taiga-ui/core";
 import {
   TuiInputModule,
-  TuiInputNumberModule,
+  TuiInputNumberModule, TuiIslandModule,
   TuiProgressModule,
   TuiSelectModule,
   TuiStepperModule
@@ -22,6 +22,7 @@ import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.component';
 import { RaceHeaderComponent } from './race-header/race-header.component';
 import { GoogleTableStepperComponent } from './google-table-stepper/google-table-stepper.component';
+import { FooterComponent } from './footer/footer.component';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { GoogleTableStepperComponent } from './google-table-stepper/google-table
     RaceControlsComponent,
     IttRaceProgressComponent,
     RaceHeaderComponent,
-    GoogleTableStepperComponent
+    GoogleTableStepperComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,
@@ -49,14 +51,16 @@ import { GoogleTableStepperComponent } from './google-table-stepper/google-table
     NgOptimizedImage,
     TuiLoaderModule,
     TuiStepperModule,
-    TuiInputNumberModule
+    TuiInputNumberModule,
+    TuiIslandModule
   ],
   exports: [
     RacerEditorComponent,
     RaceControlsComponent,
     IttRaceProgressComponent,
     RaceHeaderComponent,
-    GoogleTableStepperComponent
+    GoogleTableStepperComponent,
+    FooterComponent
   ]
 })
 export class ComponentsModule { }
