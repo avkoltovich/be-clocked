@@ -1,8 +1,11 @@
 <tui-island size="l">
 
   <app-race-header
+    class="tui-space_bottom-6"
     [raceName$]="raceName$"
+    [raceType$]="raceType$"
     (raceNameSave)="onRaceNameSave($event)"
+    (raceTypeChange)="onRaceTypeChanged($event)"
   />
 
   <div *tuiLet="racers$ | async as racers">

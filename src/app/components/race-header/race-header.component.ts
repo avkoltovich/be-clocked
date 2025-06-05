@@ -1,20 +1,45 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormControl, Validators} from "@angular/forms";
-import {BehaviorSubject} from "rxjs";
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {BehaviorSubject, finalize, takeUntil, tap} from "rxjs";
+import {RaceType} from "../../models/enums";
+import {TuiDestroyService} from "@taiga-ui/cdk";
 
 @Component({
   selector: 'app-race-header',
   templateUrl: './race-header.component.html',
   styleUrls: ['./race-header.component.scss']
 })
-export class RaceHeaderComponent {
+export class RaceHeaderComponent implements OnInit {
+  protected readonly RaceType = RaceType;
+
   public isRaceNameEditing = false;
 
   public raceNameFormControl = new FormControl('', Validators.required);
 
+  public raceType = new FormControl(RaceType.ITT);
+
   @Input() raceName$ = new BehaviorSubject('');
 
-  @Output() raceNameSave = new EventEmitter();
+  @Input() raceType$ = new BehaviorSubject(RaceType.ITT);
+
+  @Output() raceNameSave: EventEmitter<string> = new EventEmitter();
+
+  @Output() raceTypeChange: EventEmitter<RaceType> = new EventEmitter();
+
+  constructor(@Inject(TuiDestroyService)
+              private readonly destroy$: TuiDestroyService) {
+  }
+
+  public ngOnInit(): void {
+    this.raceType.valueChanges.pipe(
+      tap((value) => {
+        if (value) {
+          this.raceTypeChange.emit(value)
+        }
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe();
+  }
 
   public onRaceNameClick(): void {
     this.raceNameFormControl.patchValue(this.raceName$.value)
@@ -31,4 +56,7 @@ export class RaceHeaderComponent {
     }
   }
 
+  public onRaceTypeClick(raceType: RaceType) {
+    this.raceTypeChange.emit(raceType);
+  }
 }

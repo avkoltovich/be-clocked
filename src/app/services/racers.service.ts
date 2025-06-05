@@ -3,28 +3,32 @@ import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RepositoryService} from "./repository.service";
 import {IRacer, IStarter, ISyncJSON} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";
-import {DEFAULT_ITT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
+import {DEFAULT_DELTA, DEFAULT_ITT_RACE_NAME} from "../constants/itt.constants";
+import {RaceType} from "../models/enums";
 
 @Injectable({
   providedIn: "root"
 })
 export class RacersService {
   private timerDelta = 0;
-  public currentRacerIndex$ = new BehaviorSubject(0);
+  public racerSecondsDelta = DEFAULT_DELTA;
 
   public raceName$ = new BehaviorSubject<string>(DEFAULT_ITT_RACE_NAME);
+
+  public raceType$ = new BehaviorSubject<RaceType>(RaceType.ITT);
 
   public racers$ = new BehaviorSubject<IRacer[]>([]);
   public startedRacers: IStarter[] = [];
   public starterNameList$ = new BehaviorSubject<string[]>([]);
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
+  public currentRacerIndex$ = new BehaviorSubject(0);
 
-  public racerSecondsDelta = DEFAULT_DELTA;
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
   public isAllMembersHasNumbers$ = new BehaviorSubject(false);
   public isDeltaChanged$ = new BehaviorSubject(false);
+
 
   public timer$ = timer(0, 1000).pipe(
     map(i => this.racerSecondsDelta - i + this.timerDelta),

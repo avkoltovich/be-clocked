@@ -6,7 +6,7 @@ import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
-import {RaceStatus} from "../../models/enums";
+import {RaceStatus, RaceType} from "../../models/enums";
 import {IGoogleTableData} from "../../components/google-table-stepper/google-table-stepper.component";
 
 @Component({
@@ -34,6 +34,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public raceName$ = this.racersService.raceName$;
+  public raceType$ = this.racersService.raceType$;
   public timer$ = this.racersService.timer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;
@@ -154,5 +155,9 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public completeSteps(data: IGoogleTableData): void {
     this.setDataFromGoogleTable(data);
+  }
+
+  public onRaceTypeChanged($event: RaceType) {
+    this.racersService.raceType$.next($event);
   }
 }

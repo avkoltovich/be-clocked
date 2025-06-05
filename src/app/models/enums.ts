@@ -27,6 +27,6 @@ export enum RaceStatus {
 }
 
 export enum RaceType {
-  ITT = 'itt',
-  GROUP = 'group',
+  ITT = 'ITT',
+  GROUP = 'GROUP',
 }

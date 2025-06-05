@@ -3,22 +3,22 @@ import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {RacerEditorComponent} from "./racer-editor/racer-editor.component";
 import {RaceControlsComponent} from "./race-controls/race-controls.component";
 import {
-  TuiButtonModule,
-  TuiDataListModule,
-  TuiHintModule,
-  TuiLinkModule, TuiLoaderModule,
-  TuiSvgModule,
-  TuiTextfieldControllerModule
+    TuiButtonModule,
+    TuiDataListModule, TuiGroupModule,
+    TuiHintModule,
+    TuiLinkModule, TuiLoaderModule,
+    TuiSvgModule,
+    TuiTextfieldControllerModule
 } from "@taiga-ui/core";
 import {
   TuiInputModule,
   TuiInputNumberModule, TuiIslandModule,
-  TuiProgressModule,
+  TuiProgressModule, TuiRadioBlockModule,
   TuiSelectModule,
   TuiStepperModule
 } from "@taiga-ui/kit";
 import {ReactiveFormsModule} from "@angular/forms";
-import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
+import {TuiAutoFocusModule, TuiDestroyService, TuiLetModule} from "@taiga-ui/cdk";
 import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.component';
 import { RaceHeaderComponent } from './race-header/race-header.component';
 import { GoogleTableStepperComponent } from './google-table-stepper/google-table-stepper.component';
@@ -52,7 +52,9 @@ import { FooterComponent } from './footer/footer.component';
     TuiLoaderModule,
     TuiStepperModule,
     TuiInputNumberModule,
-    TuiIslandModule
+    TuiIslandModule,
+    TuiGroupModule,
+    TuiRadioBlockModule
   ],
   exports: [
     RacerEditorComponent,
@@ -61,6 +63,7 @@ import { FooterComponent } from './footer/footer.component';
     RaceHeaderComponent,
     GoogleTableStepperComponent,
     FooterComponent
-  ]
+  ],
+  providers: [TuiDestroyService]
 })
 export class ComponentsModule { }
