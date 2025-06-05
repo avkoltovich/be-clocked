@@ -23,6 +23,7 @@ import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.co
 import { RaceHeaderComponent } from './race-header/race-header.component';
 import { GoogleTableStepperComponent } from './google-table-stepper/google-table-stepper.component';
 import { FooterComponent } from './footer/footer.component';
+import { GroupRaceProgressComponent } from './group-race-progress/group-race-progress.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { FooterComponent } from './footer/footer.component';
     IttRaceProgressComponent,
     RaceHeaderComponent,
     GoogleTableStepperComponent,
-    FooterComponent
+    FooterComponent,
+    GroupRaceProgressComponent
   ],
   imports: [
     CommonModule,
@@ -62,7 +64,8 @@ import { FooterComponent } from './footer/footer.component';
     IttRaceProgressComponent,
     RaceHeaderComponent,
     GoogleTableStepperComponent,
-    FooterComponent
+    FooterComponent,
+    GroupRaceProgressComponent
   ],
   providers: [TuiDestroyService]
 })

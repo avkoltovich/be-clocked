@@ -10,6 +10,9 @@ import {RaceType} from "../models/enums";
   providedIn: "root"
 })
 export class RacersService {
+  /**
+   * Для ITT режима
+   */
   private timerDelta = 0;
   public racerSecondsDelta = DEFAULT_DELTA;
 
@@ -30,7 +33,7 @@ export class RacersService {
   public isDeltaChanged$ = new BehaviorSubject(false);
 
 
-  public timer$ = timer(0, 1000).pipe(
+  public ittRaceTimer$ = timer(0, 1000).pipe(
     map(i => this.racerSecondsDelta - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
@@ -62,6 +65,8 @@ export class RacersService {
       }
     })
   );
+
+  public groupRaceTimer$ = timer(0, 1000);
 
   constructor(private repositoryService: RepositoryService, private finishersService: FinishersService) {
     this.initRaceData();

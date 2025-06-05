@@ -15,9 +15,13 @@ import {IGoogleTableData} from "../../components/google-table-stepper/google-tab
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent implements AfterViewInit {
-  private timerSubscription: Subscription | null = null;
+  private ittTimerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
   readonly RaceType = RaceType;
+
+  /**
+   * Для ITT режима
+   */
   public maxTimerValue = this.racersService.racerSecondsDelta;
   public currentTimerValue = this.racersService.racerSecondsDelta;
 
@@ -36,11 +40,12 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public raceName$ = this.racersService.raceName$;
   public raceType$ = this.racersService.raceType$;
-  public timer$ = this.racersService.timer$.pipe(
+  public ittRaceTimer$ = this.racersService.ittRaceTimer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;
     })
   );
+  public groupRaceTimer$ = this.racersService.groupRaceTimer$;
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
       if (racers.length > 0) this.raceStatus = RaceStatus.READY;
@@ -87,7 +92,7 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public onStart() {
     this.racersService.isRaceStarted$.next(true);
-    this.timerSubscription = this.timer$.subscribe();
+    this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
   }
 
   public onSkip() {
@@ -106,12 +111,12 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.isRacePaused$.next(true);
     this.isRaceStarted$.next(false);
 
-    this.timerSubscription?.unsubscribe();
+    this.ittTimerSubscription?.unsubscribe();
     this.resetDeltaTimer();
   }
 
   public onReset() {
-    this.timerSubscription?.unsubscribe();
+    this.ittTimerSubscription?.unsubscribe();
 
     this.repositoryService.resetLS();
     this.racersService.resetRace();

@@ -22,6 +22,11 @@
         [maxTimerValue]="maxTimerValue"
         (newDelta)="onSetDelta($event)"
       />
+
+      <app-group-race-progress
+        *ngIf="raceType$.value === RaceType.GROUP"
+        [groupRaceTimer$]="groupRaceTimer$"
+      />
     </div>
 
     <app-race-controls
