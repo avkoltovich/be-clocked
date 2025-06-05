@@ -1,8 +1,4 @@
-.title {
-  text-align: right;
-}
-
-.content-wrapper {
+:host {
   display: grid;
   grid-template-columns: 60% 40%;
 }
