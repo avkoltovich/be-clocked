@@ -1,7 +1,7 @@
 <tui-island size="l">
 
   <app-race-header
-    class="tui-space_bottom-6"
+    class="tui-space_bottom-14"
     [raceName$]="raceName$"
     [raceType$]="raceType$"
     (raceNameSave)="onRaceNameSave($event)"
@@ -9,17 +9,20 @@
   />
 
   <div *tuiLet="racers$ | async as racers">
-    <app-itt-race-progress
-      [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
-      [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
-      [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
-      [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-      [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.PREPARE"
-      [isDeltaEditMode]="isRaceStarted$.value"
-      [currentTimerValue]="currentTimerValue"
-      [maxTimerValue]="maxTimerValue"
-      (newDelta)="onSetDelta($event)"
-    />
+    <div class="progress-wrapper tui-space_bottom-14">
+      <app-itt-race-progress
+        *ngIf="raceType$.value === RaceType.ITT"
+        [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
+        [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
+        [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
+        [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
+        [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.PREPARE"
+        [isDeltaEditMode]="isRaceStarted$.value"
+        [currentTimerValue]="currentTimerValue"
+        [maxTimerValue]="maxTimerValue"
+        (newDelta)="onSetDelta($event)"
+      />
+    </div>
 
     <app-race-controls
       [raceStatus]="raceStatus"

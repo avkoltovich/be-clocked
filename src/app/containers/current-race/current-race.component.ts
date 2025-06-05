@@ -17,6 +17,7 @@ import {IGoogleTableData} from "../../components/google-table-stepper/google-tab
 export class CurrentRaceComponent implements AfterViewInit {
   private timerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
+  readonly RaceType = RaceType;
   public maxTimerValue = this.racersService.racerSecondsDelta;
   public currentTimerValue = this.racersService.racerSecondsDelta;
 
