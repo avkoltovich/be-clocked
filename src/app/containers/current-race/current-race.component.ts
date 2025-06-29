@@ -8,6 +8,7 @@ import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {RaceStatus, RaceType} from "../../models/enums";
 import {IGoogleTableData} from "../../components/google-table-stepper/google-table-stepper.component";
+import {CurrentRaceService} from "../../services/current-race.service";
 
 @Component({
   selector: "app-current-race",
@@ -59,6 +60,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     private racersService: RacersService,
     private repositoryService: RepositoryService,
     private finishersService: FinishersService,
+    private currentRaceService: CurrentRaceService,
   ) {
   }
 
@@ -134,7 +136,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public setStateFromJSON(data: ISyncJSON) {
-    this.racersService.setStateFromJSON(data);
+    this.currentRaceService.setStateFromJSON(data);
     this.onContinuePrevRace();
   }
 

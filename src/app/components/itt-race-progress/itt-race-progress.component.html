@@ -1,21 +1,20 @@
-<div class="racers-container">
-  <ng-container *ngIf="isShowRacerNames">
-    <p class="current">
-      <span class="tui-text_body-xl">Стартует</span>
-      <span class="tui-text_h1 racer">
+<p class="help-text" *ngIf="isRacersListEmpty">Заполните список участников</p>
+<div class="racers-container" *ngIf="isShowRacerNames">
+  <p class="current">
+    <span class="tui-text_body-xl">Стартует</span>
+    <span class="tui-text_h1 racer">
           {{ currentRacer }}
         </span>
-    </p>
+  </p>
 
-    <p class="next">
-      <span class="tui-text_body-xl">Готовится</span>
-      <span class="tui-text_h4 racer">
+  <p class="next">
+    <span class="tui-text_body-xl">Готовится</span>
+    <span class="tui-text_h4 racer">
           {{ nextRacer }}
         </span>
-    </p>
-  </ng-container>
+  </p>
 </div>
-<div class="timer-container">
+<div class="timer-container" *ngIf="isShowTimer; else emptyList">
   <svg
     width="0"
     height="0"
@@ -43,7 +42,6 @@
 
   <label
     class="timer"
-    *ngIf="isShowTimer; else emptyList"
     tuiProgressLabel
   >
     <ng-container *ngIf="isDeltaEditMode; else deltaEditTemplate">
@@ -78,7 +76,7 @@
   #setDelta
   let-context
 >
-  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Укажите дельту</p>
+  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Укажите дельту<br>между стартующими</p>
 
   <div class="button-wrapper">
     <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">

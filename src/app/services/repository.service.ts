@@ -93,7 +93,7 @@ export class RepositoryService {
   }
 
   public readFinishersByCategories() {
-    return JSON.parse(window.localStorage.getItem("finishersByCategories")!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.FINISHERS_BY_CATEGORIES)!);
   }
 
   public readAnons() {

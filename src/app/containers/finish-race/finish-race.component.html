@@ -111,11 +111,11 @@
 
     </li>
   </ol>
-  <ng-container *ngIf="finishers$.value.length > 0">
+  <ng-container *ngIf="finishers$ | async as finishers">
     <h3>Абсолют</h3>
     <ol class="tui-list tui-list_ordered tui-list_large">
       <li
-        *ngFor="let finisher of finishers$.value"
+        *ngFor="let finisher of finishers"
         class="tui-list__item"
       >
         {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}

@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RepositoryService} from "./repository.service";
-import {IRacer, IStarter, ISyncJSON} from "../models/interfaces";
+import {IRacer, IStarter} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";
 import {DEFAULT_DELTA, DEFAULT_ITT_RACE_NAME} from "../constants/itt.constants";
 import {RaceType} from "../models/enums";
@@ -72,7 +72,18 @@ export class RacersService {
     this.initRaceData();
   }
 
-  private initRaceData() {
+  private convertCategoryName(registerCategoryName: string): string {
+    switch (registerCategoryName) {
+      case 'Шоссе (групповой велосипед)':
+        return 'Шоссе'
+      case 'Шоссе (разделочник или групповой с лежаком)':
+        return 'Шоссе ТТ'
+      default:
+        return registerCategoryName
+    }
+  }
+
+  public initRaceData() {
     const startedRacers = this.repositoryService.readStartedRacers();
     const starterNameList = this.repositoryService.readStarterNameList();
     const currentRacerIndex = this.repositoryService.readCurrentRacerIndex();
@@ -86,22 +97,6 @@ export class RacersService {
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
-  }
-
-  private convertCategoryName(registerCategoryName: string): string {
-    switch (registerCategoryName) {
-      case 'Шоссе (групповой велосипед)':
-        return 'Шоссе'
-      case 'Шоссе (разделочник или групповой с лежаком)':
-        return 'Шоссе ТТ'
-      default:
-        return registerCategoryName
-    }
-  }
-
-  public setStateFromJSON(data: ISyncJSON) {
-    this.repositoryService.setStateFromJSON(data);
-    this.initRaceData()
   }
 
   public continuePrevRace() {

@@ -13,6 +13,8 @@ export class IttRaceProgressComponent {
 
   @Input() nextRacer = '';
 
+  @Input() isRacersListEmpty = true;
+
   @Input() isShowRacerNames = true;
 
   @Input() isShowTimer = true;

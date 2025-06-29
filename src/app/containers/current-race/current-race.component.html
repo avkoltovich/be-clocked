@@ -14,6 +14,7 @@
         *ngIf="raceType$.value === RaceType.ITT"
         [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
         [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
+        [isRacersListEmpty]="racers?.length === 0"
         [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
         [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
         [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.PREPARE"
