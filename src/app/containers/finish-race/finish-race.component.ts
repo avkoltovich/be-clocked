@@ -7,6 +7,7 @@ import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
+import {CurrentRaceService} from "../../services/current-race.service";
 
 @Component({
   selector: "app-finish-race",
@@ -25,7 +26,7 @@ export class FinishRaceComponent implements OnInit {
   public anonFinishers$ = this.finishersService.anonFinishers$;
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
@@ -84,9 +85,11 @@ export class FinishRaceComponent implements OnInit {
   );
 
   constructor(private racersService: RacersService,
+              private finishersService: FinishersService,
+              private currentRaceService: CurrentRaceService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-              private finishersService: FinishersService) {
+              ) {
   }
 
   public ngOnInit() {

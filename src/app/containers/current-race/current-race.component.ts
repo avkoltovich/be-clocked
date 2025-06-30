@@ -23,8 +23,8 @@ export class CurrentRaceComponent implements AfterViewInit {
   /**
    * Для ITT режима
    */
-  public maxTimerValue = this.racersService.racerSecondsDelta;
-  public currentTimerValue = this.racersService.racerSecondsDelta;
+  public maxTimerValue = this.currentRaceService.racerSecondsDelta;
+  public currentTimerValue = this.currentRaceService.racerSecondsDelta;
 
   /**
    * Состояние компонента
@@ -34,19 +34,19 @@ export class CurrentRaceComponent implements AfterViewInit {
   /**
    * Потоки
    */
-  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
-  public isRacePaused$ = this.racersService.isRacePaused$;
-  public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
+  public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
+  public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
+  public isRacePaused$ = this.currentRaceService.isRacePaused$;
+  public isAllMembersStarted$ = this.currentRaceService.isAllMembersStarted$;
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
-  public raceName$ = this.racersService.raceName$;
-  public raceType$ = this.racersService.raceType$;
-  public ittRaceTimer$ = this.racersService.ittRaceTimer$.pipe(
+  public raceName$ = this.currentRaceService.raceName$;
+  public raceType$ = this.currentRaceService.raceType$;
+  public ittRaceTimer$ = this.currentRaceService.ittRaceTimer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;
     })
   );
-  public groupRaceTimer$ = this.racersService.groupRaceTimer$;
+  public groupRaceTimer$ = this.currentRaceService.groupRaceTimer$;
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
       if (racers.length > 0) this.raceStatus = RaceStatus.READY;
@@ -65,7 +65,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   private resetDeltaTimer() {
-    this.currentTimerValue = this.racersService.racerSecondsDelta;
+    this.currentTimerValue = this.currentRaceService.racerSecondsDelta;
   }
 
   private setDataFromGoogleTable(data: IGoogleTableData): void {
@@ -79,21 +79,21 @@ export class CurrentRaceComponent implements AfterViewInit {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     }
     else {
-      this.onReset();
+      this.repositoryService.resetLS();
     }
 
-    this.racersService.isDeltaChanged$.pipe(
+    this.currentRaceService.isDeltaChanged$.pipe(
       tap(() => {
-        const currentDelta = this.racersService.racerSecondsDelta;
+        const currentDelta = this.currentRaceService.racerSecondsDelta;
 
         this.maxTimerValue = currentDelta;
         this.currentTimerValue = currentDelta;
       })
-    ).subscribe()
+    ).subscribe();
   }
 
   public onStart() {
-    this.racersService.isRaceStarted$.next(true);
+    this.currentRaceService.isRaceStarted$.next(true);
     this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
   }
 
@@ -121,7 +121,8 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.ittTimerSubscription?.unsubscribe();
 
     this.repositoryService.resetLS();
-    this.racersService.resetRace();
+    this.currentRaceService.resetCurrentRace();
+    this.racersService.resetRacersData();
     this.finishersService.resetFinishersData();
 
     this.raceStatus = RaceStatus.PREPARE;
@@ -147,18 +148,20 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onContinuePrevRace() {
-    this.racersService.continuePrevRace();
+    this.currentRaceService.continuePrevRace();
+    this.racersService.initRacersData();
+    this.finishersService.initFinishersData();
     this.raceStatus = RaceStatus.READY
   }
 
   public onSetDelta(newDelta: number): void {
-    this.racersService.setRacersDelta(newDelta);
+    this.currentRaceService.setRacersDelta(newDelta);
     this.maxTimerValue = newDelta;
     this.currentTimerValue = newDelta;
   }
 
   public onRaceNameSave(raceName: string) {
-    this.racersService.updateRaceName(raceName);
+    this.currentRaceService.updateRaceName(raceName);
   }
 
   public completeSteps(data: IGoogleTableData): void {
@@ -166,6 +169,6 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onRaceTypeChanged($event: RaceType) {
-    this.racersService.raceType$.next($event);
+    this.currentRaceService.raceType$.next($event);
   }
 }

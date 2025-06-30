@@ -6,6 +6,7 @@ import {ModifyMode} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
+import {CurrentRaceService} from "../../services/current-race.service";
 
 interface ICurrentRacer {
   index: number;
@@ -18,8 +19,8 @@ interface ICurrentRacer {
   styleUrls: ["./racer-list.component.scss"]
 })
 export class RacerListComponent {
-  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
+  public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
 
@@ -46,6 +47,7 @@ export class RacerListComponent {
   constructor(
     private racersService: RacersService,
     private finishersService: FinishersService,
+    private currentRaceService: CurrentRaceService,
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
   ) {
   }
