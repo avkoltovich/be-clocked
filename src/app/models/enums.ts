@@ -16,6 +16,7 @@ export enum RepositoryKey {
   CURRENT_ANON_INDEX =  "CURRENT_ANON_INDEX",
   RACE_NAME =  "RACE_NAME",
   RACERS_DELTA = "RACERS_DELTA",
+  RACE_TYPE = "RACE_TYPE",
 }
 
 export enum RaceStatus {

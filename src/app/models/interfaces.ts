@@ -1,3 +1,5 @@
+import {RaceType} from "./enums";
+
 export interface IFinisher {
   name: string;
   time: number;
@@ -33,4 +35,5 @@ export interface ISyncJSON {
   anons: IFinisher[];
   finisherNameList: string[];
   racersDelta: number;
+  raceType: RaceType;
 }

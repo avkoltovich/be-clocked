@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {RepositoryService} from "./repository.service";
 import {RacersService} from "./racers.service";
 import {ISyncJSON} from "../models/interfaces";
-import {DEFAULT_DELTA, DEFAULT_ITT_RACE_NAME} from "../constants/itt.constants";
+import {DEFAULT_DELTA, DEFAULT_RACE_NAME} from "../constants/itt.constants";
 import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RaceType} from "../models/enums";
 
@@ -16,7 +16,7 @@ export class CurrentRaceService {
   private timerDelta = 0;
   public racerSecondsDelta = DEFAULT_DELTA;
 
-  public raceName$ = new BehaviorSubject<string>(DEFAULT_ITT_RACE_NAME);
+  public raceName$ = new BehaviorSubject<string>(DEFAULT_RACE_NAME);
 
   public raceType$ = new BehaviorSubject<RaceType>(RaceType.ITT);
 
@@ -68,6 +68,7 @@ export class CurrentRaceService {
   }
 
   public initCurrentRaceData() {
+    const raceType = this.repositoryService.readRaceType();
     const currentRacerIndex = this.repositoryService.readCurrentRacerIndex();
     const raceName = this.repositoryService.readRaceName();
     const racersDelta = this.repositoryService.readRacersDelta();
@@ -77,6 +78,8 @@ export class CurrentRaceService {
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
     if (starterNameList !== null) this.isRaceBeginning$.next(true);
+
+    this.raceType$.next(raceType ?? RaceType.ITT);
   }
 
   public setStateFromJSON(data: ISyncJSON) {
@@ -90,7 +93,8 @@ export class CurrentRaceService {
     this.isRacePaused$.next(false);
     this.isRaceBeginning$.next(false);
     this.isAllMembersStarted$.next(false);
-    this.raceName$.next(DEFAULT_ITT_RACE_NAME);
+    this.raceName$.next(DEFAULT_RACE_NAME);
+    this.raceType$.next(RaceType.ITT);
     this.timerDelta = 0;
     this.racerSecondsDelta = DEFAULT_DELTA;
     this.isDeltaChanged$.next(true);

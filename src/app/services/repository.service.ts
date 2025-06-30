@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {RepositoryKey} from '../models/enums';
+import {RaceType, RepositoryKey} from '../models/enums';
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
-import {DEFAULT_ITT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
+import {DEFAULT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -60,6 +60,10 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.RACERS_DELTA, JSON.stringify(value));
   }
 
+  public updateRaceType(value: string) {
+    window.localStorage.setItem(RepositoryKey.RACE_TYPE, JSON.stringify(value));
+  }
+
   /**
    * Read
    */
@@ -112,6 +116,10 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.RACERS_DELTA)!);
   }
 
+  public readRaceType() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_TYPE)!);
+  }
+
   /**
    * Утилиты
    */
@@ -133,20 +141,22 @@ export class RepositoryService {
     const finisherNameList = this.readFinisherNameList();
     const raceName = this.readRaceName();
     const racersDelta = this.readRacersDelta();
+    const raceType = this.readRaceType();
 
     return {
-      raceName: raceName ? raceName : DEFAULT_ITT_RACE_NAME,
-      racers: racers ? racers : [],
-      categoriesMap: categoriesMap ? categoriesMap : {},
-      starters: starters ? starters : [],
-      starterNameList: starterNameList ? starterNameList : [],
-      currentRacerIndex: currentRacerIndex ? currentRacerIndex : 0,
-      currentAnonIndex: currentAnonIndex ? currentAnonIndex : 0,
-      finishers: finishers ? finishers : [],
-      finishersByCategories: finishersByCategories ? finishersByCategories : [],
-      anons: anons ? anons : [],
-      finisherNameList: finisherNameList ? finisherNameList : [],
-      racersDelta: racersDelta ? racersDelta : DEFAULT_DELTA
+      raceName: raceName ? raceName : DEFAULT_RACE_NAME,
+      racers: racers ?? [],
+      categoriesMap: categoriesMap ?? {},
+      starters: starters ?? [],
+      starterNameList: starterNameList ?? [],
+      currentRacerIndex: currentRacerIndex ?? 0,
+      currentAnonIndex: currentAnonIndex ?? 0,
+      finishers: finishers ?? [],
+      finishersByCategories: finishersByCategories ?? [],
+      anons: anons ?? [],
+      finisherNameList: finisherNameList ?? [],
+      racersDelta: racersDelta ?? DEFAULT_DELTA,
+      raceType: raceType ?? RaceType.ITT,
     };
   }
 
@@ -161,8 +171,9 @@ export class RepositoryService {
     this.updateFinishersByCategories(data.finishersByCategories);
     this.updateAnons(data.anons);
     this.updateFinisherNameList(data.finisherNameList);
-    this.updateRaceName(data.raceName);
-    this.updateRacersDelta(data.racersDelta);
+    this.updateRaceName(data.raceName ?? DEFAULT_RACE_NAME);
+    this.updateRacersDelta(data.racersDelta ?? DEFAULT_DELTA);
+    this.updateRaceType(data.raceType ?? RaceType.ITT);
   }
 
   public resetLS() {

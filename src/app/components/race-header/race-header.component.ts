@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
 import {BehaviorSubject, takeUntil, tap} from "rxjs";
 import {RaceType} from "../../models/enums";
