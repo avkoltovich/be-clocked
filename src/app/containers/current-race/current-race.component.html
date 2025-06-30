@@ -4,6 +4,7 @@
     class="tui-space_bottom-14"
     [raceName$]="raceName$"
     [raceType$]="raceType$"
+    [isRaceBeginning$]="isRaceBeginning$"
     (raceNameSave)="onRaceNameSave($event)"
     (raceTypeChange)="onRaceTypeChanged($event)"
   />
@@ -17,7 +18,7 @@
         [isRacersListEmpty]="racers?.length === 0"
         [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
         [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-        [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.PREPARE"
+        [isShowEmptyRacerListNotification]="raceStatus$.value !== RaceStatus.PREPARE"
         [isDeltaEditMode]="isRaceStarted$.value"
         [currentTimerValue]="currentTimerValue"
         [maxTimerValue]="maxTimerValue"
@@ -31,7 +32,7 @@
     </div>
 
     <app-race-controls
-      [raceStatus]="raceStatus"
+      [raceStatus$]="raceStatus$"
       [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value!"
       [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"

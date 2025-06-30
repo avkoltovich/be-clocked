@@ -22,6 +22,7 @@ export class CurrentRaceService {
 
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
+  public isRaceBeginning$ = new BehaviorSubject(false);
   public isAllMembersStarted$ = new BehaviorSubject(false);
   public isDeltaChanged$ = new BehaviorSubject(false);
 
@@ -70,10 +71,12 @@ export class CurrentRaceService {
     const currentRacerIndex = this.repositoryService.readCurrentRacerIndex();
     const raceName = this.repositoryService.readRaceName();
     const racersDelta = this.repositoryService.readRacersDelta();
+    const starterNameList = this.repositoryService.readStarterNameList();
 
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
+    if (starterNameList !== null) this.isRaceBeginning$.next(true);
   }
 
   public setStateFromJSON(data: ISyncJSON) {
@@ -85,6 +88,7 @@ export class CurrentRaceService {
     this.currentRacerIndex$.next(0);
     this.isRaceStarted$.next(false);
     this.isRacePaused$.next(false);
+    this.isRaceBeginning$.next(false);
     this.isAllMembersStarted$.next(false);
     this.raceName$.next(DEFAULT_ITT_RACE_NAME);
     this.timerDelta = 0;

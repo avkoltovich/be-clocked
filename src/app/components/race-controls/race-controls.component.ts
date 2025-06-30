@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {RepositoryService} from "../../services/repository.service";
-import {catchError, EMPTY, fromEvent, switchMap, tap} from "rxjs";
+import {BehaviorSubject, catchError, EMPTY, fromEvent, switchMap, tap} from "rxjs";
 import {RaceStatus} from "../../models/enums";
 
 @Component({
@@ -13,7 +13,7 @@ export class RaceControlsComponent implements AfterViewInit {
 
   public downloadJsonHref: string = '';
 
-  @Input() raceStatus: RaceStatus = RaceStatus.PREPARE;
+  @Input() raceStatus$ = new BehaviorSubject<RaceStatus>(RaceStatus.PREPARE);
 
   @Input() isPauseAndSkipDisabled = true;
 

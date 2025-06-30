@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
 import {BehaviorSubject, takeUntil, tap} from "rxjs";
 import {RaceType} from "../../models/enums";
@@ -22,6 +22,8 @@ export class RaceHeaderComponent implements OnInit {
 
   @Input() raceType$ = new BehaviorSubject(RaceType.ITT);
 
+  @Input() isRaceBeginning$ = new BehaviorSubject(false);
+
   @Output() raceNameSave: EventEmitter<string> = new EventEmitter();
 
   @Output() raceTypeChange: EventEmitter<RaceType> = new EventEmitter();
@@ -39,6 +41,17 @@ export class RaceHeaderComponent implements OnInit {
       }),
       takeUntil(this.destroy$),
     ).subscribe();
+
+    this.isRaceBeginning$.pipe(
+      tap((isRaceBeginning) => {
+        if (isRaceBeginning) {
+          this.raceType.disable();
+        } else {
+          this.raceType.enable();
+        }
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe()
   }
 
   public onRaceNameClick(): void {

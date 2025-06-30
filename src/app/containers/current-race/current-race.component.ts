@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from "@angular/core";
-import {Subscription, tap} from "rxjs";
+import {BehaviorSubject, Subscription, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
@@ -29,7 +29,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   /**
    * Состояние компонента
    */
-  public raceStatus = RaceStatus.PREPARE;
+  public raceStatus$ = new BehaviorSubject(RaceStatus.PREPARE);
 
   /**
    * Потоки
@@ -41,6 +41,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
   public raceName$ = this.currentRaceService.raceName$;
   public raceType$ = this.currentRaceService.raceType$;
+  public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
   public ittRaceTimer$ = this.currentRaceService.ittRaceTimer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;
@@ -49,7 +50,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   public groupRaceTimer$ = this.currentRaceService.groupRaceTimer$;
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
-      if (racers.length > 0) this.raceStatus = RaceStatus.READY;
+      if (racers.length > 0) this.raceStatus$.next(RaceStatus.READY);
     })
   );
 
@@ -125,7 +126,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.racersService.resetRacersData();
     this.finishersService.resetFinishersData();
 
-    this.raceStatus = RaceStatus.PREPARE;
+    this.raceStatus$.next(RaceStatus.PREPARE);
   }
 
   public openResetDialog(content: any): void {
@@ -151,7 +152,12 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.currentRaceService.continuePrevRace();
     this.racersService.initRacersData();
     this.finishersService.initFinishersData();
-    this.raceStatus = RaceStatus.READY
+
+    if (this.racersService.startedRacers.length > 0) {
+      this.raceStatus$.next(RaceStatus.START);
+    } else {
+      this.raceStatus$.next(RaceStatus.READY);
+    }
   }
 
   public onSetDelta(newDelta: number): void {

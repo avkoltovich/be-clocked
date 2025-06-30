@@ -1,4 +1,4 @@
-<ng-container *ngIf="raceStatus === RaceStatus.READY">
+<ng-container *ngIf="raceStatus$.value === RaceStatus.READY || raceStatus$.value === RaceStatus.START">
   <button
     tuiButton
     type="button"
@@ -68,7 +68,7 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="raceStatus === RaceStatus.PREPARE">
+<ng-container *ngIf="raceStatus$.value === RaceStatus.PREPARE">
   <button
     class="icon-button"
     tuiButton
