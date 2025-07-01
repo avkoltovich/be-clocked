@@ -68,7 +68,7 @@ export class CurrentRaceService {
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
     if (starterNameList !== null) this.isRaceBeginning$.next(true);
-    if (racers !== null) this.isAllMembersStarted$.next(this.currentRacerIndex$.value >= racers.length);
+    if (racers !== null && racers.length > 0) this.isAllMembersStarted$.next(this.currentRacerIndex$.value >= racers.length);
 
     this.raceType$.next(raceType ?? RaceType.ITT);
   }

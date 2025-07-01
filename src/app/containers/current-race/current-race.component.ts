@@ -148,7 +148,7 @@ export class CurrentRaceComponent implements AfterViewInit {
 
     if (this.racersService.startedRacers.length > 0) {
       this.raceStatus$.next(RaceStatus.START);
-    } else {
+    } else if (this.racersService.racers$.value.length > 0) {
       this.raceStatus$.next(RaceStatus.READY);
     }
   }
