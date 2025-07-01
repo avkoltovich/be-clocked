@@ -75,8 +75,8 @@ export class CurrentRaceService {
 
   public setStateFromJSON(data: ISyncJSON) {
     this.repositoryService.setStateFromJSON(data);
-    this.racersService.initRacersData();
     this.finisherService.initFinishersData();
+    this.racersService.initRacersData();
     this.continuePrevRace();
   }
 

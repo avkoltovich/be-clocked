@@ -87,6 +87,13 @@ export class RacersService {
     this.updateRacers(currentRacers);
   }
 
+  public updateRacerStatusByIndex(index: number, status: RacerStatus) {
+    const currentRacers = this.racers$.value.slice();
+    currentRacers[index].status = status;
+
+    this.updateRacers(currentRacers);
+  }
+
   public setRacersFromGoogleSheet(data: Record<string, any>[], cellName: string, cellCategory: string) {
     const racers: IRacer[] = [];
     const categoriesMap: Record<string, IRacer[]> = {};

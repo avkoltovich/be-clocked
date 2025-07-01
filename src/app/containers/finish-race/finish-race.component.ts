@@ -8,6 +8,7 @@ import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {CurrentRaceService} from "../../services/current-race.service";
+import {RacerStatus} from "../../models/enums";
 
 @Component({
   selector: "app-finish-race",
@@ -108,6 +109,7 @@ export class FinishRaceComponent implements OnInit {
 
       const finishers = this.finishers$.value.slice();
       const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === currentRacer.number);
+      const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === currentRacer.number);
 
       if (startedData === undefined) return;
 
@@ -143,6 +145,7 @@ export class FinishRaceComponent implements OnInit {
       finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
 
       this.finishersService.updateFinishersByCategories(finishersByCategories);
+      this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
     }
   }
 
