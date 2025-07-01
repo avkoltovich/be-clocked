@@ -1,14 +1,6 @@
-<ng-container *ngIf="!isCycleCountSet; else timer">
-  <button
-    tuiLink
-    type="button"
-    [pseudo]="true"
-    (click)="onCycleCountClick()"
-  >
-    <p class="count-button">Указать количество кругов</p>
-  </button>
-</ng-container>
+<p class="help-text" *ngIf="isRacersListEmpty; else timer">Заполните список участников</p>
 
 <ng-template #timer>
-  <span class="timer">2:15:45</span>
+  <span class="timer">0:00:00</span>
 </ng-template>
+

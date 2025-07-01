@@ -17,6 +17,12 @@ export class CurrentRaceService {
   private timerDelta = 0;
   public racerSecondsDelta = DEFAULT_DELTA;
 
+  /**
+   * Для Группового режима
+   */
+  public lapsCount$ = new BehaviorSubject<number>(1);
+  public isLapsCountSetted$ = new BehaviorSubject<boolean>(false);
+
   public raceName$ = new BehaviorSubject<string>(DEFAULT_RACE_NAME);
 
   public raceType$ = new BehaviorSubject<RaceType>(RaceType.ITT);
@@ -24,7 +30,7 @@ export class CurrentRaceService {
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isRaceBeginning$ = new BehaviorSubject(false);
-  public isAllMembersStarted$ = new BehaviorSubject(false);
+  public isAllRacersStarted$ = new BehaviorSubject(false);
   public isDeltaChanged$ = new BehaviorSubject(false);
 
   public currentRacerIndex$ = new BehaviorSubject(0);
@@ -45,7 +51,7 @@ export class CurrentRaceService {
       if (this.isRacePaused$.value) {
         this.timerDelta = 0;
       } else {
-        this.isAllMembersStarted$.next(true);
+        this.isAllRacersStarted$.next(true);
       }
     })
   );
@@ -68,7 +74,7 @@ export class CurrentRaceService {
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
     if (starterNameList !== null) this.isRaceBeginning$.next(true);
-    if (racers !== null && racers.length > 0) this.isAllMembersStarted$.next(this.currentRacerIndex$.value >= racers.length);
+    if (racers !== null && racers.length > 0) this.isAllRacersStarted$.next(this.currentRacerIndex$.value >= racers.length);
 
     this.raceType$.next(raceType ?? RaceType.ITT);
   }
@@ -85,7 +91,7 @@ export class CurrentRaceService {
     this.isRaceStarted$.next(false);
     this.isRacePaused$.next(false);
     this.isRaceBeginning$.next(false);
-    this.isAllMembersStarted$.next(false);
+    this.isAllRacersStarted$.next(false);
     this.raceName$.next(DEFAULT_RACE_NAME);
     this.raceType$.next(RaceType.ITT);
     this.timerDelta = 0;

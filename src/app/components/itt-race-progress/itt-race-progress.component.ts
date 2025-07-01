@@ -27,7 +27,7 @@ export class IttRaceProgressComponent {
 
   @Input() maxTimerValue: number = DEFAULT_DELTA;
 
-  @Input() isShowEmptyRacerListNotification = true;
+  @Input() isAllRacersStarted = true;
 
   @Output() newDelta= new EventEmitter();
 

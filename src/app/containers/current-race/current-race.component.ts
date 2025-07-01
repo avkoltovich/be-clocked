@@ -38,11 +38,15 @@ export class CurrentRaceComponent implements AfterViewInit {
   public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
   public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public isRacePaused$ = this.currentRaceService.isRacePaused$;
-  public isAllMembersStarted$ = this.currentRaceService.isAllMembersStarted$;
-  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
+  public isAllRacersStarted$ = this.currentRaceService.isAllRacersStarted$;
+  public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
   public raceName$ = this.currentRaceService.raceName$;
   public raceType$ = this.currentRaceService.raceType$;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+
+  /**
+   * Для Группового режима
+   */
   public ittRaceTimer$ = this.currentRaceService.ittRaceTimer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;

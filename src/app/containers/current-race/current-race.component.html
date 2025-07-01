@@ -18,8 +18,8 @@
         [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
         [isRacersListEmpty]="racers?.length === 0"
         [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
-        [isShowTimer]="(raceStatus$.value !== RaceStatus.PREPARE) && !isAllMembersStarted$.value"
-        [isShowEmptyRacerListNotification]="isAllMembersStarted$.value"
+        [isShowTimer]="(raceStatus$.value !== RaceStatus.PREPARE) && !isAllRacersStarted$.value"
+        [isAllRacersStarted]="isAllRacersStarted$.value"
         [isDeltaEditMode]="isRaceStarted$.value"
         [currentTimerValue]="currentTimerValue"
         [maxTimerValue]="maxTimerValue"
@@ -29,14 +29,15 @@
       <app-group-race-progress
         *ngIf="raceType$.value === RaceType.GROUP"
         [groupRaceTimer$]="groupRaceTimer$"
+        [isRacersListEmpty]="racers?.length === 0"
       />
     </div>
 
     <app-race-controls
       [raceStatus$]="raceStatus$"
-      [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value! || (isAllMembersStarted$ | async)!"
-      [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
-      [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"
+      [isStartDisabled]="isRaceStarted$.value! || !isAllRacersHasNumbers$.value! || (isAllRacersStarted$ | async)!"
+      [isPauseAndSkipDisabled]="isAllRacersStarted$.value! || !isRaceStarted$.value"
+      [isResetDisabled]="isRaceStarted$.value && !isAllRacersStarted$.value"
       [isSkipDisabled]="currentRacerSkipped"
       (start)="onStart()"
       (skip)="onSkip()"

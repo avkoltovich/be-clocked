@@ -15,7 +15,7 @@ export class RacersService {
   public starterNameList$ = new BehaviorSubject<string[]>([]);
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public isAllMembersHasNumbers$ = new BehaviorSubject(false);
+  public isAllRacersHasNumbers$ = new BehaviorSubject(false);
 
   constructor(private repositoryService: RepositoryService, private finishersService: FinishersService) {
     this.initRacersData();
@@ -54,7 +54,7 @@ export class RacersService {
 
     this.racers$.next([]);
 
-    this.isAllMembersHasNumbers$.next(false);
+    this.isAllRacersHasNumbers$.next(false);
     this.categoriesMap$.next({});
 
     this.startedRacers = [];
@@ -132,7 +132,7 @@ export class RacersService {
     let accumulator = true;
     this.racers$.value.forEach((racer) => accumulator = (racer.number !== null) && accumulator)
 
-    this.isAllMembersHasNumbers$.next(accumulator);
+    this.isAllRacersHasNumbers$.next(accumulator);
   }
 
   public validateRacersData(): void {
