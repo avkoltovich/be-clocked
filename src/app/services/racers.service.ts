@@ -3,6 +3,7 @@ import {BehaviorSubject} from "rxjs";
 import {RepositoryService} from "./repository.service";
 import {IRacer, IStarter} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";
+import {RacerStatus} from "../models/enums";
 
 @Injectable({
   providedIn: "root"
@@ -10,6 +11,7 @@ import {FinishersService} from "./finishers.service";
 export class RacersService {
   public racers$ = new BehaviorSubject<IRacer[]>([]);
   public startedRacers: IStarter[] = [];
+  public skippedRacers: number[] = [];
   public starterNameList$ = new BehaviorSubject<string[]>([]);
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
@@ -33,15 +35,18 @@ export class RacersService {
   public initRacersData() {
     const racers: IRacer[] = this.repositoryService.readRacers();
     const startedRacers = this.repositoryService.readStartedRacers();
+    const skippedRacers = this.repositoryService.readSkippedRacers();
     const starterNameList = this.repositoryService.readStarterNameList();
     const categoriesMap = this.repositoryService.readCategoriesMap();
 
     if (racers !== null) this.racers$.next(racers);
     if (startedRacers !== null) this.startedRacers = startedRacers;
+    if (skippedRacers !== null) this.skippedRacers = skippedRacers;
     if (starterNameList !== null) this.starterNameList$.next(starterNameList);
     if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
 
     this.checkAllMembersHasNumbers();
+    this.validateRacersData();
   }
 
   public resetRacersData(): void {
@@ -56,6 +61,32 @@ export class RacersService {
     this.starterNameList$.next([]);
   }
 
+  public startRacerByIndex(index: number) {
+    const currentRacers = this.racers$.value.slice();
+    const currentRacer = currentRacers[index];
+
+    if (this.skippedRacers.includes(currentRacer.number!)) {
+      currentRacer.status = RacerStatus.SKIPPED;
+
+      return;
+    }
+
+    currentRacer.status = RacerStatus.STARTED;
+
+    this.startedRacers.push({
+      racer: currentRacer,
+      time: Date.now()
+    });
+
+    const starterNameList = this.starterNameList$.value.slice();
+    starterNameList.push(this.generateRacerNameAndNumberString(currentRacer));
+
+    this.repositoryService.updateStartedRacers(this.startedRacers);
+    this.starterNameList$.next(starterNameList);
+    this.repositoryService.updateStarterNameList(this.starterNameList$.value);
+    this.updateRacers(currentRacers);
+  }
+
   public setRacersFromGoogleSheet(data: Record<string, any>[], cellName: string, cellCategory: string) {
     const racers: IRacer[] = [];
     const categoriesMap: Record<string, IRacer[]> = {};
@@ -68,7 +99,8 @@ export class RacersService {
         const racer = {
           name,
           category: this.convertCategoryName(registerInfo[cellCategory]),
-          number: null
+          number: null,
+          status: RacerStatus.READY
         }
         racers.push(racer);
 
@@ -96,6 +128,27 @@ export class RacersService {
     this.isAllMembersHasNumbers$.next(accumulator);
   }
 
+  public validateRacersData(): void {
+    const racers = this.racers$.value.slice();
+    const validatedRacers = racers.map((racer: IRacer) => {
+      if (racer.number === undefined) racer.number = null;
+
+      const isFinished = this.finishersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
+      const isSkipped = this.skippedRacers.includes(racer.number!);
+      const isStarted = this.starterNameList$.value.includes(this.generateRacerNameAndNumberString(racer));
+
+      if (racer.status === undefined) {
+        if (isStarted) racer.status = RacerStatus.STARTED;
+        if (isFinished) racer.status = RacerStatus.FINISHED;
+        if (isSkipped) racer.status = RacerStatus.SKIPPED;
+      }
+
+      return racer;
+    })
+
+    this.updateRacers(validatedRacers);
+  }
+
   public updateRacers(racers: IRacer[]) {
     this.racers$.next(racers);
     this.repositoryService.updateRacers(racers);
@@ -105,6 +158,13 @@ export class RacersService {
   public updateCategoriesMap(categoriesMap: Record<string, IRacer[]>) {
     this.categoriesMap$.next(categoriesMap);
     this.repositoryService.updateCategoriesMap(categoriesMap);
+  }
+
+  public skipRacer(racer: IRacer) {
+    if (racer.number !== null && racer.number !== undefined) {
+      this.skippedRacers.push(racer.number);
+      this.repositoryService.updateSkippedRacers(this.skippedRacers);
+    }
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {

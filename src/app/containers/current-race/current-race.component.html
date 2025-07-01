@@ -17,8 +17,8 @@
         [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
         [isRacersListEmpty]="racers?.length === 0"
         [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
-        [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-        [isShowEmptyRacerListNotification]="raceStatus$.value !== RaceStatus.PREPARE"
+        [isShowTimer]="(raceStatus$.value !== RaceStatus.PREPARE) && !isAllMembersStarted$.value"
+        [isShowEmptyRacerListNotification]="isAllMembersStarted$.value"
         [isDeltaEditMode]="isRaceStarted$.value"
         [currentTimerValue]="currentTimerValue"
         [maxTimerValue]="maxTimerValue"
@@ -33,7 +33,7 @@
 
     <app-race-controls
       [raceStatus$]="raceStatus$"
-      [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value!"
+      [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value! || (isAllMembersStarted$ | async)!"
       [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"
       (start)="onStart()"

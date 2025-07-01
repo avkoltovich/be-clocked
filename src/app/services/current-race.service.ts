@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {RepositoryService} from "./repository.service";
 import {RacersService} from "./racers.service";
-import {ISyncJSON} from "../models/interfaces";
+import {IRacer, ISyncJSON} from "../models/interfaces";
 import {DEFAULT_DELTA, DEFAULT_RACE_NAME} from "../constants/itt.constants";
 import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
 import {RaceType} from "../models/enums";
+import {FinishersService} from "./finishers.service";
 
 @Injectable({
   providedIn: 'root'
@@ -32,19 +33,7 @@ export class CurrentRaceService {
     map(i => this.racerSecondsDelta - i + this.timerDelta),
     tap((value) => {
       if (value === 0) {
-        const currentRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
-
-        this.racersService.startedRacers.push({
-          racer: currentRacer,
-          time: Date.now()
-        });
-
-        const starterNameList = this.racersService.starterNameList$.value.slice();
-        starterNameList.push(this.racersService.generateRacerNameAndNumberString(currentRacer));
-
-        this.repositoryService.updateStartedRacers(this.racersService.startedRacers);
-        this.racersService.starterNameList$.next(starterNameList);
-        this.repositoryService.updateStarterNameList(this.racersService.starterNameList$.value);
+        this.racersService.startRacerByIndex(this.currentRacerIndex$.value);
 
         this.timerDelta += this.racerSecondsDelta;
         this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
@@ -63,7 +52,7 @@ export class CurrentRaceService {
 
   public groupRaceTimer$ = timer(0, 1000);
 
-  constructor(private repositoryService: RepositoryService, private racersService: RacersService) {
+  constructor(private repositoryService: RepositoryService, private racersService: RacersService, private finisherService: FinishersService) {
     this.initCurrentRaceData();
   }
 
@@ -73,17 +62,21 @@ export class CurrentRaceService {
     const raceName = this.repositoryService.readRaceName();
     const racersDelta = this.repositoryService.readRacersDelta();
     const starterNameList = this.repositoryService.readStarterNameList();
+    const racers: IRacer[] = this.repositoryService.readRacers();
 
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
     if (starterNameList !== null) this.isRaceBeginning$.next(true);
+    if (racers !== null) this.isAllMembersStarted$.next(this.currentRacerIndex$.value >= racers.length);
 
     this.raceType$.next(raceType ?? RaceType.ITT);
   }
 
   public setStateFromJSON(data: ISyncJSON) {
     this.repositoryService.setStateFromJSON(data);
+    this.racersService.initRacersData();
+    this.finisherService.initFinishersData();
     this.continuePrevRace();
   }
 

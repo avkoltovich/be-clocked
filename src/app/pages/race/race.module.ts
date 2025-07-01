@@ -26,7 +26,6 @@ import {
   TuiTextfieldControllerModule
 } from "@taiga-ui/core";
 import {TuiReorderModule} from "@taiga-ui/addon-table";
-import {RacersService} from "../../services/racers.service";
 import {ReactiveFormsModule} from "@angular/forms";
 import {TuiLetModule} from "@taiga-ui/cdk";
 import {HttpClientModule} from "@angular/common/http";
@@ -65,9 +64,6 @@ import {ComponentsModule} from "../../components/components.module";
     TuiStepperModule,
     TuiLoaderModule,
     TuiDataListModule,
-  ],
-  providers: [
-    RacersService
   ]
 })
 export class RaceModule {

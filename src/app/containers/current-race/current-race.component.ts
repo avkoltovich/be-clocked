@@ -5,7 +5,6 @@ import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
 import {FinishersService} from "../../services/finishers.service";
-import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {RaceStatus, RaceType} from "../../models/enums";
 import {IGoogleTableData} from "../../components/google-table-stepper/google-table-stepper.component";
 import {CurrentRaceService} from "../../services/current-race.service";
@@ -98,16 +97,10 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
   }
 
+  // Пропускать участника, не добавлять в список стартёров
   public onSkip() {
-    const currentRacers = this.racersService.racers$.value.slice();
-    const skippedRacer = currentRacers[this.currentRacerIndex$.value];
-
-    if (skippedRacer.name === SKIPPED_RACER_NAME) return;
-
-    currentRacers.push(skippedRacer);
-    currentRacers[this.currentRacerIndex$.value].name = SKIPPED_RACER_NAME;
-
-    this.racersService.racers$.next(currentRacers);
+    const skippedRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
+    this.racersService.skipRacer(skippedRacer);
   }
 
   public onPause() {

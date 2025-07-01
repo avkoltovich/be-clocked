@@ -11,11 +11,12 @@ import {
     TuiTextfieldControllerModule
 } from "@taiga-ui/core";
 import {
-  TuiInputModule,
-  TuiInputNumberModule, TuiIslandModule,
-  TuiProgressModule, TuiRadioBlockModule,
-  TuiSelectModule,
-  TuiStepperModule
+    TuiBadgeModule,
+    TuiInputModule,
+    TuiInputNumberModule, TuiIslandModule,
+    TuiProgressModule, TuiRadioBlockModule,
+    TuiSelectModule,
+    TuiStepperModule
 } from "@taiga-ui/kit";
 import {ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule, TuiDestroyService, TuiLetModule} from "@taiga-ui/cdk";
@@ -24,6 +25,7 @@ import { RaceHeaderComponent } from './race-header/race-header.component';
 import { GoogleTableStepperComponent } from './google-table-stepper/google-table-stepper.component';
 import { FooterComponent } from './footer/footer.component';
 import { GroupRaceProgressComponent } from './group-race-progress/group-race-progress.component';
+import { StatusBadgeComponent } from './status-badge/status-badge.component';
 
 
 @NgModule({
@@ -34,30 +36,32 @@ import { GroupRaceProgressComponent } from './group-race-progress/group-race-pro
     RaceHeaderComponent,
     GoogleTableStepperComponent,
     FooterComponent,
-    GroupRaceProgressComponent
+    GroupRaceProgressComponent,
+    StatusBadgeComponent
   ],
-  imports: [
-    CommonModule,
-    TuiButtonModule,
-    TuiSvgModule,
-    TuiHintModule,
-    TuiInputModule,
-    ReactiveFormsModule,
-    TuiTextfieldControllerModule,
-    TuiAutoFocusModule,
-    TuiSelectModule,
-    TuiDataListModule,
-    TuiLetModule,
-    TuiLinkModule,
-    TuiProgressModule,
-    NgOptimizedImage,
-    TuiLoaderModule,
-    TuiStepperModule,
-    TuiInputNumberModule,
-    TuiIslandModule,
-    TuiGroupModule,
-    TuiRadioBlockModule
-  ],
+    imports: [
+        CommonModule,
+        TuiButtonModule,
+        TuiSvgModule,
+        TuiHintModule,
+        TuiInputModule,
+        ReactiveFormsModule,
+        TuiTextfieldControllerModule,
+        TuiAutoFocusModule,
+        TuiSelectModule,
+        TuiDataListModule,
+        TuiLetModule,
+        TuiLinkModule,
+        TuiProgressModule,
+        NgOptimizedImage,
+        TuiLoaderModule,
+        TuiStepperModule,
+        TuiInputNumberModule,
+        TuiIslandModule,
+        TuiGroupModule,
+        TuiRadioBlockModule,
+        TuiBadgeModule
+    ],
   exports: [
     RacerEditorComponent,
     RaceControlsComponent,
@@ -65,7 +69,8 @@ import { GroupRaceProgressComponent } from './group-race-progress/group-race-pro
     RaceHeaderComponent,
     GoogleTableStepperComponent,
     FooterComponent,
-    GroupRaceProgressComponent
+    GroupRaceProgressComponent,
+    StatusBadgeComponent
   ],
   providers: [TuiDestroyService]
 })

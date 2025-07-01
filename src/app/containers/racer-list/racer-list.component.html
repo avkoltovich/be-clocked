@@ -1,156 +1,148 @@
-<tui-island size="l" *ngIf="(racers$ | async)!.length > 0">
-  <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
+<ng-container *tuiLet="(racers$ | async) as racers">
+  <tui-island size="l" *ngIf="racers!.length > 0">
+    <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
-  <tui-notification
-    *ngIf="!(isAllMembersHasNumbers$ | async) && racers$.value.length > 0"
-    class="tui-space_bottom-5"
-    status="error"
-  >
-    Не у всех участников заполнены номера
-  </tui-notification>
+    <tui-notification
+      *ngIf="!(isAllMembersHasNumbers$ | async) && racers!.length > 0"
+      class="tui-space_bottom-5"
+      status="error"
+    >
+      Не у всех участников заполнены номера
+    </tui-notification>
 
-  <ol class="tui-list tui-list_ordered tui-list_large">
-    <li class="tui-list__item item" *ngFor="let item of racers$ | async; let i = index">
-      <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode"
-                    class="tui-form__row_multi-fields" [formGroup]="formGroup">
-        <app-racer-editor
-          [categories$]="categories$"
-          [formValue]="formValue"
-          [mode]="ModifyMode.EDIT"
-          (changeRacer)="onSave($event)"
-          (cancel)="onCancel()"
-        />
-      </ng-container>
-      <ng-template #notEditMode>
+    <ol class="tui-list tui-list_ordered tui-list_large">
+      <li class="tui-list__item item" *ngFor="let racer of racers!; let i = index">
+        <ng-container *ngIf="isEditMode && currentRacer !== null && currentRacer['index'] === i; else notEditMode"
+                      class="tui-form__row_multi-fields" [formGroup]="formGroup">
+          <app-racer-editor
+            [categories$]="categories$"
+            [formValue]="formValue"
+            [mode]="ModifyMode.EDIT"
+            (changeRacer)="onSave($event)"
+            (cancel)="onCancel()"
+          />
+        </ng-container>
+        <ng-template #notEditMode>
         <span
           class="name"
           [ngClass]="{
           current: (currentRacerIndex$ | async) === i && (isRaceStarted$ | async)
           }"
         >
-          {{ generateRacerNameAndNumberString(item) }}
-          <ng-container *ngIf="item.number === null">
+          {{ generateRacerNameAndNumberString(racer) }}
+          <ng-container *ngIf="racer.number === null">
             —
             <button
               tuiLink
               type="button"
               [pseudo]="true"
-              (click)="openSetNumberDialog(setNumber, i, item)"
+              (click)="openSetNumberDialog(setNumber, i, racer)"
             >
               номер
             </button>
           </ng-container>
         </span>
-        <span class="category">
-          {{ item.category }}
+          <span class="category">
+          {{ racer.category }}
         </span>
-        <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
-          <button
-            tuiIconButton
-            appearance="flat"
-            size="s"
-            icon="tuiIconArrowUp"
-            title="Выше"
-            shape="rounded"
-            type="button"
-            (click)="up(i)"
-            [disabled]="i === (currentRacerIndex$ | async)!"
-          ></button>
-          <button
-            tuiIconButton
-            appearance="flat"
-            size="s"
-            icon="tuiIconArrowDown"
-            title="Ниже"
-            shape="rounded"
-            type="button"
-            (click)="down(i)"
-            [disabled]="i === (racers$ | async)!.length - 1"
-          ></button>
-          <button
-            tuiIconButton
-            appearance="flat"
-            size="s"
-            icon="tuiIconEdit"
-            title="Редактировать"
-            shape="rounded"
-            type="button"
-            (click)="edit(i, item)"
-          ></button>
-          <button
-            tuiIconButton
-            appearance="flat"
-            size="s"
-            icon="tuiIconTrash"
-            title="Удалить"
-            shape="rounded"
-            type="button"
-            (click)="openRemoveDialog(reset, i, item)"
-          ></button>
-        </ng-container>
-        <tui-badge
-          *ngIf="checkRacerFinished(item)"
-          status="success"
-          value="Финиш"
-        ></tui-badge>
-        <tui-badge
-          *ngIf="checkRacerStarted(item) && !checkRacerFinished(item)"
-          status="info"
-          value="В пути"
-        ></tui-badge>
-      </ng-template>
-    </li>
-  </ol>
+          <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
+            <button
+              tuiIconButton
+              appearance="flat"
+              size="s"
+              icon="tuiIconArrowUp"
+              title="Выше"
+              shape="rounded"
+              type="button"
+              (click)="up(i)"
+              [disabled]="i === (currentRacerIndex$ | async)!"
+            ></button>
+            <button
+              tuiIconButton
+              appearance="flat"
+              size="s"
+              icon="tuiIconArrowDown"
+              title="Ниже"
+              shape="rounded"
+              type="button"
+              (click)="down(i)"
+              [disabled]="i === racers!.length - 1"
+            ></button>
+            <button
+              tuiIconButton
+              appearance="flat"
+              size="s"
+              icon="tuiIconEdit"
+              title="Редактировать"
+              shape="rounded"
+              type="button"
+              (click)="edit(i, racer)"
+            ></button>
+            <button
+              tuiIconButton
+              appearance="flat"
+              size="s"
+              icon="tuiIconTrash"
+              title="Удалить"
+              shape="rounded"
+              type="button"
+              (click)="openRemoveDialog(reset, i, racer)"
+            ></button>
+          </ng-container>
+          <app-status-badge [status]="racer.status"/>
+        </ng-template>
+      </li>
+    </ol>
 
-</tui-island>
+  </tui-island>
 
-<ng-template
-  #reset
-  let-observer
->
-  <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Удалить участника?</p>
+  <ng-template
+    #reset
+    let-observer
+  >
+    <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Удалить участника?</p>
 
-  <div class="button-wrapper">
-    <button
-      tuiButton
-      type="button"
-      size="m"
-      appearance="accent"
-      class="tui-space_right-3"
-      (click)="remove(); observer.complete()"
-    >
-      Удалить
-    </button>
-    <button
-      tuiButton
-      type="button"
-      size="m"
-      appearance="secondary"
-      (click)="observer.complete()"
-    >
-      Отмена
-    </button>
-  </div>
-</ng-template>
+    <div class="button-wrapper">
+      <button
+        tuiButton
+        type="button"
+        size="m"
+        appearance="accent"
+        class="tui-space_right-3"
+        (click)="remove(); observer.complete()"
+      >
+        Удалить
+      </button>
+      <button
+        tuiButton
+        type="button"
+        size="m"
+        appearance="secondary"
+        (click)="observer.complete()"
+      >
+        Отмена
+      </button>
+    </div>
+  </ng-template>
 
-<ng-template
-  #setNumber
-  let-context
->
-  <p class="tui-text_h6 tui-space_bottom-6 tui-space_top-0">Укажите номер участника</p>
-  <div class="dialog-container">
-    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="numberControl">
-      Номер
-    </tui-input-number>
-    <button
-      tuiButton
-      appearance="primary"
-      size="m"
-      (click)="onSetNumber(); context.complete()"
-      [disabled]="numberControl.invalid"
-    >
-      ОК
-    </button>
-  </div>
-</ng-template>
-
+  <ng-template
+    #setNumber
+    let-context
+  >
+    <p class="tui-text_h6 tui-space_bottom-6 tui-space_top-0">Укажите номер участника</p>
+    <div class="dialog-container">
+      <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="numberControl">
+        Номер
+      </tui-input-number>
+      <button
+        tuiButton
+        appearance="primary"
+        size="m"
+        (click)="onSetNumber(); context.complete()"
+        [disabled]="numberControl.invalid"
+      >
+        ОК
+      </button>
+    </div>
+  </ng-template>
+</ng-container>

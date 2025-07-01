@@ -24,6 +24,10 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.STARTERS, JSON.stringify(value));
   }
 
+  public updateSkippedRacers(value: number[]) {
+    window.localStorage.setItem(RepositoryKey.SKIPPED_RACERS, JSON.stringify(value));
+  }
+
   public updateStarterNameList(value: string[]) {
     window.localStorage.setItem(RepositoryKey.STARTER_NAME_LIST, JSON.stringify(value));
   }
@@ -80,6 +84,10 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.STARTERS)!);
   }
 
+  public readSkippedRacers() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.SKIPPED_RACERS)!);
+  }
+
   public readStarterNameList() {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.STARTER_NAME_LIST)!);
   }
@@ -132,6 +140,7 @@ export class RepositoryService {
     const racers = this.readRacers();
     const categoriesMap = this.readCategoriesMap();
     const starters = this.readStartedRacers();
+    const skippedRacers = this.readSkippedRacers();
     const starterNameList = this.readStarterNameList();
     const currentRacerIndex = this.readCurrentRacerIndex();
     const currentAnonIndex = this.readCurrentAnonIndex();
@@ -148,6 +157,7 @@ export class RepositoryService {
       racers: racers ?? [],
       categoriesMap: categoriesMap ?? {},
       starters: starters ?? [],
+      skippedRacers: skippedRacers ?? [],
       starterNameList: starterNameList ?? [],
       currentRacerIndex: currentRacerIndex ?? 0,
       currentAnonIndex: currentAnonIndex ?? 0,
@@ -164,6 +174,7 @@ export class RepositoryService {
     this.updateRacers(data.racers);
     this.updateCategoriesMap(data.categoriesMap);
     this.updateStartedRacers(data.starters);
+    this.updateSkippedRacers(data.skippedRacers ?? []);
     this.updateStarterNameList(data.starterNameList);
     this.updateCurrentRacerIndex(data.currentRacerIndex);
     this.updateCurrentAnonIndex(data.currentAnonIndex);

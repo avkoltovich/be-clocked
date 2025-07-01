@@ -5,7 +5,6 @@ import {map} from "rxjs";
 import {ModifyMode} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 import {TuiDialogService} from "@taiga-ui/core";
-import {FinishersService} from "../../services/finishers.service";
 import {CurrentRaceService} from "../../services/current-race.service";
 
 interface ICurrentRacer {
@@ -46,7 +45,6 @@ export class RacerListComponent {
 
   constructor(
     private racersService: RacersService,
-    private finishersService: FinishersService,
     private currentRaceService: CurrentRaceService,
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
   ) {
@@ -103,7 +101,6 @@ export class RacerListComponent {
 
     const currentList = this.racersService.racers$.value.slice();
     currentList.splice(i, 1);
-    this.racersService.racers$.next(currentList);
     this.racersService.updateRacers(currentList);
     this.cleanCategoriesMap(racer);
   }
@@ -153,13 +150,5 @@ export class RacerListComponent {
     this.numberControl.reset()
 
     this.onSave(racer)
-  }
-
-  public checkRacerStarted(racer: IRacer) {
-    return this.racersService.starterNameList$.value.includes(this.generateRacerNameAndNumberString(racer));
-  }
-
-  public checkRacerFinished(racer: IRacer) {
-    return this.finishersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
   }
 }

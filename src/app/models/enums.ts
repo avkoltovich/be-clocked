@@ -17,6 +17,7 @@ export enum RepositoryKey {
   RACE_NAME =  "RACE_NAME",
   RACERS_DELTA = "RACERS_DELTA",
   RACE_TYPE = "RACE_TYPE",
+  SKIPPED_RACERS = "SKIPPED_RACERS",
 }
 
 export enum RaceStatus {
@@ -30,4 +31,11 @@ export enum RaceStatus {
 export enum RaceType {
   ITT = 'ITT',
   GROUP = 'GROUP',
+}
+
+export enum RacerStatus {
+  READY = 'READY',
+  STARTED = 'STARTED',
+  FINISHED = 'FINISHED',
+  SKIPPED = 'SKIPPED',
 }

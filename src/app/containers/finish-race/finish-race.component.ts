@@ -26,7 +26,7 @@ export class FinishRaceComponent implements OnInit {
   public anonFinishers$ = this.finishersService.anonFinishers$;
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
-  public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
+  public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {

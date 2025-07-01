@@ -1,0 +1,23 @@
+<ng-container [ngSwitch]="status">
+  <tui-badge
+    *ngSwitchCase="RacerStatus.SKIPPED"
+    class="badge-status"
+    status="error"
+    value="Пропуск"
+  ></tui-badge>
+  <tui-badge
+    *ngSwitchCase="RacerStatus.FINISHED"
+    class="badge-status"
+    status="success"
+    value="Финиш"
+  ></tui-badge>
+  <tui-badge
+    *ngSwitchCase="RacerStatus.STARTED"
+    class="badge-status"
+    status="info"
+    value="В пути"
+  ></tui-badge>
+  <span
+    *ngSwitchDefault
+  ></span>
+</ng-container>
