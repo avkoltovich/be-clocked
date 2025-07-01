@@ -16,7 +16,7 @@ export class RaceHeaderComponent implements OnInit {
 
   public raceNameFormControl = new FormControl('', Validators.required);
 
-  public raceType = new FormControl(RaceType.ITT);
+  public raceTypeControl = new FormControl(RaceType.ITT);
 
   @Input() raceName$ = new BehaviorSubject('');
 
@@ -33,7 +33,7 @@ export class RaceHeaderComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.raceType.valueChanges.pipe(
+    this.raceTypeControl.valueChanges.pipe(
       tap((value) => {
         if (value) {
           this.raceTypeChange.emit(value)
@@ -42,12 +42,21 @@ export class RaceHeaderComponent implements OnInit {
       takeUntil(this.destroy$),
     ).subscribe();
 
+    this.raceType$.pipe(
+      tap((raceType) => {
+        if (this.raceTypeControl.value !== raceType) {
+          this.raceTypeControl.setValue(raceType, { emitEvent: false });
+        }
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe();
+
     this.isRaceBeginning$.pipe(
       tap((isRaceBeginning) => {
         if (isRaceBeginning) {
-          this.raceType.disable();
+          this.raceTypeControl.disable();
         } else {
-          this.raceType.enable();
+          this.raceTypeControl.enable();
         }
       }),
       takeUntil(this.destroy$),
@@ -67,9 +76,5 @@ export class RaceHeaderComponent implements OnInit {
       this.isRaceNameEditing = false
       this.raceNameSave.emit(raceName);
     }
-  }
-
-  public onRaceTypeClick(raceType: RaceType) {
-    this.raceTypeChange.emit(raceType);
   }
 }
