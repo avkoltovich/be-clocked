@@ -11,6 +11,8 @@ import {TuiDialogService} from "@taiga-ui/core";
 export class IttRaceProgressComponent {
   @Input() currentRacer = '';
 
+  @Input() isSkippedRacer = false;
+
   @Input() nextRacer = '';
 
   @Input() isRacersListEmpty = true;

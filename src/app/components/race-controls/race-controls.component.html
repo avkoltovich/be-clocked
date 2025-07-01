@@ -17,7 +17,7 @@
     type="button"
     appearance="secondary"
     (click)="onSkip()"
-    [disabled]="isPauseAndSkipDisabled"
+    [disabled]="isPauseAndSkipDisabled || isSkipDisabled"
   >
     <tui-svg
       src="tuiIconFastForwardLarge"

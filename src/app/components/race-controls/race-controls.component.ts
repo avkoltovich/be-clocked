@@ -21,6 +21,8 @@ export class RaceControlsComponent implements AfterViewInit {
 
   @Input() isResetDisabled = true;
 
+  @Input() isSkipDisabled = false;
+
   @Output() start = new EventEmitter();
 
   @Output() skip = new EventEmitter();

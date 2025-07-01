@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from "@angular/core";
-import {BehaviorSubject, Subscription, tap} from "rxjs";
+import {BehaviorSubject, Subscription, takeUntil, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
@@ -8,6 +8,7 @@ import {FinishersService} from "../../services/finishers.service";
 import {RaceStatus, RaceType} from "../../models/enums";
 import {IGoogleTableData} from "../../components/google-table-stepper/google-table-stepper.component";
 import {CurrentRaceService} from "../../services/current-race.service";
+import {TuiDestroyService} from "@taiga-ui/cdk";
 
 @Component({
   selector: "app-current-race",
@@ -24,6 +25,7 @@ export class CurrentRaceComponent implements AfterViewInit {
    */
   public maxTimerValue = this.currentRaceService.racerSecondsDelta;
   public currentTimerValue = this.currentRaceService.racerSecondsDelta;
+  public currentRacerSkipped = false;
 
   /**
    * Состояние компонента
@@ -61,6 +63,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     private repositoryService: RepositoryService,
     private finishersService: FinishersService,
     private currentRaceService: CurrentRaceService,
+    private readonly destroy$: TuiDestroyService,
   ) {
   }
 
@@ -75,7 +78,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    if (this.repositoryService.checkRacers()) {
+    if (this.racersService.racers$.value.length > 0) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     }
     else {
@@ -88,7 +91,15 @@ export class CurrentRaceComponent implements AfterViewInit {
 
         this.maxTimerValue = currentDelta;
         this.currentTimerValue = currentDelta;
-      })
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe();
+
+    this.currentRacerIndex$.pipe(
+      tap(() => {
+        this.currentRacerSkipped = false;
+      }),
+      takeUntil(this.destroy$)
     ).subscribe();
   }
 
@@ -101,6 +112,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   public onSkip() {
     const skippedRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
     this.racersService.skipRacer(skippedRacer);
+    this.currentRacerSkipped = true;
   }
 
   public onPause() {

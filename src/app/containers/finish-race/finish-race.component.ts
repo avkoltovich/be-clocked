@@ -1,8 +1,8 @@
 import {Component, Inject, OnInit} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
 import {RacersService} from "../../services/racers.service";
-import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
-import {map, tap} from "rxjs";
+import {TUI_DEFAULT_MATCHER, tuiControlValue, TuiDestroyService} from "@taiga-ui/cdk";
+import {map, takeUntil, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
@@ -82,7 +82,8 @@ export class FinishRaceComponent implements OnInit {
           this.finishersByCategories$.next(finishersByCategory);
         });
       }
-    })
+    }),
+    takeUntil(this.destroy$)
   );
 
   constructor(private racersService: RacersService,
@@ -90,6 +91,7 @@ export class FinishRaceComponent implements OnInit {
               private currentRaceService: CurrentRaceService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
+              private readonly destroy$: TuiDestroyService,
               ) {
   }
 

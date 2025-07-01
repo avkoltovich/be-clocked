@@ -14,6 +14,7 @@
       <app-itt-race-progress
         *ngIf="raceType$.value === RaceType.ITT"
         [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
+        [isSkippedRacer]="currentRacerSkipped"
         [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
         [isRacersListEmpty]="racers?.length === 0"
         [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
@@ -36,6 +37,7 @@
       [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value! || (isAllMembersStarted$ | async)!"
       [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"
+      [isSkipDisabled]="currentRacerSkipped"
       (start)="onStart()"
       (skip)="onSkip()"
       (pause)="onPause()"
