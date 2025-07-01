@@ -101,7 +101,10 @@
   </button>
 </ng-container>
 
-<input type="file" accept=".json" #fileInput style="display: none">
+<form #fileInputForm style="display: none">
+  <input type="file" accept=".json" #fileInput style="display: none">
+</form>
+
 <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
 
 <ng-template #uploadHint>

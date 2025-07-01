@@ -29,7 +29,7 @@ export class RaceControlsComponent implements AfterViewInit {
 
   @Output() pause = new EventEmitter();
 
-  @Output() reset = new EventEmitter();
+  @Output() resetRace = new EventEmitter();
 
   @Output() googleTable = new EventEmitter();
 
@@ -38,6 +38,8 @@ export class RaceControlsComponent implements AfterViewInit {
   @ViewChild("download") downloadLink: ElementRef<HTMLAnchorElement> | undefined;
 
   @ViewChild("fileInput") fileInput: ElementRef<HTMLInputElement> | undefined;
+
+  @ViewChild("fileInputForm") fileInputForm: ElementRef<HTMLFormElement> | undefined;
 
   constructor(private repositoryService: RepositoryService ) {}
 
@@ -49,6 +51,7 @@ export class RaceControlsComponent implements AfterViewInit {
       fromEvent(this.fileInput.nativeElement, 'change').pipe(
         switchMap(event => {
           const file = (event.target as HTMLInputElement).files![0];
+
           return new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result as string);
@@ -58,6 +61,7 @@ export class RaceControlsComponent implements AfterViewInit {
         }),
         tap((jsonString) => {
           this.readJSON.emit(JSON.parse(jsonString));
+          this.fileInputForm?.nativeElement.reset();
         }),
         catchError((error: Error) => {
           console.warn(error)
@@ -81,7 +85,7 @@ export class RaceControlsComponent implements AfterViewInit {
   }
 
   public onReset() {
-    this.reset.emit()
+    this.resetRace.emit()
   }
 
   public onGoogleTableClick() {
