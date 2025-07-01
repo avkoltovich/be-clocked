@@ -3,7 +3,7 @@
     <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
     <tui-notification
-      *ngIf="!(isAllMembersHasNumbers$ | async) && racers!.length > 0"
+      *ngIf="!(isAllRacersHasNumbers$ | async) && racers!.length > 0"
       class="tui-space_bottom-5"
       status="error"
     >
@@ -26,7 +26,7 @@
         <span
           class="name"
           [ngClass]="{
-          current: (currentRacerIndex$ | async) === i && (isRaceStarted$ | async)
+          current: raceType$.value === RaceType.ITT && currentRacerIndex$.value === i && isRaceStarted$.value
           }"
         >
           {{ generateRacerNameAndNumberString(racer) }}
@@ -45,8 +45,9 @@
           <span class="category">
           {{ racer.category }}
         </span>
-          <ng-container *ngIf="i >= (currentRacerIndex$ | async)!">
+          <ng-container *ngIf="i >= currentRacerIndex$.value">
             <button
+              *ngIf="raceType$.value === RaceType.ITT"
               tuiIconButton
               appearance="flat"
               size="s"
@@ -55,9 +56,10 @@
               shape="rounded"
               type="button"
               (click)="up(i)"
-              [disabled]="i === (currentRacerIndex$ | async)!"
+              [disabled]="i === currentRacerIndex$.value"
             ></button>
             <button
+              *ngIf="raceType$.value === RaceType.ITT"
               tuiIconButton
               appearance="flat"
               size="s"

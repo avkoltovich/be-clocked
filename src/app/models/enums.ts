@@ -18,6 +18,7 @@ export enum RepositoryKey {
   RACERS_DELTA = "RACERS_DELTA",
   RACE_TYPE = "RACE_TYPE",
   SKIPPED_RACERS = "SKIPPED_RACERS",
+  RACE_START_TIME = "RACE_START_TIME",
 }
 
 export enum RaceStatus {

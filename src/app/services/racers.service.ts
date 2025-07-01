@@ -156,6 +156,34 @@ export class RacersService {
     this.updateRacers(validatedRacers);
   }
 
+  public startAllRacers(startTime: number): void {
+    const starterNameList: string[] = [];
+
+    const startedRacers = this.racers$.value.map((racer: IRacer) => {
+      const startedRacer = {
+        ...racer,
+        status: RacerStatus.STARTED
+      }
+
+      this.startedRacers.push({
+        racer: startedRacer,
+        time: startTime
+      });
+
+      starterNameList.push(this.generateRacerNameAndNumberString(startedRacer));
+
+      return startedRacer
+    });
+
+    this.racers$.next(startedRacers);
+    this.repositoryService.updateRacers(startedRacers);
+
+    this.repositoryService.updateStartedRacers(this.startedRacers);
+
+    this.starterNameList$.next(starterNameList);
+    this.repositoryService.updateStarterNameList(starterNameList);
+  }
+
   public updateRacers(racers: IRacer[]) {
     this.racers$.next(racers);
     this.repositoryService.updateRacers(racers);

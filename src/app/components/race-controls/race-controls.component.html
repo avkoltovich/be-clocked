@@ -1,4 +1,4 @@
-<ng-container *ngIf="raceStatus$.value === RaceStatus.READY || raceStatus$.value === RaceStatus.START">
+<ng-container *ngIf="raceStatus === RaceStatus.READY || raceStatus === RaceStatus.START">
   <button
     tuiButton
     type="button"
@@ -13,6 +13,7 @@
     Старт
   </button>
   <button
+    *ngIf="raceType === RaceType.ITT"
     tuiButton
     type="button"
     appearance="secondary"
@@ -26,6 +27,7 @@
     Пропустить
   </button>
   <button
+    *ngIf="raceType === RaceType.ITT"
     tuiButton
     type="button"
     appearance="flat"
@@ -68,7 +70,7 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="raceStatus$.value === RaceStatus.PREPARE">
+<ng-container *ngIf="raceStatus === RaceStatus.PREPARE">
   <button
     class="icon-button"
     tuiButton

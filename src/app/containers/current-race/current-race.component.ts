@@ -108,8 +108,16 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onStart() {
-    this.currentRaceService.isRaceStarted$.next(true);
-    this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
+    if (this.raceType$.value === RaceType.ITT) {
+      this.currentRaceService.isRaceStarted$.next(true);
+      this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
+    }
+
+    if (this.raceType$.value === RaceType.GROUP) {
+      const startTime = Date.now();
+      this.currentRaceService.startGroupRace(startTime);
+      this.racersService.startAllRacers(startTime);
+    }
   }
 
   // Пропускать участника, не добавлять в список стартёров

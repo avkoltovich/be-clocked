@@ -38,4 +38,5 @@ export interface ISyncJSON {
   finisherNameList: string[];
   racersDelta: number;
   raceType: RaceType;
+  raceStartTime: number;
 }

@@ -2,7 +2,7 @@ import {Component, Inject} from "@angular/core";
 import {RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {map} from "rxjs";
-import {ModifyMode} from "../../models/enums";
+import {ModifyMode, RaceType} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 import {TuiDialogService} from "@taiga-ui/core";
 import {CurrentRaceService} from "../../services/current-race.service";
@@ -18,10 +18,13 @@ interface ICurrentRacer {
   styleUrls: ["./racer-list.component.scss"]
 })
 export class RacerListComponent {
+  protected readonly RaceType = RaceType;
+
   public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
   public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
-  public isAllMembersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
+  public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
+  public raceType$ = this.currentRaceService.raceType$;
 
   public formGroup = new FormGroup({
     racer: new FormControl("", Validators.required),

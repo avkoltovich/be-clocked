@@ -68,6 +68,10 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.RACE_TYPE, JSON.stringify(value));
   }
 
+  public updateRaceStartTime(value: number) {
+    window.localStorage.setItem(RepositoryKey.RACE_START_TIME, JSON.stringify(value));
+  }
+
   /**
    * Read
    */
@@ -128,6 +132,10 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_TYPE)!);
   }
 
+  public readRaceStartTime() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_START_TIME)!);
+  }
+
   /**
    * Утилиты
    */
@@ -151,6 +159,7 @@ export class RepositoryService {
     const raceName = this.readRaceName();
     const racersDelta = this.readRacersDelta();
     const raceType = this.readRaceType();
+    const raceStartTime = this.readRaceStartTime();
 
     return {
       raceName: raceName ? raceName : DEFAULT_RACE_NAME,
@@ -167,6 +176,7 @@ export class RepositoryService {
       finisherNameList: finisherNameList ?? [],
       racersDelta: racersDelta ?? DEFAULT_DELTA,
       raceType: raceType ?? RaceType.ITT,
+      raceStartTime: raceStartTime,
     };
   }
 
@@ -185,6 +195,7 @@ export class RepositoryService {
     this.updateRaceName(data.raceName ?? DEFAULT_RACE_NAME);
     this.updateRacersDelta(data.racersDelta ?? DEFAULT_DELTA);
     this.updateRaceType(data.raceType ?? RaceType.ITT);
+    this.updateRaceStartTime(data.raceStartTime ?? null);
   }
 
   public resetLS() {

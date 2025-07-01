@@ -34,7 +34,8 @@
     </div>
 
     <app-race-controls
-      [raceStatus$]="raceStatus$"
+      [raceStatus]="raceStatus$.value"
+      [raceType]="raceType$.value"
       [isStartDisabled]="isRaceStarted$.value! || !isAllRacersHasNumbers$.value! || (isAllRacersStarted$ | async)!"
       [isPauseAndSkipDisabled]="isAllRacersStarted$.value! || !isRaceStarted$.value"
       [isResetDisabled]="isRaceStarted$.value && !isAllRacersStarted$.value"
