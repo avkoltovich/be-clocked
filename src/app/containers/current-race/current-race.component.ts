@@ -111,6 +111,7 @@ export class CurrentRaceComponent implements AfterViewInit {
     if (this.raceType$.value === RaceType.ITT) {
       this.currentRaceService.isRaceStarted$.next(true);
       this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
+      this.currentRaceService.isRacePaused$.next(false);
     }
 
     if (this.raceType$.value === RaceType.GROUP) {
