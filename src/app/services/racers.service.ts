@@ -202,6 +202,13 @@ export class RacersService {
     }
   }
 
+  public undoSkipRacer(skippedRacer: IRacer) {
+    if (skippedRacer.number !== null && skippedRacer.number !== undefined) {
+      this.skippedRacers.pop();
+      this.repositoryService.updateSkippedRacers(this.skippedRacers);
+    }
+  }
+
   public generateRacerNameAndNumberString(racer: IRacer) {
     if (racer.number !== null) {
       return `${racer.name} — ${racer.number}`

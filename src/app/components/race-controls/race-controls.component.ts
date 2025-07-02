@@ -25,11 +25,13 @@ export class RaceControlsComponent implements AfterViewInit {
 
   @Input() isResetDisabled = true;
 
-  @Input() isSkipDisabled = false;
+  @Input() isSkipped = false;
 
   @Output() start = new EventEmitter();
 
   @Output() skip = new EventEmitter();
+
+  @Output() undoSkip = new EventEmitter();
 
   @Output() pause = new EventEmitter();
 
@@ -82,6 +84,10 @@ export class RaceControlsComponent implements AfterViewInit {
 
   public onSkip() {
     this.skip.emit()
+  }
+
+  public onUndoSkip() {
+    this.undoSkip.emit()
   }
 
   public onPause() {

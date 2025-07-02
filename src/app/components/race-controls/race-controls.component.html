@@ -13,18 +13,31 @@
     Старт
   </button>
   <button
-    *ngIf="raceType === RaceType.ITT"
+    *ngIf="raceType === RaceType.ITT && !isSkipped"
     tuiButton
     type="button"
     appearance="secondary"
     (click)="onSkip()"
-    [disabled]="isPauseAndSkipDisabled || isSkipDisabled"
+    [disabled]="isPauseAndSkipDisabled"
   >
     <tui-svg
       src="tuiIconFastForwardLarge"
       class="tui-space_right-2"
     ></tui-svg>
     Пропустить
+  </button>
+  <button
+    *ngIf="raceType === RaceType.ITT && isSkipped"
+    tuiButton
+    type="button"
+    appearance="secondary"
+    (click)="onUndoSkip()"
+  >
+    <tui-svg
+      src="tuiIconUndoLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Вернуть
   </button>
   <button
     *ngIf="raceType === RaceType.ITT"

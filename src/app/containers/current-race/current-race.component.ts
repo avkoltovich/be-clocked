@@ -120,11 +120,16 @@ export class CurrentRaceComponent implements AfterViewInit {
     }
   }
 
-  // Пропускать участника, не добавлять в список стартёров
   public onSkip() {
     const skippedRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
     this.racersService.skipRacer(skippedRacer);
     this.currentRacerSkipped = true;
+  }
+
+  public onUndoSkip() {
+    const skippedRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
+    this.racersService.undoSkipRacer(skippedRacer);
+    this.currentRacerSkipped = false;
   }
 
   public onPause() {
