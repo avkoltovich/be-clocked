@@ -45,7 +45,7 @@
           <span class="category">
           {{ racer.category }}
         </span>
-          <ng-container *ngIf="i >= currentRacerIndex$.value">
+          <ng-container *ngIf="(raceType$.value === RaceType.ITT && i >= currentRacerIndex$.value) || (raceType$.value === RaceType.GROUP && !isRaceBeginning$.value)">
             <button
               *ngIf="raceType$.value === RaceType.ITT"
               tuiIconButton

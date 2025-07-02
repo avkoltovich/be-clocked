@@ -75,7 +75,7 @@ export class CurrentRaceService {
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
-    if (starterNameList !== null) this.isRaceBeginning$.next(true);
+    if (starterNameList !== null && starterNameList?.length > 0) this.isRaceBeginning$.next(true);
     if (racers !== null && racers.length > 0) this.isAllRacersStarted$.next(this.currentRacerIndex$.value >= racers.length);
 
     this.raceType$.next(raceType ?? RaceType.ITT);
@@ -119,6 +119,7 @@ export class CurrentRaceService {
 
   public startGroupRace(startTime: number) {
     this.isRaceStarted$.next(true);
+    this.isRaceBeginning$.next(true);
     this.raceStartTime = startTime;
     this.repositoryService.updateRaceStartTime(startTime);
   }
