@@ -1,4 +1,15 @@
+:host {
+  display: block;
+}
+
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.race-name-wrapper {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -10,4 +21,10 @@
 
 .title-input {
   min-width: 200px;
+}
+
+.content {
+  width: 84px;
+
+  font-weight: bold;
 }

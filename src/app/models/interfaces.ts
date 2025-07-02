@@ -1,3 +1,5 @@
+import {RacerStatus, RaceType} from "./enums";
+
 export interface IFinisher {
   name: string;
   time: number;
@@ -13,6 +15,7 @@ export interface IRacer {
   category: string;
   number: number | null;
   startNumber?: number;
+  status: RacerStatus;
 }
 
 export interface IStarter {
@@ -25,6 +28,7 @@ export interface ISyncJSON {
   racers: IRacer[];
   categoriesMap: Record<string, IRacer[]>;
   starters: IStarter[];
+  skippedRacers: number[];
   starterNameList: string[];
   currentRacerIndex: number;
   currentAnonIndex: number;
@@ -33,4 +37,6 @@ export interface ISyncJSON {
   anons: IFinisher[];
   finisherNameList: string[];
   racersDelta: number;
+  raceType: RaceType;
+  raceStartTime: number;
 }

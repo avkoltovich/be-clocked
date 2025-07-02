@@ -1,82 +1,24 @@
 import {Injectable} from "@angular/core";
-import {BehaviorSubject, finalize, map, takeWhile, tap, timer} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 import {RepositoryService} from "./repository.service";
-import {IRacer, IStarter, ISyncJSON} from "../models/interfaces";
+import {IRacer, IStarter} from "../models/interfaces";
 import {FinishersService} from "./finishers.service";
-import {DEFAULT_ITT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
+import {RacerStatus} from "../models/enums";
 
 @Injectable({
   providedIn: "root"
 })
 export class RacersService {
-  private timerDelta = 0;
-  public currentRacerIndex$ = new BehaviorSubject(0);
-
-  public raceName$ = new BehaviorSubject<string>(DEFAULT_ITT_RACE_NAME);
-
   public racers$ = new BehaviorSubject<IRacer[]>([]);
   public startedRacers: IStarter[] = [];
+  public skippedRacers: number[] = [];
   public starterNameList$ = new BehaviorSubject<string[]>([]);
   public categoriesMap$ = new BehaviorSubject<Record<string, IRacer[]>>({});
 
-  public racerSecondsDelta = DEFAULT_DELTA;
-  public isRaceStarted$ = new BehaviorSubject(false);
-  public isRacePaused$ = new BehaviorSubject(false);
-  public isAllMembersStarted$ = new BehaviorSubject(false);
-  public isAllMembersHasNumbers$ = new BehaviorSubject(false);
-  public isDeltaChanged$ = new BehaviorSubject(false);
-
-  public timer$ = timer(0, 1000).pipe(
-    map(i => this.racerSecondsDelta - i + this.timerDelta),
-    tap((value) => {
-      if (value === 0) {
-        const currentRacer = this.racers$.value[this.currentRacerIndex$.value];
-
-        this.startedRacers.push({
-          racer: currentRacer,
-          time: Date.now()
-        });
-
-        const starterNameList = this.starterNameList$.value.slice();
-        starterNameList.push(this.generateRacerNameAndNumberString(currentRacer));
-
-        this.repositoryService.updateStartedRacers(this.startedRacers);
-        this.starterNameList$.next(starterNameList);
-        this.repositoryService.updateStarterNameList(this.starterNameList$.value);
-
-        this.timerDelta += this.racerSecondsDelta;
-        this.currentRacerIndex$.next(this.currentRacerIndex$.value + 1);
-        this.repositoryService.updateCurrentRacerIndex(this.currentRacerIndex$.value);
-      }
-    }),
-    takeWhile(() => this.racers$.value.length !== this.currentRacerIndex$.value),
-    finalize(() => {
-      if (this.isRacePaused$.value) {
-        this.timerDelta = 0;
-      } else {
-        this.isAllMembersStarted$.next(true);
-      }
-    })
-  );
+  public isAllRacersHasNumbers$ = new BehaviorSubject(false);
 
   constructor(private repositoryService: RepositoryService, private finishersService: FinishersService) {
-    this.initRaceData();
-  }
-
-  private initRaceData() {
-    const startedRacers = this.repositoryService.readStartedRacers();
-    const starterNameList = this.repositoryService.readStarterNameList();
-    const currentRacerIndex = this.repositoryService.readCurrentRacerIndex();
-    const categoriesMap = this.repositoryService.readCategoriesMap();
-    const raceName = this.repositoryService.readRaceName();
-    const racersDelta = this.repositoryService.readRacersDelta();
-
-    if (startedRacers !== null) this.startedRacers = startedRacers;
-    if (starterNameList !== null) this.starterNameList$.next(starterNameList);
-    if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
-    if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
-    if (raceName !== null) this.raceName$.next(raceName);
-    if (racersDelta !== null) this.setRacersDelta(racersDelta);
+    this.initRacersData();
   }
 
   private convertCategoryName(registerCategoryName: string): string {
@@ -90,35 +32,66 @@ export class RacersService {
     }
   }
 
-  public setStateFromJSON(data: ISyncJSON) {
-    this.repositoryService.setStateFromJSON(data);
-    this.initRaceData()
+  public initRacersData() {
+    const racers: IRacer[] = this.repositoryService.readRacers();
+    const startedRacers = this.repositoryService.readStartedRacers();
+    const skippedRacers = this.repositoryService.readSkippedRacers();
+    const starterNameList = this.repositoryService.readStarterNameList();
+    const categoriesMap = this.repositoryService.readCategoriesMap();
+
+    if (racers !== null) this.racers$.next(racers);
+    if (startedRacers !== null) this.startedRacers = startedRacers;
+    if (skippedRacers !== null) this.skippedRacers = skippedRacers;
+    if (starterNameList !== null) this.starterNameList$.next(starterNameList);
+    if (categoriesMap !== null) this.categoriesMap$.next(categoriesMap);
+
+    this.checkAllMembersHasNumbers();
+    this.validateRacersData();
   }
 
-  public continuePrevRace() {
-    this.initRaceData()
-    this.updateRacers(this.repositoryService.readRacers())
-    this.updateCategoriesMap(this.repositoryService.readCategoriesMap())
-  }
-
-  public resetRace(): void {
+  public resetRacersData(): void {
     this.finishersService.resetFinishersData();
 
-    this.currentRacerIndex$.next(0);
     this.racers$.next([]);
-    this.isRaceStarted$.next(false);
-    this.isRacePaused$.next(false);
-    this.isAllMembersStarted$.next(false);
-    this.isAllMembersHasNumbers$.next(false);
+
+    this.isAllRacersHasNumbers$.next(false);
     this.categoriesMap$.next({});
-    this.raceName$.next(DEFAULT_ITT_RACE_NAME);
 
     this.startedRacers = [];
     this.starterNameList$.next([]);
+  }
 
-    this.timerDelta = 0;
-    this.racerSecondsDelta = DEFAULT_DELTA;
-    this.isDeltaChanged$.next(true);
+  public startRacerByIndex(index: number) {
+    const currentRacers = this.racers$.value.slice();
+    const currentRacer = currentRacers[index];
+
+    if (this.skippedRacers.includes(currentRacer.number!)) {
+      currentRacer.status = RacerStatus.SKIPPED;
+
+      return;
+    }
+
+    currentRacer.status = RacerStatus.STARTED;
+
+    this.startedRacers.push({
+      racer: currentRacer,
+      time: Date.now()
+    });
+
+    const starterNameList = this.starterNameList$.value.slice();
+    starterNameList.push(this.generateRacerNameAndNumberString(currentRacer));
+
+    this.repositoryService.updateStartedRacers(this.startedRacers);
+    this.starterNameList$.next(starterNameList);
+    this.repositoryService.updateStarterNameList(this.starterNameList$.value);
+    this.updateRacers(currentRacers);
+  }
+
+  public updateRacerStatusByIndex(index: number, status: RacerStatus) {
+    const currentRacers = this.racers$.value.slice();
+    currentRacers[index].status = status;
+
+    this.updateRacers(currentRacers);
   }
 
   public setRacersFromGoogleSheet(data: Record<string, any>[], cellName: string, cellCategory: string) {
@@ -133,7 +106,8 @@ export class RacersService {
         const racer = {
           name,
           category: this.convertCategoryName(registerInfo[cellCategory]),
-          number: null
+          number: null,
+          status: RacerStatus.READY
         }
         racers.push(racer);
 
@@ -158,13 +132,56 @@ export class RacersService {
     let accumulator = true;
     this.racers$.value.forEach((racer) => accumulator = (racer.number !== null) && accumulator)
 
-    this.isAllMembersHasNumbers$.next(accumulator);
+    this.isAllRacersHasNumbers$.next(accumulator);
   }
 
-  public setRacersDelta(delta: number) {
-    this.racerSecondsDelta = delta;
-    this.repositoryService.updateRacersDelta(delta);
-    this.isDeltaChanged$.next(true);
+  public validateRacersData(): void {
+    const racers = this.racers$.value.slice();
+    const validatedRacers = racers.map((racer: IRacer) => {
+      if (racer.number === undefined) racer.number = null;
+
+      const isFinished = this.finishersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
+      const isSkipped = this.skippedRacers.includes(racer.number!);
+      const isStarted = this.starterNameList$.value.includes(this.generateRacerNameAndNumberString(racer));
+
+      if (racer.status === undefined) {
+        if (isStarted) racer.status = RacerStatus.STARTED;
+        if (isFinished) racer.status = RacerStatus.FINISHED;
+        if (isSkipped) racer.status = RacerStatus.SKIPPED;
+      }
+
+      return racer;
+    })
+
+    this.updateRacers(validatedRacers);
+  }
+
+  public startAllRacers(startTime: number): void {
+    const starterNameList: string[] = [];
+
+    const startedRacers = this.racers$.value.map((racer: IRacer) => {
+      const startedRacer = {
+        ...racer,
+        status: RacerStatus.STARTED
+      }
+
+      this.startedRacers.push({
+        racer: startedRacer,
+        time: startTime
+      });
+
+      starterNameList.push(this.generateRacerNameAndNumberString(startedRacer));
+
+      return startedRacer
+    });
+
+    this.racers$.next(startedRacers);
+    this.repositoryService.updateRacers(startedRacers);
+
+    this.repositoryService.updateStartedRacers(this.startedRacers);
+
+    this.starterNameList$.next(starterNameList);
+    this.repositoryService.updateStarterNameList(starterNameList);
   }
 
   public updateRacers(racers: IRacer[]) {
@@ -178,9 +195,18 @@ export class RacersService {
     this.repositoryService.updateCategoriesMap(categoriesMap);
   }
 
-  public updateRaceName(raceName: string) {
-    this.repositoryService.updateRaceName(raceName);
-    this.raceName$.next(raceName);
+  public skipRacer(racer: IRacer) {
+    if (racer.number !== null && racer.number !== undefined) {
+      this.skippedRacers.push(racer.number);
+      this.repositoryService.updateSkippedRacers(this.skippedRacers);
+    }
+  }
+
+  public undoSkipRacer(skippedRacer: IRacer) {
+    if (skippedRacer.number !== null && skippedRacer.number !== undefined) {
+      this.skippedRacers.pop();
+      this.repositoryService.updateSkippedRacers(this.skippedRacers);
+    }
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {

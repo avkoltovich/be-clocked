@@ -17,7 +17,7 @@ export class FinishersService {
     this.initFinishersData();
   }
 
-  private initFinishersData() {
+  public initFinishersData() {
     const finishers = this.repositoryService.readFinishers();
     const finisherNameList = this.repositoryService.readFinisherNameList();
     const anonFinishers = this.repositoryService.readAnons();

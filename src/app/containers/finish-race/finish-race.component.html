@@ -44,7 +44,7 @@
       appearance="secondary"
       size="m"
       (click)="onAnonButton()"
-      [disabled]="!(isRaceStarted$ | async)"
+      [disabled]="!(isRaceBeginning$ | async)"
     >
       <tui-svg
         src="tuiIconFlagLarge"
@@ -111,29 +111,31 @@
 
     </li>
   </ol>
-  <ng-container *ngIf="finishers$.value.length > 0">
-    <h3>Абсолют</h3>
-    <ol class="tui-list tui-list_ordered tui-list_large">
-      <li
-        *ngFor="let finisher of finishers$.value"
-        class="tui-list__item"
-      >
-        {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-      </li>
-    </ol>
-    <ng-container *ngFor="let category of finishersByCategories$.value">
-      <ng-container *ngIf="category.finishers.length > 0">
-        <h3>{{ category.name }}</h3>
-        <ol class="tui-list tui-list_ordered tui-list_large">
-          <li
-            *ngFor="let finisher of category.finishers"
-            class="tui-list__item"
-          >
-            {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-          </li>
-        </ol>
-      </ng-container>
+  <ng-container *tuiLet="finishers$ | async as finishers">
+    <ng-container *ngIf="finishers!.length > 0">
+      <h3>Абсолют</h3>
+      <ol class="tui-list tui-list_ordered tui-list_large">
+        <li
+          *ngFor="let finisher of finishers"
+          class="tui-list__item"
+        >
+          {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+        </li>
+      </ol>
+      <ng-container *ngFor="let category of finishersByCategories$.value">
+        <ng-container *ngIf="category.finishers.length > 0">
+          <h3>{{ category.name }}</h3>
+          <ol class="tui-list tui-list_ordered tui-list_large">
+            <li
+              *ngFor="let finisher of category.finishers"
+              class="tui-list__item"
+            >
+              {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+            </li>
+          </ol>
+        </ng-container>
 
+      </ng-container>
     </ng-container>
   </ng-container>
 </tui-island>

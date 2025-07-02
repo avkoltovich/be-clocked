@@ -2,10 +2,10 @@ import {Component, Inject} from "@angular/core";
 import {RacersService} from "../../services/racers.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {map} from "rxjs";
-import {ModifyMode} from "../../models/enums";
+import {ModifyMode, RaceType} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 import {TuiDialogService} from "@taiga-ui/core";
-import {FinishersService} from "../../services/finishers.service";
+import {CurrentRaceService} from "../../services/current-race.service";
 
 interface ICurrentRacer {
   index: number;
@@ -18,10 +18,13 @@ interface ICurrentRacer {
   styleUrls: ["./racer-list.component.scss"]
 })
 export class RacerListComponent {
-  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  protected readonly RaceType = RaceType;
+
+  public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
+  public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public racers$ = this.racersService.racers$;
-  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
+  public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
+  public raceType$ = this.currentRaceService.raceType$;
 
   public formGroup = new FormGroup({
     racer: new FormControl("", Validators.required),
@@ -45,7 +48,7 @@ export class RacerListComponent {
 
   constructor(
     private racersService: RacersService,
-    private finishersService: FinishersService,
+    private currentRaceService: CurrentRaceService,
     @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
   ) {
   }
@@ -101,7 +104,6 @@ export class RacerListComponent {
 
     const currentList = this.racersService.racers$.value.slice();
     currentList.splice(i, 1);
-    this.racersService.racers$.next(currentList);
     this.racersService.updateRacers(currentList);
     this.cleanCategoriesMap(racer);
   }
@@ -151,13 +153,5 @@ export class RacerListComponent {
     this.numberControl.reset()
 
     this.onSave(racer)
-  }
-
-  public checkRacerStarted(racer: IRacer) {
-    return this.racersService.starterNameList$.value.includes(this.generateRacerNameAndNumberString(racer));
-  }
-
-  public checkRacerFinished(racer: IRacer) {
-    return this.finishersService.finisherNameList.includes(this.generateRacerNameAndNumberString(racer));
   }
 }

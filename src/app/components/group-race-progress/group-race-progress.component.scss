@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+}
+
+.timer {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+
+  font-weight: bold;
+  font-size: 10rem;
+  line-height: 120%;
+
+  color: transparent;
+  background: linear-gradient(95deg,
+    #3682db 0%,
+    #bd65a4 50%,
+    #fcbb14 100%
+  );
+  background-clip: text;
+}
+
+.help-text {
+  grid-column: 1 / 3;
+
+  font-size: 4rem;
+  line-height: 120%;
+  font-weight: bold;
+  text-align: center;
+}

@@ -1,4 +1,4 @@
-<ng-container *ngIf="raceStatus === RaceStatus.ready">
+<ng-container *ngIf="raceStatus === RaceStatus.READY || raceStatus === RaceStatus.START">
   <button
     tuiButton
     type="button"
@@ -13,6 +13,7 @@
     Старт
   </button>
   <button
+    *ngIf="raceType === RaceType.ITT && !isSkipped"
     tuiButton
     type="button"
     appearance="secondary"
@@ -26,6 +27,20 @@
     Пропустить
   </button>
   <button
+    *ngIf="raceType === RaceType.ITT && isSkipped"
+    tuiButton
+    type="button"
+    appearance="secondary"
+    (click)="onUndoSkip()"
+  >
+    <tui-svg
+      src="tuiIconUndoLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Вернуть
+  </button>
+  <button
+    *ngIf="raceType === RaceType.ITT"
     tuiButton
     type="button"
     appearance="flat"
@@ -68,7 +83,7 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="raceStatus === RaceStatus.prepare">
+<ng-container *ngIf="raceStatus === RaceStatus.PREPARE">
   <button
     class="icon-button"
     tuiButton
@@ -101,7 +116,10 @@
   </button>
 </ng-container>
 
-<input type="file" accept=".json" #fileInput style="display: none">
+<form #fileInputForm style="display: none">
+  <input type="file" accept=".json" #fileInput style="display: none">
+</form>
+
 <a class="btn btn-clear" title="Download JSON" [href]="downloadJsonHref" download="download.json" #download></a>
 
 <ng-template #uploadHint>
@@ -113,5 +131,5 @@
 </ng-template>
 
 <ng-template #downloadHint>
-  <span><b>Сохранить состояние</b><br> состояние гонки в JSON</span>
+  <span><b>Сохранить состояние</b><br>гонки в JSON</span>
 </ng-template>

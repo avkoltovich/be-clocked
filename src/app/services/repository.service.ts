@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {RepositoryKey} from '../models/enums';
+import {RaceType, RepositoryKey} from '../models/enums';
 import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
-import {DEFAULT_ITT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
+import {DEFAULT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -13,51 +13,63 @@ export class RepositoryService {
    */
 
   public updateRacers(value: IRacer[]) {
-    window.localStorage.setItem(RepositoryKey.racers, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.RACERS, JSON.stringify(value));
   }
 
   public updateCategoriesMap(value: Record<string, IRacer[]>) {
-    window.localStorage.setItem(RepositoryKey.categoriesMap, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.CATEGORIES_MAP, JSON.stringify(value));
   }
 
   public updateStartedRacers(value: IStarter[]) {
-    window.localStorage.setItem(RepositoryKey.starters, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.STARTERS, JSON.stringify(value));
+  }
+
+  public updateSkippedRacers(value: number[]) {
+    window.localStorage.setItem(RepositoryKey.SKIPPED_RACERS, JSON.stringify(value));
   }
 
   public updateStarterNameList(value: string[]) {
-    window.localStorage.setItem(RepositoryKey.starterNameList, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.STARTER_NAME_LIST, JSON.stringify(value));
   }
 
   public updateFinishers(value: IFinisher[]) {
-    window.localStorage.setItem(RepositoryKey.finishers, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.FINISHERS, JSON.stringify(value));
   }
 
   public updateFinishersByCategories(value: IFinishCategory[]) {
-    window.localStorage.setItem(RepositoryKey.finishersByCategories, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.FINISHERS_BY_CATEGORIES, JSON.stringify(value));
   }
 
   public updateAnons(value: IFinisher[]) {
-    window.localStorage.setItem(RepositoryKey.anons, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.ANONS, JSON.stringify(value));
   }
 
   public updateFinisherNameList(value: string[]) {
-    window.localStorage.setItem(RepositoryKey.finisherNameList, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.FINISHER_NAME_LIST, JSON.stringify(value));
   }
 
   public updateCurrentRacerIndex(value: number) {
-    window.localStorage.setItem(RepositoryKey.currentRacerIndex, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.CURRENT_RACER_INDEX, JSON.stringify(value));
   }
 
   public updateCurrentAnonIndex(value: number) {
-    window.localStorage.setItem(RepositoryKey.currentAnonIndex, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.CURRENT_ANON_INDEX, JSON.stringify(value));
   }
 
   public updateRaceName(value: string) {
-    window.localStorage.setItem(RepositoryKey.raceName, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.RACE_NAME, JSON.stringify(value));
   }
 
   public updateRacersDelta(value: number) {
-    window.localStorage.setItem(RepositoryKey.racersDelta, JSON.stringify(value));
+    window.localStorage.setItem(RepositoryKey.RACERS_DELTA, JSON.stringify(value));
+  }
+
+  public updateRaceType(value: string) {
+    window.localStorage.setItem(RepositoryKey.RACE_TYPE, JSON.stringify(value));
+  }
+
+  public updateRaceStartTime(value: number) {
+    window.localStorage.setItem(RepositoryKey.RACE_START_TIME, JSON.stringify(value));
   }
 
   /**
@@ -65,51 +77,63 @@ export class RepositoryService {
    */
 
   public readRacers() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.racers)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACERS)!);
   }
 
   public readCategoriesMap() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.categoriesMap)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.CATEGORIES_MAP)!);
   }
 
   public readStartedRacers() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.starters)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.STARTERS)!);
+  }
+
+  public readSkippedRacers() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.SKIPPED_RACERS)!);
   }
 
   public readStarterNameList() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.starterNameList)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.STARTER_NAME_LIST)!);
   }
 
   public readCurrentRacerIndex() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.currentRacerIndex)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.CURRENT_RACER_INDEX)!);
   }
 
   public readCurrentAnonIndex() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.currentAnonIndex)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.CURRENT_ANON_INDEX)!);
   }
 
   public readFinishers() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.finishers)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.FINISHERS)!);
   }
 
   public readFinishersByCategories() {
-    return JSON.parse(window.localStorage.getItem("finishersByCategories")!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.FINISHERS_BY_CATEGORIES)!);
   }
 
   public readAnons() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.anons)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.ANONS)!);
   }
 
   public readFinisherNameList() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.finisherNameList)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.FINISHER_NAME_LIST)!);
   }
 
   public readRaceName() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.raceName)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_NAME)!);
   }
 
   public readRacersDelta() {
-    return JSON.parse(window.localStorage.getItem(RepositoryKey.racersDelta)!);
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACERS_DELTA)!);
+  }
+
+  public readRaceType() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_TYPE)!);
+  }
+
+  public readRaceStartTime() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_START_TIME)!);
   }
 
   /**
@@ -117,13 +141,14 @@ export class RepositoryService {
    */
 
   public checkRacers(): boolean {
-    return window.localStorage.getItem(RepositoryKey.racers) !== null;
+    return window.localStorage.getItem(RepositoryKey.RACERS) !== null;
   }
 
   public collectRaceData() {
     const racers = this.readRacers();
     const categoriesMap = this.readCategoriesMap();
     const starters = this.readStartedRacers();
+    const skippedRacers = this.readSkippedRacers();
     const starterNameList = this.readStarterNameList();
     const currentRacerIndex = this.readCurrentRacerIndex();
     const currentAnonIndex = this.readCurrentAnonIndex();
@@ -133,20 +158,25 @@ export class RepositoryService {
     const finisherNameList = this.readFinisherNameList();
     const raceName = this.readRaceName();
     const racersDelta = this.readRacersDelta();
+    const raceType = this.readRaceType();
+    const raceStartTime = this.readRaceStartTime();
 
     return {
-      raceName: raceName ? raceName : DEFAULT_ITT_RACE_NAME,
-      racers: racers ? racers : [],
-      categoriesMap: categoriesMap ? categoriesMap : {},
-      starters: starters ? starters : [],
-      starterNameList: starterNameList ? starterNameList : [],
-      currentRacerIndex: currentRacerIndex ? currentRacerIndex : 0,
-      currentAnonIndex: currentAnonIndex ? currentAnonIndex : 0,
-      finishers: finishers ? finishers : [],
-      finishersByCategories: finishersByCategories ? finishersByCategories : [],
-      anons: anons ? anons : [],
-      finisherNameList: finisherNameList ? finisherNameList : [],
-      racersDelta: racersDelta ? racersDelta : DEFAULT_DELTA
+      raceName: raceName ? raceName : DEFAULT_RACE_NAME,
+      racers: racers ?? [],
+      categoriesMap: categoriesMap ?? {},
+      starters: starters ?? [],
+      skippedRacers: skippedRacers ?? [],
+      starterNameList: starterNameList ?? [],
+      currentRacerIndex: currentRacerIndex ?? 0,
+      currentAnonIndex: currentAnonIndex ?? 0,
+      finishers: finishers ?? [],
+      finishersByCategories: finishersByCategories ?? [],
+      anons: anons ?? [],
+      finisherNameList: finisherNameList ?? [],
+      racersDelta: racersDelta ?? DEFAULT_DELTA,
+      raceType: raceType ?? RaceType.ITT,
+      raceStartTime: raceStartTime,
     };
   }
 
@@ -154,6 +184,7 @@ export class RepositoryService {
     this.updateRacers(data.racers);
     this.updateCategoriesMap(data.categoriesMap);
     this.updateStartedRacers(data.starters);
+    this.updateSkippedRacers(data.skippedRacers ?? []);
     this.updateStarterNameList(data.starterNameList);
     this.updateCurrentRacerIndex(data.currentRacerIndex);
     this.updateCurrentAnonIndex(data.currentAnonIndex);
@@ -161,8 +192,10 @@ export class RepositoryService {
     this.updateFinishersByCategories(data.finishersByCategories);
     this.updateAnons(data.anons);
     this.updateFinisherNameList(data.finisherNameList);
-    this.updateRaceName(data.raceName);
-    this.updateRacersDelta(data.racersDelta);
+    this.updateRaceName(data.raceName ?? DEFAULT_RACE_NAME);
+    this.updateRacersDelta(data.racersDelta ?? DEFAULT_DELTA);
+    this.updateRaceType(data.raceType ?? RaceType.ITT);
+    this.updateRaceStartTime(data.raceStartTime ?? null);
   }
 
   public resetLS() {

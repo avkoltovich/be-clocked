@@ -11,7 +11,11 @@ import {TuiDialogService} from "@taiga-ui/core";
 export class IttRaceProgressComponent {
   @Input() currentRacer = '';
 
+  @Input() isSkippedRacer = false;
+
   @Input() nextRacer = '';
+
+  @Input() isRacersListEmpty = true;
 
   @Input() isShowRacerNames = true;
 
@@ -23,7 +27,7 @@ export class IttRaceProgressComponent {
 
   @Input() maxTimerValue: number = DEFAULT_DELTA;
 
-  @Input() isShowEmptyRacerListNotification = true;
+  @Input() isAllRacersStarted = true;
 
   @Output() newDelta= new EventEmitter();
 

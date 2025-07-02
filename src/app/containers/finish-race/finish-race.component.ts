@@ -1,12 +1,14 @@
 import {Component, Inject, OnInit} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
 import {RacersService} from "../../services/racers.service";
-import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
-import {map, tap} from "rxjs";
+import {TUI_DEFAULT_MATCHER, tuiControlValue, TuiDestroyService} from "@taiga-ui/cdk";
+import {map, takeUntil, tap} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
+import {CurrentRaceService} from "../../services/current-race.service";
+import {RacerStatus} from "../../models/enums";
 
 @Component({
   selector: "app-finish-race",
@@ -25,7 +27,7 @@ export class FinishRaceComponent implements OnInit {
   public anonFinishers$ = this.finishersService.anonFinishers$;
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
+  public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
@@ -80,13 +82,17 @@ export class FinishRaceComponent implements OnInit {
           this.finishersByCategories$.next(finishersByCategory);
         });
       }
-    })
+    }),
+    takeUntil(this.destroy$)
   );
 
   constructor(private racersService: RacersService,
+              private finishersService: FinishersService,
+              private currentRaceService: CurrentRaceService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-              private finishersService: FinishersService) {
+              private readonly destroy$: TuiDestroyService,
+              ) {
   }
 
   public ngOnInit() {
@@ -105,6 +111,7 @@ export class FinishRaceComponent implements OnInit {
 
       const finishers = this.finishers$.value.slice();
       const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === currentRacer.number);
+      const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === currentRacer.number);
 
       if (startedData === undefined) return;
 
@@ -140,6 +147,7 @@ export class FinishRaceComponent implements OnInit {
       finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
 
       this.finishersService.updateFinishersByCategories(finishersByCategories);
+      this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
     }
   }
 

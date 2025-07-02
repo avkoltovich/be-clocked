@@ -1,13 +1,14 @@
 import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from "@angular/core";
-import {Subscription, tap} from "rxjs";
+import {BehaviorSubject, Subscription, takeUntil, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
 import {IRacer, ISyncJSON} from "../../models/interfaces";
 import {FinishersService} from "../../services/finishers.service";
-import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
-import {RaceStatus} from "../../models/enums";
+import {RaceStatus, RaceType} from "../../models/enums";
 import {IGoogleTableData} from "../../components/google-table-stepper/google-table-stepper.component";
+import {CurrentRaceService} from "../../services/current-race.service";
+import {TuiDestroyService} from "@taiga-ui/cdk";
 
 @Component({
   selector: "app-current-race",
@@ -15,33 +16,46 @@ import {IGoogleTableData} from "../../components/google-table-stepper/google-tab
   styleUrls: ["./current-race.component.scss"]
 })
 export class CurrentRaceComponent implements AfterViewInit {
-  private timerSubscription: Subscription | null = null;
+  private ittTimerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
-  public maxTimerValue = this.racersService.racerSecondsDelta;
-  public currentTimerValue = this.racersService.racerSecondsDelta;
+  readonly RaceType = RaceType;
+
+  /**
+   * Для ITT режима
+   */
+  public maxTimerValue = this.currentRaceService.racerSecondsDelta;
+  public currentTimerValue = this.currentRaceService.racerSecondsDelta;
+  public currentRacerSkipped = false;
 
   /**
    * Состояние компонента
    */
-  public raceStatus = RaceStatus.prepare;
+  public raceStatus$ = new BehaviorSubject(RaceStatus.PREPARE);
 
   /**
    * Потоки
    */
-  public currentRacerIndex$ = this.racersService.currentRacerIndex$;
-  public isRaceStarted$ = this.racersService.isRaceStarted$;
-  public isRacePaused$ = this.racersService.isRacePaused$;
-  public isAllMembersStarted$ = this.racersService.isAllMembersStarted$;
-  public isAllMembersHasNumbers$ = this.racersService.isAllMembersHasNumbers$;
-  public raceName$ = this.racersService.raceName$;
-  public timer$ = this.racersService.timer$.pipe(
+  public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
+  public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
+  public isRacePaused$ = this.currentRaceService.isRacePaused$;
+  public isAllRacersStarted$ = this.currentRaceService.isAllRacersStarted$;
+  public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
+  public raceName$ = this.currentRaceService.raceName$;
+  public raceType$ = this.currentRaceService.raceType$;
+  public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+
+  /**
+   * Для Группового режима
+   */
+  public ittRaceTimer$ = this.currentRaceService.ittRaceTimer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;
     })
   );
+  public groupRaceTimer$ = this.currentRaceService.groupRaceTimer$;
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
-      if (racers.length > 0) this.raceStatus = RaceStatus.ready;
+      if (racers.length > 0) this.raceStatus$.next(RaceStatus.READY);
     })
   );
 
@@ -52,11 +66,13 @@ export class CurrentRaceComponent implements AfterViewInit {
     private racersService: RacersService,
     private repositoryService: RepositoryService,
     private finishersService: FinishersService,
+    private currentRaceService: CurrentRaceService,
+    private readonly destroy$: TuiDestroyService,
   ) {
   }
 
   private resetDeltaTimer() {
-    this.currentTimerValue = this.racersService.racerSecondsDelta;
+    this.currentTimerValue = this.currentRaceService.racerSecondsDelta;
   }
 
   private setDataFromGoogleTable(data: IGoogleTableData): void {
@@ -66,56 +82,73 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    if (this.repositoryService.checkRacers()) {
+    if (this.racersService.racers$.value.length > 0) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     }
     else {
-      this.onReset();
+      this.repositoryService.resetLS();
     }
 
-    this.racersService.isDeltaChanged$.pipe(
+    this.currentRaceService.isDeltaChanged$.pipe(
       tap(() => {
-        const currentDelta = this.racersService.racerSecondsDelta;
+        const currentDelta = this.currentRaceService.racerSecondsDelta;
 
         this.maxTimerValue = currentDelta;
         this.currentTimerValue = currentDelta;
-      })
-    ).subscribe()
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe();
+
+    this.currentRacerIndex$.pipe(
+      tap(() => {
+        this.currentRacerSkipped = false;
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe();
   }
 
   public onStart() {
-    this.racersService.isRaceStarted$.next(true);
-    this.timerSubscription = this.timer$.subscribe();
+    if (this.raceType$.value === RaceType.ITT) {
+      this.currentRaceService.isRaceStarted$.next(true);
+      this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
+    }
+
+    if (this.raceType$.value === RaceType.GROUP) {
+      const startTime = Date.now();
+      this.currentRaceService.startGroupRace(startTime);
+      this.racersService.startAllRacers(startTime);
+    }
   }
 
   public onSkip() {
-    const currentRacers = this.racersService.racers$.value.slice();
-    const skippedRacer = currentRacers[this.currentRacerIndex$.value];
+    const skippedRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
+    this.racersService.skipRacer(skippedRacer);
+    this.currentRacerSkipped = true;
+  }
 
-    if (skippedRacer.name === SKIPPED_RACER_NAME) return;
-
-    currentRacers.push(skippedRacer);
-    currentRacers[this.currentRacerIndex$.value].name = SKIPPED_RACER_NAME;
-
-    this.racersService.racers$.next(currentRacers);
+  public onUndoSkip() {
+    const skippedRacer = this.racersService.racers$.value[this.currentRacerIndex$.value];
+    this.racersService.undoSkipRacer(skippedRacer);
+    this.currentRacerSkipped = false;
   }
 
   public onPause() {
     this.isRacePaused$.next(true);
     this.isRaceStarted$.next(false);
 
-    this.timerSubscription?.unsubscribe();
+    this.ittTimerSubscription?.unsubscribe();
     this.resetDeltaTimer();
   }
 
   public onReset() {
-    this.timerSubscription?.unsubscribe();
+    this.ittTimerSubscription?.unsubscribe();
 
     this.repositoryService.resetLS();
-    this.racersService.resetRace();
+    this.currentRaceService.resetCurrentRace();
+    this.racersService.resetRacersData();
     this.finishersService.resetFinishersData();
 
-    this.raceStatus = RaceStatus.prepare;
+    this.raceStatus$.next(RaceStatus.PREPARE);
   }
 
   public openResetDialog(content: any): void {
@@ -127,7 +160,7 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public setStateFromJSON(data: ISyncJSON) {
-    this.racersService.setStateFromJSON(data);
+    this.currentRaceService.setStateFromJSON(data);
     this.onContinuePrevRace();
   }
 
@@ -138,21 +171,32 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public onContinuePrevRace() {
-    this.racersService.continuePrevRace();
-    this.raceStatus = RaceStatus.ready
+    this.currentRaceService.continuePrevRace();
+    this.racersService.initRacersData();
+    this.finishersService.initFinishersData();
+
+    if (this.racersService.startedRacers.length > 0) {
+      this.raceStatus$.next(RaceStatus.START);
+    } else if (this.racersService.racers$.value.length > 0) {
+      this.raceStatus$.next(RaceStatus.READY);
+    }
   }
 
   public onSetDelta(newDelta: number): void {
-    this.racersService.setRacersDelta(newDelta);
+    this.currentRaceService.setRacersDelta(newDelta);
     this.maxTimerValue = newDelta;
     this.currentTimerValue = newDelta;
   }
 
   public onRaceNameSave(raceName: string) {
-    this.racersService.updateRaceName(raceName);
+    this.currentRaceService.updateRaceName(raceName);
   }
 
   public completeSteps(data: IGoogleTableData): void {
     this.setDataFromGoogleTable(data);
+  }
+
+  public onRaceTypeChanged($event: RaceType) {
+    this.currentRaceService.raceType$.next($event);
   }
 }

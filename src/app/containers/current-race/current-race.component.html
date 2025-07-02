@@ -1,32 +1,50 @@
 <tui-island size="l">
 
   <app-race-header
+    class="tui-space_bottom-14"
     [raceName$]="raceName$"
+    [raceType$]="raceType$"
+    [isRaceBeginning$]="isRaceBeginning$"
     (raceNameSave)="onRaceNameSave($event)"
+    (raceTypeChange)="onRaceTypeChanged($event)"
   />
 
   <div *tuiLet="racers$ | async as racers">
-    <app-itt-race-progress
-      [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
-      [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
-      [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
-      [isShowTimer]="(racers$ | async)!.length > (currentRacerIndex$ | async)!"
-      [isShowEmptyRacerListNotification]="raceStatus !== RaceStatus.prepare"
-      [isDeltaEditMode]="isRaceStarted$.value"
-      [currentTimerValue]="currentTimerValue"
-      [maxTimerValue]="maxTimerValue"
-      (newDelta)="onSetDelta($event)"
-    />
+    <div class="progress-wrapper tui-space_bottom-14">
+      <app-itt-race-progress
+        *ngIf="raceType$.value === RaceType.ITT"
+        [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
+        [isSkippedRacer]="currentRacerSkipped"
+        [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
+        [isRacersListEmpty]="racers?.length === 0"
+        [isShowRacerNames]="racers![currentRacerIndex$.value] !== undefined"
+        [isShowTimer]="(raceStatus$.value !== RaceStatus.PREPARE) && !isAllRacersStarted$.value"
+        [isAllRacersStarted]="isAllRacersStarted$.value"
+        [isDeltaEditMode]="isRaceStarted$.value"
+        [currentTimerValue]="currentTimerValue"
+        [maxTimerValue]="maxTimerValue"
+        (newDelta)="onSetDelta($event)"
+      />
+
+      <app-group-race-progress
+        *ngIf="raceType$.value === RaceType.GROUP"
+        [groupRaceTimer$]="groupRaceTimer$"
+        [isRacersListEmpty]="racers?.length === 0"
+      />
+    </div>
 
     <app-race-controls
-      [raceStatus]="raceStatus"
-      [isStartDisabled]="isRaceStarted$.value! || !isAllMembersHasNumbers$.value!"
-      [isPauseAndSkipDisabled]="isAllMembersStarted$.value! || !isRaceStarted$.value"
-      [isResetDisabled]="isRaceStarted$.value && !isAllMembersStarted$.value"
+      [raceStatus]="raceStatus$.value"
+      [raceType]="raceType$.value"
+      [isStartDisabled]="isRaceStarted$.value! || !isAllRacersHasNumbers$.value! || (isAllRacersStarted$ | async)!"
+      [isPauseAndSkipDisabled]="isAllRacersStarted$.value! || !isRaceStarted$.value"
+      [isResetDisabled]="isRaceStarted$.value && !isAllRacersStarted$.value"
+      [isSkipped]="currentRacerSkipped"
       (start)="onStart()"
       (skip)="onSkip()"
+      (undoSkip)="onUndoSkip()"
       (pause)="onPause()"
-      (reset)="openResetDialog(reset)"
+      (resetRace)="openResetDialog(reset)"
       (readJSON)="setStateFromJSON($event)"
       (googleTable)="openGoogleTableDialog(googleTableDialog)"
     />

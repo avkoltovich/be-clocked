@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {EMPTY, Observable} from "rxjs";
-import {ModifyMode} from "../../models/enums";
+import {ModifyMode, RacerStatus} from "../../models/enums";
 import {IRacer} from "../../models/interfaces";
 
 @Component({
@@ -21,7 +21,7 @@ export class RacerEditorComponent implements OnChanges {
 
   @Input() categories$: Observable<string[]> = EMPTY;
 
-  @Input() mode: ModifyMode = ModifyMode.create;
+  @Input() mode: ModifyMode = ModifyMode.CREATE;
 
   @Input() formValue? = {}
 
@@ -30,8 +30,8 @@ export class RacerEditorComponent implements OnChanges {
   @Output() cancel = new EventEmitter();
 
   public buttonLabelMap = {
-    [ModifyMode.create]: 'Добавить',
-    [ModifyMode.edit]: 'Сохранить',
+    [ModifyMode.CREATE]: 'Добавить',
+    [ModifyMode.EDIT]: 'Сохранить',
   }
 
   protected readonly ModifyMode = ModifyMode;
@@ -44,7 +44,7 @@ export class RacerEditorComponent implements OnChanges {
 
     if (name === null || name === "") return;
 
-    this.changeRacer.emit({ name, startNumber, category: category ?? '', number: Number(number) });
+    this.changeRacer.emit({ name, startNumber, category: category ?? '', number: Number(number), status: RacerStatus.READY });
     this.isAddCategoryMode = false;
     this.formGroup.reset();
   }
