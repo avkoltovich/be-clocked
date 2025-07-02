@@ -28,7 +28,7 @@
 
       <app-group-race-progress
         *ngIf="raceType$.value === RaceType.GROUP"
-        [groupRaceTimer$]="groupRaceTimer$"
+        [currentTime$]="currentGroupRaceTime$"
         [isRacersListEmpty]="racers?.length === 0"
       />
     </div>

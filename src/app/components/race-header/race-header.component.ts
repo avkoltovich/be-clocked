@@ -56,8 +56,7 @@ export class RaceHeaderComponent implements OnInit {
         if (isRaceBeginning) {
           this.raceTypeControl.disable();
         } else {
-          // TODO: убрать, когда будет готова функциональность групповой гонки
-          this.raceTypeControl.disable();
+          this.raceTypeControl.enable();
         }
       }),
       takeUntil(this.destroy$),

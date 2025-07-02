@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, Inject, OnDestroy, TemplateRef, ViewChild} from "@angular/core";
 import {BehaviorSubject, Subscription, takeUntil, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
@@ -15,7 +15,7 @@ import {TuiDestroyService} from "@taiga-ui/cdk";
   templateUrl: "./current-race.component.html",
   styleUrls: ["./current-race.component.scss"]
 })
-export class CurrentRaceComponent implements AfterViewInit {
+export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
   private ittTimerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
   readonly RaceType = RaceType;
@@ -45,14 +45,20 @@ export class CurrentRaceComponent implements AfterViewInit {
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
 
   /**
-   * Для Группового режима
+   * Для ITT режима
    */
   public ittRaceTimer$ = this.currentRaceService.ittRaceTimer$.pipe(
     tap((value) => {
       this.currentTimerValue = value;
     })
   );
-  public groupRaceTimer$ = this.currentRaceService.groupRaceTimer$;
+  /**
+   * Для Группового режима
+   */
+  private startTime$ = this.currentRaceService.raceStartTime$;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+  public currentGroupRaceTime$ = new BehaviorSubject('0:00:00');
+
   public racers$ = this.racersService.racers$.pipe(
     tap((racers) => {
       if (racers.length > 0) this.raceStatus$.next(RaceStatus.READY);
@@ -82,6 +88,11 @@ export class CurrentRaceComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
+    if (this.startTime$.value !== null) {
+      this.isRaceBeginning$.next(true);
+      this.startTimer();
+    }
+
     if (this.racersService.racers$.value.length > 0) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     }
@@ -116,8 +127,11 @@ export class CurrentRaceComponent implements AfterViewInit {
 
     if (this.raceType$.value === RaceType.GROUP) {
       const startTime = Date.now();
+      this.currentRaceService.updateRaceStartTime(startTime);
       this.currentRaceService.startGroupRace(startTime);
       this.racersService.startAllRacers(startTime);
+      this.isRaceBeginning$.next(true);
+      this.startTimer();
     }
   }
 
@@ -150,6 +164,8 @@ export class CurrentRaceComponent implements AfterViewInit {
     this.finishersService.resetFinishersData();
 
     this.raceStatus$.next(RaceStatus.PREPARE);
+
+    this.currentRaceService.updateRaceStartTime(null);
   }
 
   public openResetDialog(content: any): void {
@@ -199,5 +215,29 @@ export class CurrentRaceComponent implements AfterViewInit {
 
   public onRaceTypeChanged($event: RaceType) {
     this.currentRaceService.raceType$.next($event);
+  }
+
+  private formatTime(): string {
+    const totalSeconds = this.isRaceBeginning$.value
+      ? Math.floor((Date.now() - this.startTime$.value!) / 1000)
+      : 0;
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  private startTimer() {
+    this.intervalId = setInterval(() => {
+      this.currentGroupRaceTime$.next(this.formatTime());
+    }, 1000);
+  }
+
+  public ngOnDestroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 }

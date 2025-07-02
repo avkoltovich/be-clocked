@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {Observable, timer} from "rxjs";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-group-race-progress',
@@ -7,7 +7,7 @@ import {Observable, timer} from "rxjs";
   styleUrls: ['./group-race-progress.component.scss']
 })
 export class GroupRaceProgressComponent {
-  @Input() groupRaceTimer$: Observable<number> = timer(0, 1000);
+  @Input() currentTime$: BehaviorSubject<string> = new BehaviorSubject<string>('0:00:00');
 
   @Input() isRacersListEmpty = true;
 }
