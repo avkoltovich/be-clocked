@@ -1,1 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: "JetBrains";
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+  src: url("/assets/fonts/JetBrainsMono-ExtraBold.woff2") format("woff2");
+}

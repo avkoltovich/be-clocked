@@ -68,7 +68,7 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.RACE_TYPE, JSON.stringify(value));
   }
 
-  public updateRaceStartTime(value: number) {
+  public updateRaceStartTime(value: number | null) {
     window.localStorage.setItem(RepositoryKey.RACE_START_TIME, JSON.stringify(value));
   }
 

@@ -22,7 +22,7 @@ export class CurrentRaceService {
    */
   public lapsCount$ = new BehaviorSubject<number>(1);
   public isLapsCountSetted$ = new BehaviorSubject<boolean>(false);
-  public raceStartTime: number | null = null
+  public raceStartTime$ = new BehaviorSubject<number | null>(null);
 
   public raceName$ = new BehaviorSubject<string>(DEFAULT_RACE_NAME);
 
@@ -47,7 +47,7 @@ export class CurrentRaceService {
         this.repositoryService.updateCurrentRacerIndex(this.currentRacerIndex$.value);
       }
     }),
-    takeWhile(() => this.racersService.racers$.value.length !== this.currentRacerIndex$.value),
+    takeWhile(() => this.racersService.racers$.value.length > this.currentRacerIndex$.value),
     finalize(() => {
       if (this.isRacePaused$.value) {
         this.timerDelta = 0;
@@ -70,12 +70,12 @@ export class CurrentRaceService {
     const racersDelta = this.repositoryService.readRacersDelta();
     const starterNameList = this.repositoryService.readStarterNameList();
     const racers: IRacer[] = this.repositoryService.readRacers();
-    this.raceStartTime = this.repositoryService.readRaceStartTime();
+    this.raceStartTime$.next(this.repositoryService.readRaceStartTime());
 
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
-    if (starterNameList !== null) this.isRaceBeginning$.next(true);
+    if (starterNameList !== null && starterNameList?.length > 0) this.isRaceBeginning$.next(true);
     if (racers !== null && racers.length > 0) this.isAllRacersStarted$.next(this.currentRacerIndex$.value >= racers.length);
 
     this.raceType$.next(raceType ?? RaceType.ITT);
@@ -99,7 +99,7 @@ export class CurrentRaceService {
     this.timerDelta = 0;
     this.racerSecondsDelta = DEFAULT_DELTA;
     this.isDeltaChanged$.next(true);
-    this.raceStartTime = null;
+    this.raceStartTime$.next(null);
   }
 
   public continuePrevRace() {
@@ -119,7 +119,13 @@ export class CurrentRaceService {
 
   public startGroupRace(startTime: number) {
     this.isRaceStarted$.next(true);
-    this.raceStartTime = startTime;
+    this.isRaceBeginning$.next(true);
+    this.raceStartTime$.next(startTime);
     this.repositoryService.updateRaceStartTime(startTime);
+  }
+
+  public updateRaceStartTime(startTime: number | null) {
+    this.repositoryService.updateRaceStartTime(startTime);
+    this.raceStartTime$.next(startTime);
   }
 }

@@ -45,7 +45,7 @@
     tuiProgressLabel
   >
     <ng-container *ngIf="isDeltaEditMode; else deltaEditTemplate">
-      <span class="tui-text_h1">{{ currentTimerValue }}</span>
+      <span class="tui-text_h1 timer-count">{{ currentTimerValue }}</span>
     </ng-container>
 
     <ng-template #deltaEditTemplate>
@@ -55,7 +55,7 @@
         [pseudo]="true"
         (click)="openDeltaDialog(setDelta)"
       >
-        <span class="tui-text_h1">{{ currentTimerValue }}</span>
+        <span class="tui-text_h1 timer-count">{{ currentTimerValue }}</span>
       </button>
     </ng-template>
 
