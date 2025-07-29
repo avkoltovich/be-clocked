@@ -8,7 +8,7 @@ import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {CurrentRaceService} from "../../services/current-race.service";
-import {RacerStatus} from "../../models/enums";
+import {RacerStatus, RaceType} from "../../models/enums";
 
 @Component({
   selector: "app-finish-race",
@@ -28,6 +28,7 @@ export class FinishRaceComponent implements OnInit {
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+  public raceType$ = this.currentRaceService.raceType$;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
@@ -213,4 +214,6 @@ export class FinishRaceComponent implements OnInit {
   public openRemoveDialog(content: any): void {
     this.dialogs.open(content, {size: 's'}).subscribe();
   }
+
+  protected readonly RaceType = RaceType;
 }

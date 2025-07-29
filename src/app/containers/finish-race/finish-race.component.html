@@ -113,15 +113,17 @@
   </ol>
   <ng-container *tuiLet="finishers$ | async as finishers">
     <ng-container *ngIf="finishers!.length > 0">
-      <h3>Абсолют</h3>
-      <ol class="tui-list tui-list_ordered tui-list_large">
-        <li
-          *ngFor="let finisher of finishers"
-          class="tui-list__item"
-        >
-          {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-        </li>
-      </ol>
+      <ng-container *ngIf="(raceType$ | async) === RaceType.ITT">
+        <h3>Абсолют</h3>
+        <ol class="tui-list tui-list_ordered tui-list_large">
+          <li
+            *ngFor="let finisher of finishers"
+            class="tui-list__item"
+          >
+            {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+          </li>
+        </ol>
+      </ng-container>
       <ng-container *ngFor="let category of finishersByCategories$.value">
         <ng-container *ngIf="category.finishers.length > 0">
           <h3>{{ category.name }}</h3>
