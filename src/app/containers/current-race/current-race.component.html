@@ -12,7 +12,7 @@
   <div *tuiLet="racers$ | async as racers">
     <div class="progress-wrapper tui-space_bottom-14">
       <app-itt-race-progress
-        *ngIf="raceType$.value === RaceType.ITT"
+        *ngIf="(raceType$ | async) === RaceType.ITT"
         [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
         [isSkippedRacer]="currentRacerSkipped"
         [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
@@ -27,7 +27,7 @@
       />
 
       <app-group-race-progress
-        *ngIf="raceType$.value === RaceType.GROUP"
+        *ngIf="(raceType$ | async) === RaceType.GROUP"
         [currentTime$]="currentGroupRaceTime$"
         [isRacersListEmpty]="racers?.length === 0"
       />

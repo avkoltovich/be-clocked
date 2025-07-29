@@ -178,7 +178,6 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
 
   public setStateFromJSON(data: ISyncJSON) {
     this.currentRaceService.setStateFromJSON(data);
-    this.onContinuePrevRace();
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
