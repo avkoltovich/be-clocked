@@ -215,6 +215,7 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
 
   public onRaceTypeChanged($event: RaceType) {
     this.currentRaceService.raceType$.next($event);
+    this.repositoryService.updateRaceType($event);
   }
 
   private formatTime(): string {
