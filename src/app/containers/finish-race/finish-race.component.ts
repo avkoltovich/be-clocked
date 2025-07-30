@@ -113,6 +113,7 @@ export class FinishRaceComponent {
       this.updateFinisherList(this.finishers$.value.slice(), currentFinisher)
       this.updateFinishersByCategories({ ...this.finishersByCategoriesMap$.value }, categoryName, currentFinisher)
       this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
+      this.checkAllFinished()
     } else {
       /**
        * TODO: Добавить обработку ошибок
@@ -189,6 +190,12 @@ export class FinishRaceComponent {
     return new Array(length).fill(0).map((_, i) => i + 1);
   }
 
+  private checkAllFinished() {
+    if (this.racersService.racers$.value.every((racer) => racer.status === RacerStatus.FINISHED)) {
+      this.finishersService.isAllFinished$.next(true);
+    }
+  }
+
   private onLapRaceFinish(currentTime: number, currentRacerNameAndNumber: string, racerNameAndNumber: { name: string, number: number }, startedData: IStarter) {
     const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === racerNameAndNumber.number);
     const currentRacer = this.racersService.racers$.value[currentRacerIndex];
@@ -209,6 +216,7 @@ export class FinishRaceComponent {
       this.sortFinishersForLapRace(categoryName);
       this.finishersService.updateFinisherNameList([...this.finishersService.finisherNameList, currentRacerNameAndNumber]);
       this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
+      this.checkAllFinished()
     }
   }
 

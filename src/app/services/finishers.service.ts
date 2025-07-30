@@ -12,6 +12,7 @@ export class FinishersService {
   public anonFinishers$ = new BehaviorSubject<IFinisher[]>([]);
   public finishersByCategoriesMap$ = new BehaviorSubject<Record<string, IFinisher[]>>({});
   public currentAnonIndex$ = new BehaviorSubject(0);
+  public isAllFinished$ = new BehaviorSubject<boolean>(false);
 
   constructor(private repositoryService: RepositoryService) {
     this.initFinishersData();

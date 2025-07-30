@@ -93,6 +93,12 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
     if (this.raceType$.value === RaceType.GROUP && this.isRaceEnded$.value !== null) {
       this.currentGroupRaceTime$.next(this.formatTime());
     }
+
+    this.finishersService.isAllFinished$.pipe(
+      tap((isAllFinished) => {
+        if (isAllFinished) this.onStop()
+      })
+    ).subscribe();
   }
 
   public ngAfterViewInit(): void {
