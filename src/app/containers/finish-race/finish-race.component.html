@@ -120,7 +120,7 @@
             *ngFor="let finisher of finishers"
             class="tui-list__item list-item"
           >
-            {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
+            <span class="finisher-name">{{ finisher.name }}</span><span class="finisher-time">{{ getTimeRemaining(finisher.time) }}</span>
           </li>
         </ol>
       </ng-container>
