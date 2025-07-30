@@ -1,0 +1,27 @@
+.item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.input-number {
+  min-width: 50px;
+}
+
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.button-wrapper {
+  display: flex;
+
+  & button {
+    flex-grow: 1;
+  }
+}
+
+.dialog-description {
+  text-align: center;
+}
