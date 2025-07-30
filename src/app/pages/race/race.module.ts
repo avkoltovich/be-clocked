@@ -26,10 +26,11 @@ import {
   TuiTextfieldControllerModule
 } from "@taiga-ui/core";
 import {TuiReorderModule} from "@taiga-ui/addon-table";
-import {ReactiveFormsModule} from "@angular/forms";
-import {TuiLetModule} from "@taiga-ui/cdk";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {TuiAutoFocusModule, TuiLetModule} from "@taiga-ui/cdk";
 import {HttpClientModule} from "@angular/common/http";
 import {ComponentsModule} from "../../components/components.module";
+import {LapRaceComponent} from "../../containers/lap-race/lap-race.component";
 
 
 @NgModule({
@@ -39,6 +40,7 @@ import {ComponentsModule} from "../../components/components.module";
     CurrentRaceComponent,
     FinishRaceComponent,
     RaceComponent,
+    LapRaceComponent
   ],
   imports: [
     ComponentsModule,
@@ -64,6 +66,8 @@ import {ComponentsModule} from "../../components/components.module";
     TuiStepperModule,
     TuiLoaderModule,
     TuiDataListModule,
+    TuiAutoFocusModule,
+    FormsModule,
   ]
 })
 export class RaceModule {

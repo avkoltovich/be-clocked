@@ -1,10 +1,11 @@
 <ng-container *ngIf="raceStatus === RaceStatus.READY || raceStatus === RaceStatus.START">
   <button
+    *ngIf="raceType === RaceType.ITT || (!isRaceBeginning && !isRaceEnded)"
     tuiButton
     type="button"
     appearance="primary"
     (click)="onStart()"
-    [disabled]="isStartDisabled"
+    [disabled]="isRaceBeginning && !isRacePaused"
   >
     <tui-svg
       src="tuiIconPlayCircleLarge"
@@ -13,12 +14,26 @@
     Старт
   </button>
   <button
+    *ngIf="raceType === RaceType.GROUP && isRaceBeginning && !isRaceEnded"
+    tuiButton
+    type="button"
+    appearance="secondary"
+    (click)="onStop()"
+    [disabled]="isRaceEnded"
+  >
+    <tui-svg
+      src="tuiIconStopCircleLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Стоп
+  </button>
+  <button
     *ngIf="raceType === RaceType.ITT && !isSkipped"
     tuiButton
     type="button"
     appearance="secondary"
     (click)="onSkip()"
-    [disabled]="isPauseAndSkipDisabled"
+    [disabled]="!isRaceBeginning || isRacePaused"
   >
     <tui-svg
       src="tuiIconFastForwardLarge"
@@ -45,7 +60,7 @@
     type="button"
     appearance="flat"
     (click)="onPause()"
-    [disabled]="isPauseAndSkipDisabled"
+    [disabled]="!isRaceBeginning || isRacePaused"
   >
     <tui-svg
       src="tuiIconPauseCircleLarge"
@@ -58,10 +73,9 @@
     type="button"
     appearance="secondary-destructive"
     (click)="onReset()"
-    [disabled]="isResetDisabled"
   >
     <tui-svg
-      src="tuiIconStopCircleLarge"
+      src="tuiIconTrashLarge"
       class="tui-space_right-2"
     ></tui-svg>
     Сброс

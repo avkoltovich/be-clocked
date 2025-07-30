@@ -20,9 +20,9 @@ export class CurrentRaceService {
   /**
    * Для Группового режима
    */
-  public lapsCount$ = new BehaviorSubject<number>(1);
-  public isLapsCountSetted$ = new BehaviorSubject<boolean>(false);
+  public lapByCategoriesMap: Record<string, number> = {}
   public raceStartTime$ = new BehaviorSubject<number | null>(null);
+  public raceEndTime$ = new BehaviorSubject<number | null>(null);
 
   public raceName$ = new BehaviorSubject<string>(DEFAULT_RACE_NAME);
 
@@ -31,6 +31,7 @@ export class CurrentRaceService {
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isRaceBeginning$ = new BehaviorSubject(false);
+  public isRaceEnded$ = new BehaviorSubject(false);
   public isAllRacersStarted$ = new BehaviorSubject(false);
   public isDeltaChanged$ = new BehaviorSubject(false);
 
@@ -57,7 +58,13 @@ export class CurrentRaceService {
     })
   );
 
-  public groupRaceTimer$ = timer(0, 1000);
+  get isLapRace() {
+    for (let key in this.lapByCategoriesMap) {
+      if (this.lapByCategoriesMap[key] > 1) return true;
+    }
+
+    return false;
+  }
 
   constructor(private repositoryService: RepositoryService, private racersService: RacersService, private finisherService: FinishersService) {
     this.initCurrentRaceData();
@@ -70,14 +77,19 @@ export class CurrentRaceService {
     const racersDelta = this.repositoryService.readRacersDelta();
     const starterNameList = this.repositoryService.readStarterNameList();
     const racers: IRacer[] = this.repositoryService.readRacers();
+    const lapByCategoriesMap = this.repositoryService.readLapByCategoriesMap();
+    const isRaceEnded = this.repositoryService.readIsRaceEnded();
     this.raceStartTime$.next(this.repositoryService.readRaceStartTime());
+    this.raceEndTime$.next(this.repositoryService.readRaceEndTime());
 
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
-    if (starterNameList !== null && starterNameList?.length > 0) this.isRaceBeginning$.next(true);
+    if (starterNameList !== null && starterNameList?.length > 0 && !isRaceEnded) this.isRaceBeginning$.next(true);
     if (racers !== null && racers.length > 0) this.isAllRacersStarted$.next(this.currentRacerIndex$.value >= racers.length);
+    if (lapByCategoriesMap !== null) this.lapByCategoriesMap = lapByCategoriesMap;
 
+    this.isRaceEnded$.next(isRaceEnded);
     this.raceType$.next(raceType ?? RaceType.ITT);
   }
 
@@ -93,6 +105,7 @@ export class CurrentRaceService {
     this.isRaceStarted$.next(false);
     this.isRacePaused$.next(false);
     this.isRaceBeginning$.next(false);
+    this.isRaceEnded$.next(false);
     this.isAllRacersStarted$.next(false);
     this.raceName$.next(DEFAULT_RACE_NAME);
     this.raceType$.next(RaceType.ITT);
@@ -100,6 +113,8 @@ export class CurrentRaceService {
     this.racerSecondsDelta = DEFAULT_DELTA;
     this.isDeltaChanged$.next(true);
     this.raceStartTime$.next(null);
+    this.raceEndTime$.next(null);
+    this.lapByCategoriesMap = {};
   }
 
   public continuePrevRace() {
@@ -127,5 +142,27 @@ export class CurrentRaceService {
   public updateRaceStartTime(startTime: number | null) {
     this.repositoryService.updateRaceStartTime(startTime);
     this.raceStartTime$.next(startTime);
+  }
+
+  public updateLapByCategoriesMap(category: string, lapCount: number) {
+    this.lapByCategoriesMap[category] = lapCount;
+    this.repositoryService.updateLapByCategoriesMap(this.lapByCategoriesMap);
+  }
+
+  public updateRaceType(raceType: RaceType) {
+    this.raceType$.next(raceType);
+  }
+
+  public setRaceBeginning(value: boolean) {
+    this.isRaceBeginning$.next(value);
+  }
+
+  public endGroupRace() {
+    const endTime = Date.now();
+    this.isRaceEnded$.next(true);
+    this.isRaceBeginning$.next(false);
+    this.raceEndTime$.next(endTime);
+    this.repositoryService.updateRaceEndTime(endTime);
+    this.repositoryService.updateIsRaceEnded(true);
   }
 }

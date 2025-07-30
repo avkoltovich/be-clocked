@@ -1,5 +1,5 @@
 <ng-container *tuiLet="(racers$ | async) as racers">
-  <tui-island size="l" *ngIf="racers!.length > 0">
+  <tui-island size="l">
     <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
     <tui-notification
@@ -45,7 +45,8 @@
           <span class="category">
           {{ racer.category }}
         </span>
-          <ng-container *ngIf="(raceType$.value === RaceType.ITT && i >= currentRacerIndex$.value) || (raceType$.value === RaceType.GROUP && !isRaceBeginning$.value)">
+          <ng-container
+            *ngIf="(raceType$.value === RaceType.ITT && i >= currentRacerIndex$.value) || (raceType$.value === RaceType.GROUP && !isRaceBeginning$.value && !isRaceEnded$.value)">
             <button
               *ngIf="raceType$.value === RaceType.ITT"
               tuiIconButton
@@ -132,19 +133,20 @@
     let-context
   >
     <p class="tui-text_h6 tui-space_bottom-6 tui-space_top-0">Укажите номер участника</p>
-    <div class="dialog-container">
-      <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="numberControl">
-        Номер
+    <form class="dialog-container" [formGroup]="numberFormGroup" (ngSubmit)="$event.preventDefault(); onSetNumber(); context.complete()">
+      <tui-input-number tuiAutoFocus class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" formControlName="number" [pseudoInvalid]="checkNumberAlreadyExists()">
+        {{ checkNumberAlreadyExists() ? 'Номер занят' : 'Номер' }}
       </tui-input-number>
       <button
         tuiButton
         appearance="primary"
         size="m"
-        (click)="onSetNumber(); context.complete()"
-        [disabled]="numberControl.invalid"
+        type="submit"
+        (click)="$event.preventDefault(); onSetNumber(); context.complete()"
+        [disabled]="numberFormGroup.invalid || checkNumberAlreadyExists()"
       >
         ОК
       </button>
-    </div>
+    </form>
   </ng-template>
 </ng-container>

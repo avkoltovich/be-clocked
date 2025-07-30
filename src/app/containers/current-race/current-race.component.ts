@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnDestroy, TemplateRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, Inject, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {BehaviorSubject, Subscription, takeUntil, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
@@ -13,9 +13,10 @@ import {TuiDestroyService} from "@taiga-ui/cdk";
 @Component({
   selector: "app-current-race",
   templateUrl: "./current-race.component.html",
-  styleUrls: ["./current-race.component.scss"]
+  styleUrls: ["./current-race.component.scss"],
+  providers: [TuiDestroyService],
 })
-export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
+export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   private ittTimerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
   readonly RaceType = RaceType;
@@ -39,10 +40,10 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
   public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public isRacePaused$ = this.currentRaceService.isRacePaused$;
   public isAllRacersStarted$ = this.currentRaceService.isAllRacersStarted$;
-  public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
   public raceName$ = this.currentRaceService.raceName$;
   public raceType$ = this.currentRaceService.raceType$;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+  public isRaceEnded$ = this.currentRaceService.isRaceEnded$;
 
   /**
    * Для ITT режима
@@ -56,6 +57,7 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
    * Для Группового режима
    */
   private startTime$ = this.currentRaceService.raceStartTime$;
+  private endTime$ = this.currentRaceService.raceEndTime$;
   private intervalId: ReturnType<typeof setInterval> | null = null;
   public currentGroupRaceTime$ = new BehaviorSubject('0:00:00');
 
@@ -87,9 +89,21 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
     this.racersService.setRacersFromGoogleSheet(tableData, name, category);
   }
 
+  public ngOnInit(): void {
+    if (this.raceType$.value === RaceType.GROUP && this.isRaceEnded$.value !== null) {
+      this.currentGroupRaceTime$.next(this.formatTime());
+    }
+
+    this.finishersService.isAllFinished$.pipe(
+      tap((isAllFinished) => {
+        if (isAllFinished) this.onStop()
+      })
+    ).subscribe();
+  }
+
   public ngAfterViewInit(): void {
-    if (this.startTime$.value !== null) {
-      this.isRaceBeginning$.next(true);
+    if (this.raceType$.value === RaceType.GROUP && this.startTime$.value !== null && !this.isRaceEnded$.value) {
+      this.currentRaceService.setRaceBeginning(true);
       this.startTimer();
     }
 
@@ -121,6 +135,7 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
   public onStart() {
     if (this.raceType$.value === RaceType.ITT) {
       this.currentRaceService.isRaceStarted$.next(true);
+      this.currentRaceService.setRaceBeginning(true);
       this.ittTimerSubscription = this.ittRaceTimer$.subscribe();
       this.currentRaceService.isRacePaused$.next(false);
     }
@@ -130,9 +145,14 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
       this.currentRaceService.updateRaceStartTime(startTime);
       this.currentRaceService.startGroupRace(startTime);
       this.racersService.startAllRacers(startTime);
-      this.isRaceBeginning$.next(true);
+      this.currentRaceService.setRaceBeginning(true);
       this.startTimer();
     }
+  }
+
+  public onStop() {
+    this.racersService.dnfRacers();
+    this.currentRaceService.endGroupRace()
   }
 
   public onSkip() {
@@ -157,15 +177,12 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
 
   public onReset() {
     this.ittTimerSubscription?.unsubscribe();
-
-    this.repositoryService.resetLS();
     this.currentRaceService.resetCurrentRace();
     this.racersService.resetRacersData();
     this.finishersService.resetFinishersData();
-
     this.raceStatus$.next(RaceStatus.PREPARE);
-
     this.currentRaceService.updateRaceStartTime(null);
+    this.repositoryService.resetLS();
   }
 
   public openResetDialog(content: any): void {
@@ -178,7 +195,6 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
 
   public setStateFromJSON(data: ISyncJSON) {
     this.currentRaceService.setStateFromJSON(data);
-    this.onContinuePrevRace();
   }
 
   public generateRacerNameAndNumberString(racer: IRacer) {
@@ -197,6 +213,10 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
     } else if (this.racersService.racers$.value.length > 0) {
       this.raceStatus$.next(RaceStatus.READY);
     }
+
+    if (this.raceType$.value === RaceType.ITT && this.isRaceBeginning$.value) {
+      this.onStart();
+    }
   }
 
   public onSetDelta(newDelta: number): void {
@@ -214,13 +234,15 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
   }
 
   public onRaceTypeChanged($event: RaceType) {
-    this.currentRaceService.raceType$.next($event);
+    this.currentRaceService.updateRaceType($event);
+    this.repositoryService.updateRaceType($event);
   }
 
   private formatTime(): string {
-    const totalSeconds = this.isRaceBeginning$.value
-      ? Math.floor((Date.now() - this.startTime$.value!) / 1000)
-      : 0;
+    let totalSeconds = 0;
+
+    if (this.isRaceBeginning$.value) totalSeconds = Math.floor((Date.now() - this.startTime$.value!) / 1000)
+    if (this.isRaceEnded$.value) totalSeconds = Math.floor((this.endTime$.value! - this.startTime$.value!) / 1000)
 
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);

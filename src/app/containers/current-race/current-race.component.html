@@ -4,6 +4,7 @@
     class="tui-space_bottom-14"
     [raceName$]="raceName$"
     [raceType$]="raceType$"
+    [isRaceEnded$]="isRaceEnded$"
     [isRaceBeginning$]="isRaceBeginning$"
     (raceNameSave)="onRaceNameSave($event)"
     (raceTypeChange)="onRaceTypeChanged($event)"
@@ -12,7 +13,7 @@
   <div *tuiLet="racers$ | async as racers">
     <div class="progress-wrapper tui-space_bottom-14">
       <app-itt-race-progress
-        *ngIf="raceType$.value === RaceType.ITT"
+        *ngIf="(raceType$ | async) === RaceType.ITT"
         [currentRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value])"
         [isSkippedRacer]="currentRacerSkipped"
         [nextRacer]="generateRacerNameAndNumberString(racers![currentRacerIndex$.value + 1])"
@@ -27,7 +28,7 @@
       />
 
       <app-group-race-progress
-        *ngIf="raceType$.value === RaceType.GROUP"
+        *ngIf="(raceType$ | async) === RaceType.GROUP"
         [currentTime$]="currentGroupRaceTime$"
         [isRacersListEmpty]="racers?.length === 0"
       />
@@ -36,11 +37,12 @@
     <app-race-controls
       [raceStatus]="raceStatus$.value"
       [raceType]="raceType$.value"
-      [isStartDisabled]="isRaceStarted$.value! || !isAllRacersHasNumbers$.value! || (isAllRacersStarted$ | async)!"
-      [isPauseAndSkipDisabled]="isAllRacersStarted$.value! || !isRaceStarted$.value"
-      [isResetDisabled]="isRaceStarted$.value && !isAllRacersStarted$.value"
+      [isRaceBeginning]="(isRaceBeginning$ | async)!"
+      [isRaceEnded]="(isRaceEnded$ | async)!"
+      [isRacePaused]="(isRacePaused$ | async)!"
       [isSkipped]="currentRacerSkipped"
       (start)="onStart()"
+      (stop)="onStop()"
       (skip)="onSkip()"
       (undoSkip)="onUndoSkip()"
       (pause)="onPause()"

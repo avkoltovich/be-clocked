@@ -1,0 +1,60 @@
+<tui-island size="l">
+  <h2 class="tui-island__title tui-space_bottom-5">Количество кругов в категориях</h2>
+  <ol class="categories">
+    <li class="ol-item" *ngFor="let category of categoryList">
+      <tui-badge
+        size="l"
+        class="badge tui-space_right-3"
+        status="custom"
+        [value]="lapByCategoriesMap[category]"
+      ></tui-badge> {{ category }}
+    </li>
+  </ol>
+  <button
+    *ngIf="!(isRaceBeginning$ | async) && !(isRaceEnded$ | async)"
+    class="tui-space_top-6"
+    tuiButton
+    appearance="primary"
+    size="m"
+    type="button"
+    (click)="openEditDialog(setLapModal)"
+  >
+    <tui-svg
+      src="tuiIconEditLarge"
+      class="tui-space_right-2"
+    ></tui-svg>
+    Изменить
+  </button>
+</tui-island>
+
+<ng-template
+  #setLapModal
+  let-context
+>
+  <p class="tui-text_h6 tui-space_bottom-6 tui-space_top-0">Редактор кругов</p>
+  <div class="dialog-container">
+    <form [formGroup]="lapFormGroup">
+      <ol class="categories tui-space_bottom-6">
+        <li class="tui-list__item item" *ngFor="let category of categoryList">
+          {{ category }}:
+          <tui-input class="input-number" [formControlName]="category" tuiTextfieldSize="s">
+            Кругов
+            <input
+              tuiTextfield
+              type="number"
+            >
+          </tui-input>
+        </li>
+      </ol>
+    </form>
+    <button
+      tuiButton
+      appearance="primary"
+      size="m"
+      (click)="onSetLaps(); context.complete()"
+      [disabled]="lapFormGroup.invalid"
+    >
+      ОК
+    </button>
+  </div>
+</ng-template>

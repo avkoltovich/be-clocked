@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject} from "rxjs";
-import {IFinishCategory, IFinisher} from "../models/interfaces";
+import {IFinisher} from "../models/interfaces";
 import {RepositoryService} from "./repository.service";
 
 @Injectable({
@@ -10,8 +10,9 @@ export class FinishersService {
   public finishers$ = new BehaviorSubject<IFinisher[]>([]);
   public finisherNameList: string[] = [];
   public anonFinishers$ = new BehaviorSubject<IFinisher[]>([]);
-  public finishersByCategories$ = new BehaviorSubject<IFinishCategory[]>([]);
+  public finishersByCategoriesMap$ = new BehaviorSubject<Record<string, IFinisher[]>>({});
   public currentAnonIndex$ = new BehaviorSubject(0);
+  public isAllFinished$ = new BehaviorSubject<boolean>(false);
 
   constructor(private repositoryService: RepositoryService) {
     this.initFinishersData();
@@ -28,14 +29,14 @@ export class FinishersService {
     if (finisherNameList !== null) this.finisherNameList = finisherNameList;
     if (anonFinishers !== null) this.anonFinishers$.next(anonFinishers);
     if (anonIndex !== null) this.currentAnonIndex$.next(anonIndex);
-    if (finishersByCategories !== null) this.finishersByCategories$.next(finishersByCategories);
+    if (finishersByCategories !== null) this.finishersByCategoriesMap$.next(finishersByCategories);
   }
 
   public resetFinishersData() {
     this.finishers$.next([]);
     this.finisherNameList = [];
     this.anonFinishers$.next([]);
-    this.finishersByCategories$.next([]);
+    this.finishersByCategoriesMap$.next({});
     this.currentAnonIndex$.next(0);
   }
 
@@ -49,8 +50,8 @@ export class FinishersService {
     this.repositoryService.updateFinisherNameList(finisherNameList);
   }
 
-  public updateFinishersByCategories(finishersByCategory: IFinishCategory[]) {
-    this.finishersByCategories$.next(finishersByCategory);
+  public updateFinishersByCategories(finishersByCategory: Record<string, IFinisher[]>) {
+    this.finishersByCategoriesMap$.next(finishersByCategory);
     this.repositoryService.updateFinishersByCategories(finishersByCategory);
   }
 

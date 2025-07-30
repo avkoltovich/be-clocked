@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {RaceType, RepositoryKey} from '../models/enums';
-import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
-import {DEFAULT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
+import {IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
+import {DEFAULT_DELTA, DEFAULT_RACE_NAME} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -36,7 +36,7 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.FINISHERS, JSON.stringify(value));
   }
 
-  public updateFinishersByCategories(value: IFinishCategory[]) {
+  public updateFinishersByCategories(value: Record<string, IFinisher[]>) {
     window.localStorage.setItem(RepositoryKey.FINISHERS_BY_CATEGORIES, JSON.stringify(value));
   }
 
@@ -70,6 +70,18 @@ export class RepositoryService {
 
   public updateRaceStartTime(value: number | null) {
     window.localStorage.setItem(RepositoryKey.RACE_START_TIME, JSON.stringify(value));
+  }
+
+  public updateRaceEndTime(value: number | null) {
+    window.localStorage.setItem(RepositoryKey.RACE_END_TIME, JSON.stringify(value));
+  }
+
+  public updateLapByCategoriesMap(map: Record<string, number>) {
+    window.localStorage.setItem(RepositoryKey.LAP_BY_CATEGORY, JSON.stringify(map));
+  }
+
+  public updateIsRaceEnded(value: boolean) {
+    window.localStorage.setItem(RepositoryKey.IS_RACE_ENDED, JSON.stringify(value));
   }
 
   /**
@@ -136,6 +148,18 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_START_TIME)!);
   }
 
+  public readRaceEndTime() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_END_TIME)!);
+  }
+
+  public readLapByCategoriesMap() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.LAP_BY_CATEGORY)!);
+  }
+
+  public readIsRaceEnded() {
+    return Boolean(JSON.parse(window.localStorage.getItem(RepositoryKey.IS_RACE_ENDED)!));
+  }
+
   /**
    * Утилиты
    */
@@ -160,6 +184,9 @@ export class RepositoryService {
     const racersDelta = this.readRacersDelta();
     const raceType = this.readRaceType();
     const raceStartTime = this.readRaceStartTime();
+    const lapByCategoriesMap = this.readLapByCategoriesMap();
+    const isRaceEnded = this.readIsRaceEnded();
+    const raceEndTime = this.readRaceEndTime();
 
     return {
       raceName: raceName ? raceName : DEFAULT_RACE_NAME,
@@ -176,7 +203,10 @@ export class RepositoryService {
       finisherNameList: finisherNameList ?? [],
       racersDelta: racersDelta ?? DEFAULT_DELTA,
       raceType: raceType ?? RaceType.ITT,
-      raceStartTime: raceStartTime,
+      raceStartTime,
+      raceEndTime,
+      lapByCategoriesMap,
+      isRaceEnded
     };
   }
 
@@ -196,6 +226,9 @@ export class RepositoryService {
     this.updateRacersDelta(data.racersDelta ?? DEFAULT_DELTA);
     this.updateRaceType(data.raceType ?? RaceType.ITT);
     this.updateRaceStartTime(data.raceStartTime ?? null);
+    this.updateRaceEndTime(data.raceEndTime ?? null);
+    this.updateLapByCategoriesMap(data.lapByCategoriesMap ?? {});
+    this.updateIsRaceEnded(data.isRaceEnded ?? false);
   }
 
   public resetLS() {

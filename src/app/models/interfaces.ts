@@ -2,12 +2,8 @@ import {RacerStatus, RaceType} from "./enums";
 
 export interface IFinisher {
   name: string;
-  time: number;
-}
-
-export interface IFinishCategory {
-  name: string;
-  finishers: IFinisher[];
+  time: number | null;
+  timeList?: number[];
 }
 
 export interface IRacer {
@@ -33,10 +29,13 @@ export interface ISyncJSON {
   currentRacerIndex: number;
   currentAnonIndex: number;
   finishers: IFinisher[];
-  finishersByCategories: IFinishCategory[];
+  finishersByCategories: Record<string, IFinisher[]>;
   anons: IFinisher[];
   finisherNameList: string[];
   racersDelta: number;
   raceType: RaceType;
   raceStartTime: number;
+  raceEndTime: number;
+  lapByCategoriesMap: Record<string, number>;
+  isRaceEnded: boolean;
 }

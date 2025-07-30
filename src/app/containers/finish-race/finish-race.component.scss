@@ -11,6 +11,10 @@
   }
 }
 
+.form:not(:last-child) {
+  margin-bottom: 40px;
+}
+
 .item {
   display: flex;
   align-items: center;
@@ -28,4 +32,51 @@
   & button {
     flex-grow: 1;
   }
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+}
+
+.finisher-name {
+  min-width: 350px;
+  padding-right: 0.75rem;
+}
+
+.finisher-time {
+  min-width: 150px;
+
+  font-family: "JetBrains", monospace;
+}
+
+.table-category:not(:last-child) {
+  margin-bottom: 40px;
+}
+
+.table-header {
+  min-width: 150px;
+  padding-bottom: 0.75rem;
+
+  color: var(--tui-text-03);
+
+  border-bottom: 1px solid var(--tui-base-03);
+}
+
+.table-description {
+  padding-top: 0.75rem;
+
+  &--count {
+    min-width: 26px;
+
+    color: var(--tui-text-03);
+  }
+}
+
+.finish-lap {
+  text-align: right;
+}
+
+.th-category {
+  margin: 0;
 }

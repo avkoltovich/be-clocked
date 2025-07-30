@@ -7,7 +7,8 @@ import {TuiDestroyService} from "@taiga-ui/cdk";
 @Component({
   selector: 'app-race-header',
   templateUrl: './race-header.component.html',
-  styleUrls: ['./race-header.component.scss']
+  styleUrls: ['./race-header.component.scss'],
+  providers: [TuiDestroyService],
 })
 export class RaceHeaderComponent implements OnInit {
   protected readonly RaceType = RaceType;
@@ -24,6 +25,8 @@ export class RaceHeaderComponent implements OnInit {
 
   @Input() isRaceBeginning$ = new BehaviorSubject(false);
 
+  @Input() isRaceEnded$ = new BehaviorSubject(false);
+
   @Output() raceNameSave: EventEmitter<string> = new EventEmitter();
 
   @Output() raceTypeChange: EventEmitter<RaceType> = new EventEmitter();
@@ -33,34 +36,39 @@ export class RaceHeaderComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.raceTypeControl.valueChanges.pipe(
-      tap((value) => {
-        if (value) {
-          this.raceTypeChange.emit(value)
-        }
-      }),
-      takeUntil(this.destroy$),
-    ).subscribe();
+    if (this.isRaceEnded$.value) {
+      this.raceTypeControl.disable();
+      this.raceTypeControl.setValue(this.raceType$.value, { emitEvent: false });
+    } else {
+      this.raceTypeControl.valueChanges.pipe(
+        tap((value) => {
+          if (value) {
+            this.raceTypeChange.emit(value)
+          }
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe();
 
-    this.raceType$.pipe(
-      tap((raceType) => {
-        if (this.raceTypeControl.value !== raceType) {
-          this.raceTypeControl.setValue(raceType, { emitEvent: false });
-        }
-      }),
-      takeUntil(this.destroy$)
-    ).subscribe();
+      this.raceType$.pipe(
+        tap((raceType) => {
+          if (this.raceTypeControl.value !== raceType) {
+            this.raceTypeControl.setValue(raceType);
+          }
+        }),
+        takeUntil(this.destroy$)
+      ).subscribe();
 
-    this.isRaceBeginning$.pipe(
-      tap((isRaceBeginning) => {
-        if (isRaceBeginning) {
-          this.raceTypeControl.disable();
-        } else {
-          this.raceTypeControl.enable();
-        }
-      }),
-      takeUntil(this.destroy$),
-    ).subscribe()
+      this.isRaceBeginning$.pipe(
+        tap((isRaceBeginning) => {
+          if (isRaceBeginning || this.isRaceEnded$.value) {
+            this.raceTypeControl.disable();
+          } else {
+            this.raceTypeControl.enable();
+          }
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe()
+    }
   }
 
   public onRaceNameClick(): void {

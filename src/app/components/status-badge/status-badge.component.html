@@ -1,9 +1,9 @@
 <ng-container [ngSwitch]="status">
   <tui-badge
-    *ngSwitchCase="RacerStatus.SKIPPED"
+    *ngSwitchCase="RacerStatus.DNS"
     class="badge-status"
     status="error"
-    value="Пропуск"
+    value="DNS"
   ></tui-badge>
   <tui-badge
     *ngSwitchCase="RacerStatus.FINISHED"
@@ -16,6 +16,12 @@
     class="badge-status"
     status="info"
     value="В пути"
+  ></tui-badge>
+  <tui-badge
+    *ngSwitchCase="RacerStatus.DNF"
+    class="badge-status"
+    status="error"
+    value="DNF"
   ></tui-badge>
   <span
     *ngSwitchDefault

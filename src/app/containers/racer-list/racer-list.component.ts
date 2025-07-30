@@ -23,6 +23,7 @@ export class RacerListComponent {
   public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
   public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+  public isRaceEnded$ = this.currentRaceService.isRaceEnded$;
   public racers$ = this.racersService.racers$;
   public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
   public raceType$ = this.currentRaceService.raceType$;
@@ -33,7 +34,9 @@ export class RacerListComponent {
     category: new FormControl("", Validators.required)
   });
 
-  public numberControl = new FormControl(null, Validators.required);
+  public numberFormGroup = new FormGroup({
+    number: new FormControl(null, Validators.required),
+  })
 
   public formValue = {};
 
@@ -150,9 +153,17 @@ export class RacerListComponent {
   public onSetNumber() {
     if (this.currentRacer === null) return;
 
-    const racer = { ...this.currentRacer.racer, number: Number(this.numberControl.value) };
-    this.numberControl.reset()
+    const racer = { ...this.currentRacer.racer, number: Number(this.numberFormGroup.controls.number.value) };
+    this.numberFormGroup.reset()
 
     this.onSave(racer)
+  }
+
+  public checkNumberAlreadyExists(): boolean {
+    const number = this.numberFormGroup.controls.number.value;
+
+    if (number === undefined || number === null) return false;
+
+    return this.racers$.value.some((racer) => racer.number === number);
   }
 }

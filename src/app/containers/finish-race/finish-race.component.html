@@ -1,6 +1,6 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Финишный протокол</h2>
-  <form class="tui-form__row_multi-fields tui-space_bottom-8 form" [formGroup]="formGroup">
+  <form class="tui-form__row_multi-fields form" [formGroup]="formGroup" (ngSubmit)="$event.preventDefault(); onFinish()">
     <tui-input
       *tuiLet="racers$ | async as racers"
       class="input"
@@ -26,10 +26,10 @@
     </tui-input>
     <button
       tuiButton
-      type="button"
+      type="submit"
       appearance="primary"
       size="m"
-      (click)="onFinish()"
+      (click)="$event.preventDefault(); onFinish()"
       [disabled]="racerControl.value?.length === 0"
     >
       <tui-svg
@@ -113,29 +113,64 @@
   </ol>
   <ng-container *tuiLet="finishers$ | async as finishers">
     <ng-container *ngIf="finishers!.length > 0">
-      <h3>Абсолют</h3>
-      <ol class="tui-list tui-list_ordered tui-list_large">
-        <li
-          *ngFor="let finisher of finishers"
-          class="tui-list__item"
-        >
-          {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-        </li>
-      </ol>
-      <ng-container *ngFor="let category of finishersByCategories$.value">
-        <ng-container *ngIf="category.finishers.length > 0">
-          <h3>{{ category.name }}</h3>
-          <ol class="tui-list tui-list_ordered tui-list_large">
-            <li
-              *ngFor="let finisher of category.finishers"
-              class="tui-list__item"
-            >
-              {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-            </li>
-          </ol>
-        </ng-container>
-
+      <ng-container *ngIf="(raceType$ | async) === RaceType.ITT">
+        <h3>Абсолют</h3>
+        <ol class="tui-list tui-list_ordered tui-list_large">
+          <li
+            *ngFor="let finisher of finishers"
+            class="tui-list__item list-item"
+          >
+            <span class="finisher-name">{{ finisher.name }}</span><span class="finisher-time">{{ getTimeRemaining(finisher.time) }}</span>
+          </li>
+        </ol>
       </ng-container>
+      <ng-container *ngIf="!isLapRace; else lapRaceTemplate">
+        <ng-container *ngFor="let category of categories">
+          <ng-container *ngIf="finishersByCategoriesMap$.value[category].length > 0">
+            <h3>{{ category }}</h3>
+            <ol class="tui-list tui-list_ordered tui-list_large">
+              <li
+                *ngFor="let finisher of finishersByCategoriesMap$.value[category]"
+                class="tui-list__item list-item"
+              >
+                <span class="finisher-name">{{ finisher.name }}</span><span class="finisher-time">{{ getTimeRemaining(finisher.time) }}</span>
+              </li>
+            </ol>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <ng-template #lapRaceTemplate>
+        <ng-container *ngFor="let category of categories">
+          <ng-container *ngIf="finishersByCategoriesMap$.value[category].length > 0">
+            <table class="table-category">
+              <tr>
+                <th></th>
+                <th><h3 class="th-category">{{ category }}</h3></th>
+                <th class="table-header" *ngFor="let index of getArrayByLength(lapByCategoriesMap[category])">
+                  Круг {{ index }}
+                </th>
+                <th class="table-header finish-lap">Время финиша</th>
+              </tr>
+              <tr
+                *ngFor="let finisher of finishersByCategoriesMap$.value[category]; let i = index"
+              >
+                <td class="table-description table-description--count">{{ i + 1 }}.</td>
+                <td class="finisher-name table-description">
+                  {{ finisher.name }}
+                </td>
+                <td class="finisher-time table-description" *ngFor="let time of finisher.timeList">
+                  {{ getTimeRemaining(time) }}
+                </td>
+                <td class="finisher-time table-description finish-lap" *ngIf="finisher.time">
+                  {{getTimeRemaining(finisher.time)}}
+                </td>
+              </tr>
+            </table>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+
     </ng-container>
   </ng-container>
 </tui-island>
@@ -144,46 +179,50 @@
   #content
   let-context
 >
-  <tui-input
-    *tuiLet="anonRacers$ | async as anonRacers"
-    class="tui-space_bottom-6"
-    tuiTextfieldSize="m"
-    [formControl]="anonNameControl"
-  >
-    Выбрать анонима
-    <input
-      tuiTextfield
-      type="text"
+  <form (ngSubmit)="$event.preventDefault(); onRenameAnon(); context.complete()">
+    <tui-input
+      *tuiLet="anonRacers$ | async as anonRacers"
+      class="tui-space_bottom-6"
+      tuiTextfieldSize="m"
+      [formControl]="anonNameControl"
     >
-    <ng-container *ngIf="anonRacers?.length">
-      <tui-data-list *tuiDataList>
-        <button
-          *ngFor="let anon of anonRacers"
-          tuiOption
-          [value]="anon.toString()"
-        >
-          {{ anon }}
-        </button>
-      </tui-data-list>
-    </ng-container>
-  </tui-input>
-  <div class="button-wrapper">
-    <button
-      tuiButton
-      appearance="primary"
-      size="m"
-      class="tui-space_right-3"
-      (click)="onRenameAnon(); context.complete()"
-    >
-      Выбрать
-    </button>
-    <button
-      tuiButton
-      appearance="secondary"
-      size="m"
-      (click)="context.complete()"
-    >
-      Отмена
-    </button>
-  </div>
+      Выбрать анонима
+      <input
+        tuiTextfield
+        tuiAutoFocus
+        type="text"
+      >
+      <ng-container *ngIf="anonRacers?.length">
+        <tui-data-list *tuiDataList>
+          <button
+            *ngFor="let anon of anonRacers"
+            tuiOption
+            [value]="anon.toString()"
+          >
+            {{ anon }}
+          </button>
+        </tui-data-list>
+      </ng-container>
+    </tui-input>
+    <div class="button-wrapper">
+      <button
+        tuiButton
+        appearance="primary"
+        size="m"
+        class="tui-space_right-3"
+        type="submit"
+        (click)="$event.preventDefault(); onRenameAnon(); context.complete()"
+      >
+        Выбрать
+      </button>
+      <button
+        tuiButton
+        appearance="secondary"
+        size="m"
+        (click)="context.complete()"
+      >
+        Отмена
+      </button>
+    </div>
+  </form>
 </ng-template>

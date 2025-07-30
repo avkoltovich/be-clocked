@@ -66,7 +66,7 @@ export class RacersService {
     const currentRacer = currentRacers[index];
 
     if (this.skippedRacers.includes(currentRacer.number!)) {
-      currentRacer.status = RacerStatus.SKIPPED;
+      currentRacer.status = RacerStatus.DNS;
 
       return;
     }
@@ -147,7 +147,7 @@ export class RacersService {
       if (racer.status === undefined) {
         if (isStarted) racer.status = RacerStatus.STARTED;
         if (isFinished) racer.status = RacerStatus.FINISHED;
-        if (isSkipped) racer.status = RacerStatus.SKIPPED;
+        if (isSkipped) racer.status = RacerStatus.DNS;
       }
 
       return racer;
@@ -221,5 +221,17 @@ export class RacersService {
     const splitString = nameAndNumber.split(' — ');
 
     return { name: splitString[0], number: Number(splitString[1]) };
+  }
+
+  public dnfRacers() {
+    const racers = this.racers$.value.map((racer: IRacer) => {
+      if (racer.status === RacerStatus.STARTED) {
+        return { ...racer, status: RacerStatus.DNF };
+      }
+
+      return racer;
+    })
+
+    this.updateRacers(racers);
   }
 }
