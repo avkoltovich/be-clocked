@@ -205,9 +205,47 @@ export class FinishRaceComponent {
      * Обновляется только, когда финишный круг
      */
     if (isFinishLap) {
+      this.sortFinishersForLapRace();
+      this.sortFinishersForLapRace(categoryName);
       this.finishersService.updateFinisherNameList([...this.finishersService.finisherNameList, currentRacerNameAndNumber]);
       this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
     }
+  }
+
+  private sortFinishersForLapRace(category: string | null = null) {
+    let finishers: IFinisher[] = []
+
+    if (category === null) {
+      finishers = this.finishers$.value.slice();
+    } else {
+      finishers = this.finishersByCategoriesMap$.value[category].slice();
+    }
+
+    const finished: IFinisher[] = [];
+    const inProgress: IFinisher[] = []
+
+    finishers.forEach((finisher) => {
+      if (finisher.time !== null) {
+        finished.push(finisher);
+      } else {
+        inProgress.push(finisher);
+      }
+    })
+
+    finished.sort((a, b) => a.time! - b.time!);
+
+    const sortedFinishers: IFinisher[] = finished.concat(inProgress);
+
+    if (category === null) {
+      this.finishersService.updateFinishers(sortedFinishers);
+    } else {
+      const finishersByCategoriesMap = { ...this.finishersByCategoriesMap$.value }
+      finishersByCategoriesMap[category] = sortedFinishers;
+
+      this.finishersService.updateFinishersByCategories(finishersByCategoriesMap);
+    }
+
+
   }
 
   private updateFinishersByCategoriesForLapRace(categoryName: string, currentFinisher: IFinisher) {
