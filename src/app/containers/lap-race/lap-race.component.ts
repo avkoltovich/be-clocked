@@ -14,9 +14,12 @@ import {CurrentRaceService} from "../../services/current-race.service";
 })
 export class LapRaceComponent implements OnInit {
   public lapFormGroup: FormGroup = new FormGroup({})
+
   public categoryList: string[] = []
 
   public lapByCategoriesMap: Record<string, number> = {}
+
+  public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$
 
   constructor(private racersService: RacersService,
               private currentRaceService: CurrentRaceService,

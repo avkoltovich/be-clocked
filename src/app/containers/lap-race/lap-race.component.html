@@ -1,6 +1,6 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Количество кругов в категориях</h2>
-  <ol class="categories tui-space_bottom-6">
+  <ol class="categories">
     <li class="ol-item" *ngFor="let category of categoryList">
       <tui-badge
         size="l"
@@ -11,6 +11,8 @@
     </li>
   </ol>
   <button
+    *ngIf="!(isRaceBeginning$ | async)"
+    class="tui-space_top-6"
     tuiButton
     appearance="primary"
     size="m"
