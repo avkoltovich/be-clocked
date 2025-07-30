@@ -1,8 +1,13 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Количество кругов в категориях</h2>
   <ol class="categories tui-space_bottom-6">
-    <li class="tui-list__item" *ngFor="let category of categoryList">
-      <b>{{ lapByCategoriesMap[category] }}</b> — {{ category }}
+    <li class="ol-item" *ngFor="let category of categoryList">
+      <tui-badge
+        size="l"
+        class="badge tui-space_right-3"
+        status="custom"
+        [value]="lapByCategoriesMap[category]"
+      ></tui-badge> {{ category }}
     </li>
   </ol>
   <button

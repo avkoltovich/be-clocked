@@ -25,3 +25,13 @@
 .dialog-description {
   text-align: center;
 }
+
+.badge {
+  color: var(--tui-text-01);
+  font-weight: bold;
+  background: var(--tui-info-bg)
+}
+
+.ol-item {
+  margin-top: 0.75rem;
+}
