@@ -76,7 +76,7 @@ export class FinishRaceComponent {
               private currentRaceService: CurrentRaceService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-              ) {
+  ) {
   }
 
   public onFinish(currentTime = Date.now(), currentRacerNameAndNumber = this.formGroup.controls.racer.value) {
@@ -87,7 +87,10 @@ export class FinishRaceComponent {
       finisherNameList.push(currentRacerNameAndNumber);
 
       this.finishersService.updateFinisherNameList(finisherNameList);
-      const racerNameAndNumber: { name: string, number: number } = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
+      const racerNameAndNumber: {
+        name: string,
+        number: number
+      } = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
 
       const finishers = this.finishers$.value.slice();
       const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === racerNameAndNumber.number);
@@ -110,10 +113,20 @@ export class FinishRaceComponent {
 
       const finishersByCategories = { ...this.finishersByCategoriesMap$.value };
 
-      finishersByCategories[categoryName].push({
-        name: currentRacerNameAndNumber,
-        time: actualTime
-      })
+      /**
+       * Если категория не пустая, добавляем, в противном случае создаем
+       */
+      if (finishersByCategories[categoryName] !== undefined) {
+        finishersByCategories[categoryName].push({
+          name: currentRacerNameAndNumber,
+          time: actualTime
+        })
+      } else {
+        finishersByCategories[categoryName] = [{
+          name: currentRacerNameAndNumber,
+          time: actualTime
+        }]
+      }
 
       finishersByCategories[categoryName].sort((a, b) => a.time - b.time);
 
