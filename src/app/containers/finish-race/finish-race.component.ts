@@ -13,7 +13,7 @@ import {RacerStatus, RaceType} from "../../models/enums";
 @Component({
   selector: "app-finish-race",
   templateUrl: "./finish-race.component.html",
-  providers: [TuiDialogFormService],
+  providers: [TuiDialogFormService, TuiDestroyService],
   styleUrls: ["./finish-race.component.scss"]
 })
 export class FinishRaceComponent implements OnInit {

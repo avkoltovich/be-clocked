@@ -7,7 +7,8 @@ import {TuiDestroyService} from "@taiga-ui/cdk";
 @Component({
   selector: 'app-race-header',
   templateUrl: './race-header.component.html',
-  styleUrls: ['./race-header.component.scss']
+  styleUrls: ['./race-header.component.scss'],
+  providers: [TuiDestroyService],
 })
 export class RaceHeaderComponent implements OnInit {
   protected readonly RaceType = RaceType;

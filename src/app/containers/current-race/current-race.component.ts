@@ -13,7 +13,8 @@ import {TuiDestroyService} from "@taiga-ui/cdk";
 @Component({
   selector: "app-current-race",
   templateUrl: "./current-race.component.html",
-  styleUrls: ["./current-race.component.scss"]
+  styleUrls: ["./current-race.component.scss"],
+  providers: [TuiDestroyService],
 })
 export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
   private ittTimerSubscription: Subscription | null = null;

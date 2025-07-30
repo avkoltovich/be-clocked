@@ -21,6 +21,7 @@ export class CurrentRaceService {
    * Для Группового режима
    */
   public lapsCount$ = new BehaviorSubject<number>(1);
+  public lapByCategoriesMap: Record<string, number> = {}
   public isLapsCountSetted$ = new BehaviorSubject<boolean>(false);
   public raceStartTime$ = new BehaviorSubject<number | null>(null);
 
@@ -70,6 +71,7 @@ export class CurrentRaceService {
     const racersDelta = this.repositoryService.readRacersDelta();
     const starterNameList = this.repositoryService.readStarterNameList();
     const racers: IRacer[] = this.repositoryService.readRacers();
+    const lapByCategoriesMap = this.repositoryService.readLapByCategoriesMap();
     this.raceStartTime$.next(this.repositoryService.readRaceStartTime());
 
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
@@ -77,6 +79,7 @@ export class CurrentRaceService {
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
     if (starterNameList !== null && starterNameList?.length > 0) this.isRaceBeginning$.next(true);
     if (racers !== null && racers.length > 0) this.isAllRacersStarted$.next(this.currentRacerIndex$.value >= racers.length);
+    if (lapByCategoriesMap !== null) this.lapByCategoriesMap = lapByCategoriesMap;
 
     this.raceType$.next(raceType ?? RaceType.ITT);
   }
@@ -100,6 +103,7 @@ export class CurrentRaceService {
     this.racerSecondsDelta = DEFAULT_DELTA;
     this.isDeltaChanged$.next(true);
     this.raceStartTime$.next(null);
+    this.lapByCategoriesMap = {};
   }
 
   public continuePrevRace() {
@@ -127,5 +131,10 @@ export class CurrentRaceService {
   public updateRaceStartTime(startTime: number | null) {
     this.repositoryService.updateRaceStartTime(startTime);
     this.raceStartTime$.next(startTime);
+  }
+
+  public updateLapByCategoriesMap(category: string, lapCount: number) {
+    this.lapByCategoriesMap[category] = lapCount;
+    this.repositoryService.updateLapByCategoriesMap(this.lapByCategoriesMap);
   }
 }
