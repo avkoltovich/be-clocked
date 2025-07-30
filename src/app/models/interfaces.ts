@@ -35,5 +35,7 @@ export interface ISyncJSON {
   racersDelta: number;
   raceType: RaceType;
   raceStartTime: number;
+  raceEndTime: number;
   lapByCategoriesMap: Record<string, number>;
+  isRaceEnded: boolean;
 }

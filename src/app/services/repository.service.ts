@@ -72,8 +72,16 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.RACE_START_TIME, JSON.stringify(value));
   }
 
+  public updateRaceEndTime(value: number | null) {
+    window.localStorage.setItem(RepositoryKey.RACE_END_TIME, JSON.stringify(value));
+  }
+
   public updateLapByCategoriesMap(map: Record<string, number>) {
     window.localStorage.setItem(RepositoryKey.LAP_BY_CATEGORY, JSON.stringify(map));
+  }
+
+  public updateIsRaceEnded(value: boolean) {
+    window.localStorage.setItem(RepositoryKey.IS_RACE_ENDED, JSON.stringify(value));
   }
 
   /**
@@ -140,8 +148,16 @@ export class RepositoryService {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_START_TIME)!);
   }
 
+  public readRaceEndTime() {
+    return JSON.parse(window.localStorage.getItem(RepositoryKey.RACE_END_TIME)!);
+  }
+
   public readLapByCategoriesMap() {
     return JSON.parse(window.localStorage.getItem(RepositoryKey.LAP_BY_CATEGORY)!);
+  }
+
+  public readIsRaceEnded() {
+    return Boolean(JSON.parse(window.localStorage.getItem(RepositoryKey.IS_RACE_ENDED)!));
   }
 
   /**
@@ -169,6 +185,8 @@ export class RepositoryService {
     const raceType = this.readRaceType();
     const raceStartTime = this.readRaceStartTime();
     const lapByCategoriesMap = this.readLapByCategoriesMap();
+    const isRaceEnded = this.readIsRaceEnded();
+    const raceEndTime = this.readRaceEndTime();
 
     return {
       raceName: raceName ? raceName : DEFAULT_RACE_NAME,
@@ -186,7 +204,9 @@ export class RepositoryService {
       racersDelta: racersDelta ?? DEFAULT_DELTA,
       raceType: raceType ?? RaceType.ITT,
       raceStartTime,
+      raceEndTime,
       lapByCategoriesMap,
+      isRaceEnded
     };
   }
 
@@ -206,7 +226,9 @@ export class RepositoryService {
     this.updateRacersDelta(data.racersDelta ?? DEFAULT_DELTA);
     this.updateRaceType(data.raceType ?? RaceType.ITT);
     this.updateRaceStartTime(data.raceStartTime ?? null);
+    this.updateRaceEndTime(data.raceEndTime ?? null);
     this.updateLapByCategoriesMap(data.lapByCategoriesMap ?? {});
+    this.updateIsRaceEnded(data.isRaceEnded ?? false);
   }
 
   public resetLS() {

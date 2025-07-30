@@ -19,7 +19,9 @@ export enum RepositoryKey {
   RACE_TYPE = "RACE_TYPE",
   SKIPPED_RACERS = "SKIPPED_RACERS",
   RACE_START_TIME = "RACE_START_TIME",
+  RACE_END_TIME = "RACE_END_TIME",
   LAP_BY_CATEGORY = "LAP_BY_CATEGORY",
+  IS_RACE_ENDED = "IS_RACE_ENDED",
 }
 
 export enum RaceStatus {
@@ -39,5 +41,6 @@ export enum RacerStatus {
   READY = 'READY',
   STARTED = 'STARTED',
   FINISHED = 'FINISHED',
-  SKIPPED = 'SKIPPED',
+  DNS = 'DNS',
+  DNF = 'DNF',
 }

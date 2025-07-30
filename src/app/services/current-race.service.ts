@@ -22,6 +22,7 @@ export class CurrentRaceService {
    */
   public lapByCategoriesMap: Record<string, number> = {}
   public raceStartTime$ = new BehaviorSubject<number | null>(null);
+  public raceEndTime$ = new BehaviorSubject<number | null>(null);
 
   public raceName$ = new BehaviorSubject<string>(DEFAULT_RACE_NAME);
 
@@ -30,6 +31,7 @@ export class CurrentRaceService {
   public isRaceStarted$ = new BehaviorSubject(false);
   public isRacePaused$ = new BehaviorSubject(false);
   public isRaceBeginning$ = new BehaviorSubject(false);
+  public isRaceEnded$ = new BehaviorSubject(false);
   public isAllRacersStarted$ = new BehaviorSubject(false);
   public isDeltaChanged$ = new BehaviorSubject(false);
 
@@ -76,15 +78,18 @@ export class CurrentRaceService {
     const starterNameList = this.repositoryService.readStarterNameList();
     const racers: IRacer[] = this.repositoryService.readRacers();
     const lapByCategoriesMap = this.repositoryService.readLapByCategoriesMap();
+    const isRaceEnded = this.repositoryService.readIsRaceEnded();
     this.raceStartTime$.next(this.repositoryService.readRaceStartTime());
+    this.raceEndTime$.next(this.repositoryService.readRaceEndTime());
 
     if (currentRacerIndex !== null) this.currentRacerIndex$.next(currentRacerIndex);
     if (raceName !== null) this.raceName$.next(raceName);
     if (racersDelta !== null) this.setRacersDelta(racersDelta);
-    if (starterNameList !== null && starterNameList?.length > 0) this.isRaceBeginning$.next(true);
+    if (starterNameList !== null && starterNameList?.length > 0 && !isRaceEnded) this.isRaceBeginning$.next(true);
     if (racers !== null && racers.length > 0) this.isAllRacersStarted$.next(this.currentRacerIndex$.value >= racers.length);
     if (lapByCategoriesMap !== null) this.lapByCategoriesMap = lapByCategoriesMap;
 
+    this.isRaceEnded$.next(isRaceEnded);
     this.raceType$.next(raceType ?? RaceType.ITT);
   }
 
@@ -100,6 +105,7 @@ export class CurrentRaceService {
     this.isRaceStarted$.next(false);
     this.isRacePaused$.next(false);
     this.isRaceBeginning$.next(false);
+    this.isRaceEnded$.next(false);
     this.isAllRacersStarted$.next(false);
     this.raceName$.next(DEFAULT_RACE_NAME);
     this.raceType$.next(RaceType.ITT);
@@ -107,6 +113,7 @@ export class CurrentRaceService {
     this.racerSecondsDelta = DEFAULT_DELTA;
     this.isDeltaChanged$.next(true);
     this.raceStartTime$.next(null);
+    this.raceEndTime$.next(null);
     this.lapByCategoriesMap = {};
   }
 
@@ -144,5 +151,16 @@ export class CurrentRaceService {
 
   public updateRaceType(raceType: RaceType) {
     this.raceType$.next(raceType);
+  }
+
+  public setRaceBeginning(value: boolean) {
+    this.isRaceBeginning$.next(value);
+  }
+
+  public endGroupRace() {
+    this.isRaceEnded$.next(true);
+    this.isRaceBeginning$.next(false);
+    this.raceEndTime$.next(Date.now());
+    this.repositoryService.updateIsRaceEnded(true);
   }
 }

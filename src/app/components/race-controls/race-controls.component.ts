@@ -15,19 +15,21 @@ export class RaceControlsComponent implements AfterViewInit {
 
   public downloadJsonHref: string = '';
 
+  @Input() isRaceBeginning = false;
+
+  @Input() isRaceEnded = false;
+
+  @Input() isRacePaused = false;
+
   @Input() raceStatus = RaceStatus.PREPARE;
 
   @Input() raceType: RaceType = RaceType.ITT;
 
-  @Input() isPauseAndSkipDisabled = true;
-
-  @Input() isStartDisabled = true;
-
-  @Input() isResetDisabled = true;
-
   @Input() isSkipped = false;
 
   @Output() start = new EventEmitter();
+
+  @Output() stop = new EventEmitter();
 
   @Output() skip = new EventEmitter();
 
@@ -80,6 +82,10 @@ export class RaceControlsComponent implements AfterViewInit {
 
   public onStart() {
     this.start.emit()
+  }
+
+  public onStop() {
+    this.stop.emit()
   }
 
   public onSkip() {
