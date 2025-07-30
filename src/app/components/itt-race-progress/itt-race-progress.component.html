@@ -78,18 +78,19 @@
 >
   <p class="dialog-description tui-text_h6 tui-space_bottom-8 tui-space_top-0">Укажите дельту<br>между стартующими</p>
 
-  <div class="button-wrapper">
-    <tui-input-number class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">
+  <form class="button-wrapper" (ngSubmit)="$event.preventDefault(); onSetDelta(); context.complete()">
+    <tui-input-number tuiAutoFocus class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" [formControl]="deltaFormControl">
       Дельта
     </tui-input-number>
     <button
       tuiButton
       appearance="primary"
       size="m"
-      (click)="onSetDelta(); context.complete()"
+      type="submit"
+      (click)="$event.preventDefault(); onSetDelta(); context.complete()"
       [disabled]="deltaFormControl.invalid"
     >
       ОК
     </button>
-  </div>
+  </form>
 </ng-template>

@@ -34,7 +34,9 @@ export class RacerListComponent {
     category: new FormControl("", Validators.required)
   });
 
-  public numberControl = new FormControl(null, Validators.required);
+  public numberFormGroup = new FormGroup({
+    number: new FormControl(null, Validators.required),
+  })
 
   public formValue = {};
 
@@ -151,8 +153,8 @@ export class RacerListComponent {
   public onSetNumber() {
     if (this.currentRacer === null) return;
 
-    const racer = { ...this.currentRacer.racer, number: Number(this.numberControl.value) };
-    this.numberControl.reset()
+    const racer = { ...this.currentRacer.racer, number: Number(this.numberFormGroup.controls.number.value) };
+    this.numberFormGroup.reset()
 
     this.onSave(racer)
   }

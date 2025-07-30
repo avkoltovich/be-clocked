@@ -18,7 +18,7 @@ import {
     TuiSelectModule,
     TuiStepperModule
 } from "@taiga-ui/kit";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TuiAutoFocusModule, TuiDestroyService, TuiLetModule} from "@taiga-ui/cdk";
 import {IttRaceProgressComponent} from './itt-race-progress/itt-race-progress.component';
 import { RaceHeaderComponent } from './race-header/race-header.component';
@@ -60,7 +60,8 @@ import { StatusBadgeComponent } from './status-badge/status-badge.component';
         TuiIslandModule,
         TuiGroupModule,
         TuiRadioBlockModule,
-        TuiBadgeModule
+        TuiBadgeModule,
+        FormsModule
     ],
   exports: [
     RacerEditorComponent,

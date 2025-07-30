@@ -1,6 +1,6 @@
 <tui-island size="l">
   <h2 class="tui-island__title tui-space_bottom-5">Финишный протокол</h2>
-  <form class="tui-form__row_multi-fields form" [formGroup]="formGroup">
+  <form class="tui-form__row_multi-fields form" [formGroup]="formGroup" (ngSubmit)="$event.preventDefault(); onFinish()">
     <tui-input
       *tuiLet="racers$ | async as racers"
       class="input"
@@ -26,10 +26,10 @@
     </tui-input>
     <button
       tuiButton
-      type="button"
+      type="submit"
       appearance="primary"
       size="m"
-      (click)="onFinish()"
+      (click)="$event.preventDefault(); onFinish()"
       [disabled]="racerControl.value?.length === 0"
     >
       <tui-svg
@@ -179,46 +179,50 @@
   #content
   let-context
 >
-  <tui-input
-    *tuiLet="anonRacers$ | async as anonRacers"
-    class="tui-space_bottom-6"
-    tuiTextfieldSize="m"
-    [formControl]="anonNameControl"
-  >
-    Выбрать анонима
-    <input
-      tuiTextfield
-      type="text"
+  <form (ngSubmit)="$event.preventDefault(); onRenameAnon(); context.complete()">
+    <tui-input
+      *tuiLet="anonRacers$ | async as anonRacers"
+      class="tui-space_bottom-6"
+      tuiTextfieldSize="m"
+      [formControl]="anonNameControl"
     >
-    <ng-container *ngIf="anonRacers?.length">
-      <tui-data-list *tuiDataList>
-        <button
-          *ngFor="let anon of anonRacers"
-          tuiOption
-          [value]="anon.toString()"
-        >
-          {{ anon }}
-        </button>
-      </tui-data-list>
-    </ng-container>
-  </tui-input>
-  <div class="button-wrapper">
-    <button
-      tuiButton
-      appearance="primary"
-      size="m"
-      class="tui-space_right-3"
-      (click)="onRenameAnon(); context.complete()"
-    >
-      Выбрать
-    </button>
-    <button
-      tuiButton
-      appearance="secondary"
-      size="m"
-      (click)="context.complete()"
-    >
-      Отмена
-    </button>
-  </div>
+      Выбрать анонима
+      <input
+        tuiTextfield
+        tuiAutoFocus
+        type="text"
+      >
+      <ng-container *ngIf="anonRacers?.length">
+        <tui-data-list *tuiDataList>
+          <button
+            *ngFor="let anon of anonRacers"
+            tuiOption
+            [value]="anon.toString()"
+          >
+            {{ anon }}
+          </button>
+        </tui-data-list>
+      </ng-container>
+    </tui-input>
+    <div class="button-wrapper">
+      <button
+        tuiButton
+        appearance="primary"
+        size="m"
+        class="tui-space_right-3"
+        type="submit"
+        (click)="$event.preventDefault(); onRenameAnon(); context.complete()"
+      >
+        Выбрать
+      </button>
+      <button
+        tuiButton
+        appearance="secondary"
+        size="m"
+        (click)="context.complete()"
+      >
+        Отмена
+      </button>
+    </div>
+  </form>
 </ng-template>
