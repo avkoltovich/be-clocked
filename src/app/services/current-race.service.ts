@@ -20,9 +20,7 @@ export class CurrentRaceService {
   /**
    * Для Группового режима
    */
-  public lapsCount$ = new BehaviorSubject<number>(1);
   public lapByCategoriesMap: Record<string, number> = {}
-  public isLapsCountSetted$ = new BehaviorSubject<boolean>(false);
   public raceStartTime$ = new BehaviorSubject<number | null>(null);
 
   public raceName$ = new BehaviorSubject<string>(DEFAULT_RACE_NAME);
@@ -57,8 +55,6 @@ export class CurrentRaceService {
       }
     })
   );
-
-  public groupRaceTimer$ = timer(0, 1000);
 
   constructor(private repositoryService: RepositoryService, private racersService: RacersService, private finisherService: FinishersService) {
     this.initCurrentRaceData();
@@ -136,5 +132,9 @@ export class CurrentRaceService {
   public updateLapByCategoriesMap(category: string, lapCount: number) {
     this.lapByCategoriesMap[category] = lapCount;
     this.repositoryService.updateLapByCategoriesMap(this.lapByCategoriesMap);
+  }
+
+  public updateRaceType(raceType: RaceType) {
+    this.raceType$.next(raceType);
   }
 }

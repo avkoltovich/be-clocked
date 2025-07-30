@@ -46,7 +46,7 @@ export class RaceHeaderComponent implements OnInit {
     this.raceType$.pipe(
       tap((raceType) => {
         if (this.raceTypeControl.value !== raceType) {
-          this.raceTypeControl.setValue(raceType, { emitEvent: false });
+          this.raceTypeControl.setValue(raceType);
         }
       }),
       takeUntil(this.destroy$)

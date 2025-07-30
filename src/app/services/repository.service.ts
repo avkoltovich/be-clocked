@@ -206,7 +206,7 @@ export class RepositoryService {
     this.updateRacersDelta(data.racersDelta ?? DEFAULT_DELTA);
     this.updateRaceType(data.raceType ?? RaceType.ITT);
     this.updateRaceStartTime(data.raceStartTime ?? null);
-    this.updateLapByCategoriesMap(data.lapByCategoriesMap)
+    this.updateLapByCategoriesMap(data.lapByCategoriesMap ?? {});
   }
 
   public resetLS() {

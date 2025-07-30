@@ -158,15 +158,12 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
 
   public onReset() {
     this.ittTimerSubscription?.unsubscribe();
-
-    this.repositoryService.resetLS();
     this.currentRaceService.resetCurrentRace();
     this.racersService.resetRacersData();
     this.finishersService.resetFinishersData();
-
     this.raceStatus$.next(RaceStatus.PREPARE);
-
     this.currentRaceService.updateRaceStartTime(null);
+    this.repositoryService.resetLS();
   }
 
   public openResetDialog(content: any): void {
@@ -214,7 +211,7 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
   }
 
   public onRaceTypeChanged($event: RaceType) {
-    this.currentRaceService.raceType$.next($event);
+    this.currentRaceService.updateRaceType($event);
     this.repositoryService.updateRaceType($event);
   }
 
