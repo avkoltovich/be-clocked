@@ -124,12 +124,12 @@
           </li>
         </ol>
       </ng-container>
-      <ng-container *ngFor="let category of finishersByCategories$.value">
-        <ng-container *ngIf="category.finishers.length > 0">
-          <h3>{{ category.name }}</h3>
+      <ng-container *ngFor="let category of categories">
+        <ng-container *ngIf="finishersByCategoriesMap$.value[category].length > 0">
+          <h3>{{ category }}</h3>
           <ol class="tui-list tui-list_ordered tui-list_large">
             <li
-              *ngFor="let finisher of category.finishers"
+              *ngFor="let finisher of finishersByCategoriesMap$.value[category]"
               class="tui-list__item"
             >
               {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}

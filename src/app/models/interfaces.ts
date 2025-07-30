@@ -5,11 +5,6 @@ export interface IFinisher {
   time: number;
 }
 
-export interface IFinishCategory {
-  name: string;
-  finishers: IFinisher[];
-}
-
 export interface IRacer {
   name: string;
   category: string;
@@ -33,7 +28,7 @@ export interface ISyncJSON {
   currentRacerIndex: number;
   currentAnonIndex: number;
   finishers: IFinisher[];
-  finishersByCategories: IFinishCategory[];
+  finishersByCategories: Record<string, IFinisher[]>;
   anons: IFinisher[];
   finisherNameList: string[];
   racersDelta: number;

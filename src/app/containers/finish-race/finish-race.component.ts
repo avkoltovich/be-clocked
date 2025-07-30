@@ -1,8 +1,8 @@
-import {Component, Inject, OnInit} from "@angular/core";
+import {Component, Inject} from "@angular/core";
 import {FormControl, FormGroup} from "@angular/forms";
 import {RacersService} from "../../services/racers.service";
-import {TUI_DEFAULT_MATCHER, tuiControlValue, TuiDestroyService} from "@taiga-ui/cdk";
-import {map, takeUntil, tap} from "rxjs";
+import {TUI_DEFAULT_MATCHER, tuiControlValue} from "@taiga-ui/cdk";
+import {map} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
@@ -13,17 +13,17 @@ import {RacerStatus, RaceType} from "../../models/enums";
 @Component({
   selector: "app-finish-race",
   templateUrl: "./finish-race.component.html",
-  providers: [TuiDialogFormService, TuiDestroyService],
+  providers: [TuiDialogFormService],
   styleUrls: ["./finish-race.component.scss"]
 })
-export class FinishRaceComponent implements OnInit {
+export class FinishRaceComponent {
   public racerControl = new FormControl("");
   public anonNameControl = new FormControl("");
   public formGroup = new FormGroup({
     racer: this.racerControl
   });
   public finishers$ = this.finishersService.finishers$;
-  public finishersByCategories$ = this.finishersService.finishersByCategories$;
+  public finishersByCategoriesMap$ = this.finishersService.finishersByCategoriesMap$;
   public anonFinishers$ = this.finishersService.anonFinishers$;
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
@@ -67,37 +67,16 @@ export class FinishRaceComponent implements OnInit {
     })
   );
 
-  public categoriesMap$ = this.racersService.categoriesMap$.pipe(
-    tap((categoriesMap) => {
-      const categories = Object.keys(categoriesMap);
-
-      if (categories.length > 0) {
-        categories.forEach((category) => {
-          const finishersByCategory = this.finishersByCategories$.value.slice()
-
-          finishersByCategory.push({
-            name: category,
-            finishers: []
-          });
-
-          this.finishersByCategories$.next(finishersByCategory);
-        });
-      }
-    }),
-    takeUntil(this.destroy$)
-  );
+  get categories() {
+    return Object.keys(this.finishersByCategoriesMap$.value);
+  }
 
   constructor(private racersService: RacersService,
               private finishersService: FinishersService,
               private currentRaceService: CurrentRaceService,
               @Inject(TuiDialogFormService) private readonly dialogForm: TuiDialogFormService,
               @Inject(TuiDialogService) private readonly dialogs: TuiDialogService,
-              private readonly destroy$: TuiDestroyService,
               ) {
-  }
-
-  public ngOnInit() {
-    this.categoriesMap$.subscribe();
   }
 
   public onFinish(currentTime = Date.now(), currentRacerNameAndNumber = this.formGroup.controls.racer.value) {
@@ -108,11 +87,13 @@ export class FinishRaceComponent implements OnInit {
       finisherNameList.push(currentRacerNameAndNumber);
 
       this.finishersService.updateFinisherNameList(finisherNameList);
-      const currentRacer = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
+      const racerNameAndNumber: { name: string, number: number } = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
 
       const finishers = this.finishers$.value.slice();
-      const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === currentRacer.number);
-      const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === currentRacer.number);
+      const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === racerNameAndNumber.number);
+      const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === racerNameAndNumber.number);
+      const currentRacer = this.racersService.racers$.value[currentRacerIndex];
+      const categoryName = currentRacer.category;
 
       if (startedData === undefined) return;
 
@@ -127,25 +108,14 @@ export class FinishRaceComponent implements OnInit {
 
       this.finishersService.updateFinishers(finishers.slice());
 
-      let categoryName = "";
+      const finishersByCategories = { ...this.finishersByCategoriesMap$.value };
 
-      for (const category in this.racersService.categoriesMap$.value) {
-        if (this.racersService.categoriesMap$.value[category].filter((racer) => racer.number === currentRacer.number).length > 0) {
-          categoryName = category;
-          break;
-        }
-      }
-
-      const finishersByCategories = this.finishersByCategories$.value.slice();
-
-      const categoryIndex = finishersByCategories.findIndex((finishCategory) => finishCategory.name === categoryName);
-
-      finishersByCategories[categoryIndex].finishers.push({
+      finishersByCategories[categoryName].push({
         name: currentRacerNameAndNumber,
         time: actualTime
-      });
+      })
 
-      finishersByCategories[categoryIndex].finishers.sort((a, b) => a.time - b.time);
+      finishersByCategories[categoryName].sort((a, b) => a.time - b.time);
 
       this.finishersService.updateFinishersByCategories(finishersByCategories);
       this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {RaceType, RepositoryKey} from '../models/enums';
-import {IFinishCategory, IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
-import {DEFAULT_RACE_NAME, DEFAULT_DELTA} from "../constants/itt.constants";
+import {IFinisher, IRacer, IStarter, ISyncJSON} from "../models/interfaces";
+import {DEFAULT_DELTA, DEFAULT_RACE_NAME} from "../constants/itt.constants";
 
 
 @Injectable({
@@ -36,7 +36,7 @@ export class RepositoryService {
     window.localStorage.setItem(RepositoryKey.FINISHERS, JSON.stringify(value));
   }
 
-  public updateFinishersByCategories(value: IFinishCategory[]) {
+  public updateFinishersByCategories(value: Record<string, IFinisher[]>) {
     window.localStorage.setItem(RepositoryKey.FINISHERS_BY_CATEGORIES, JSON.stringify(value));
   }
 
