@@ -9,6 +9,7 @@ import {FinishersService} from "../../services/finishers.service";
 import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {CurrentRaceService} from "../../services/current-race.service";
 import {RacerStatus, RaceType} from "../../models/enums";
+import {IFinisher} from "../../models/interfaces";
 
 @Component({
   selector: "app-finish-race",
@@ -80,58 +81,31 @@ export class FinishRaceComponent {
   }
 
   public onFinish(currentTime = Date.now(), currentRacerNameAndNumber = this.formGroup.controls.racer.value) {
-    this.racerControl.setValue("");
-
     if (currentRacerNameAndNumber !== null && currentRacerNameAndNumber !== "") {
-      const finisherNameList = this.finishersService.finisherNameList.slice();
-      finisherNameList.push(currentRacerNameAndNumber);
+      this.racerControl.setValue("");
 
-      this.finishersService.updateFinisherNameList(finisherNameList);
-      const racerNameAndNumber: {
-        name: string,
-        number: number
-      } = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
-
-      const finishers = this.finishers$.value.slice();
+      const racerNameAndNumber = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
       const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === racerNameAndNumber.number);
-      const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === racerNameAndNumber.number);
-      const currentRacer = this.racersService.racers$.value[currentRacerIndex];
-      const categoryName = currentRacer.category;
 
       if (startedData === undefined) return;
 
+      const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === racerNameAndNumber.number);
+      const currentRacer = this.racersService.racers$.value[currentRacerIndex];
+      const categoryName = currentRacer.category;
       const actualTime = currentTime - startedData!.time;
-
-      finishers.push({
+      const currentFinisher = {
         name: currentRacerNameAndNumber,
         time: actualTime
-      });
-
-      finishers.sort((a, b) => a.time - b.time);
-
-      this.finishersService.updateFinishers(finishers.slice());
-
-      const finishersByCategories = { ...this.finishersByCategoriesMap$.value };
-
-      /**
-       * Если категория не пустая, добавляем, в противном случае создаем
-       */
-      if (finishersByCategories[categoryName] !== undefined) {
-        finishersByCategories[categoryName].push({
-          name: currentRacerNameAndNumber,
-          time: actualTime
-        })
-      } else {
-        finishersByCategories[categoryName] = [{
-          name: currentRacerNameAndNumber,
-          time: actualTime
-        }]
       }
 
-      finishersByCategories[categoryName].sort((a, b) => a.time - b.time);
-
-      this.finishersService.updateFinishersByCategories(finishersByCategories);
+      this.updateFinisherList(this.finishers$.value.slice(), currentFinisher)
+      this.updateFinishersByCategories({ ...this.finishersByCategoriesMap$.value }, categoryName, currentFinisher)
+      this.finishersService.updateFinisherNameList([ ...this.finishersService.finisherNameList, currentRacerNameAndNumber ]);
       this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
+    } else {
+      /**
+       * TODO: Добавить обработку ошибок
+       */
     }
   }
 
@@ -196,6 +170,28 @@ export class FinishRaceComponent {
 
   public openRemoveDialog(content: any): void {
     this.dialogs.open(content, {size: 's'}).subscribe();
+  }
+
+  private updateFinisherList(finishers: IFinisher[], currentFinisher: { name: string; time: number }) {
+    finishers.push(currentFinisher);
+    finishers.sort((a, b) => a.time - b.time);
+
+    this.finishersService.updateFinishers(finishers.slice());
+  }
+
+  private updateFinishersByCategories(finishersByCategories: Record<string, IFinisher[]>, categoryName: string, currentFinisher: { name: string; time: number }) {
+    /**
+     * Если категория не пустая, добавляем, в противном случае создаем
+     */
+    if (finishersByCategories[categoryName] !== undefined) {
+      finishersByCategories[categoryName].push(currentFinisher)
+    } else {
+      finishersByCategories[categoryName] = [currentFinisher]
+    }
+
+    finishersByCategories[categoryName].sort((a, b) => a.time - b.time);
+
+    this.finishersService.updateFinishersByCategories(finishersByCategories);
   }
 
   protected readonly RaceType = RaceType;
