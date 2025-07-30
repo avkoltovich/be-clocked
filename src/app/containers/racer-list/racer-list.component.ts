@@ -158,4 +158,12 @@ export class RacerListComponent {
 
     this.onSave(racer)
   }
+
+  public checkNumberAlreadyExists(): boolean {
+    const number = this.numberFormGroup.controls.number.value;
+
+    if (number === undefined || number === null) return false;
+
+    return this.racers$.value.some((racer) => racer.number === number);
+  }
 }

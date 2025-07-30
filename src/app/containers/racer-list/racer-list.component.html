@@ -134,8 +134,8 @@
   >
     <p class="tui-text_h6 tui-space_bottom-6 tui-space_top-0">Укажите номер участника</p>
     <form class="dialog-container" [formGroup]="numberFormGroup" (ngSubmit)="$event.preventDefault(); onSetNumber(); context.complete()">
-      <tui-input-number tuiAutoFocus class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" formControlName="number">
-        Номер
+      <tui-input-number tuiAutoFocus class="tui-space_right-3 input-number" [tuiTextfieldSize]="'m'" formControlName="number" [pseudoInvalid]="checkNumberAlreadyExists()">
+        {{ checkNumberAlreadyExists() ? 'Номер занят' : 'Номер' }}
       </tui-input-number>
       <button
         tuiButton
@@ -143,7 +143,7 @@
         size="m"
         type="submit"
         (click)="$event.preventDefault(); onSetNumber(); context.complete()"
-        [disabled]="numberFormGroup.invalid"
+        [disabled]="numberFormGroup.invalid || checkNumberAlreadyExists()"
       >
         ОК
       </button>
