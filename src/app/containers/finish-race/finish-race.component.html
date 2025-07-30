@@ -118,26 +118,59 @@
         <ol class="tui-list tui-list_ordered tui-list_large">
           <li
             *ngFor="let finisher of finishers"
-            class="tui-list__item"
+            class="tui-list__item list-item"
           >
             {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
           </li>
         </ol>
       </ng-container>
-      <ng-container *ngFor="let category of categories">
-        <ng-container *ngIf="finishersByCategoriesMap$.value[category].length > 0">
-          <h3>{{ category }}</h3>
-          <ol class="tui-list tui-list_ordered tui-list_large">
-            <li
-              *ngFor="let finisher of finishersByCategoriesMap$.value[category]"
-              class="tui-list__item"
-            >
-              {{ finisher.name }} - {{ getTimeRemaining(finisher.time) }}
-            </li>
-          </ol>
+      <ng-container *ngIf="!isLapRace; else lapRaceTemplate">
+        <ng-container *ngFor="let category of categories">
+          <ng-container *ngIf="finishersByCategoriesMap$.value[category].length > 0">
+            <h3>{{ category }}</h3>
+            <ol class="tui-list tui-list_ordered tui-list_large">
+              <li
+                *ngFor="let finisher of finishersByCategoriesMap$.value[category]"
+                class="tui-list__item list-item"
+              >
+                <span class="finisher-name">{{ finisher.name }}</span><span class="finisher-time">{{ getTimeRemaining(finisher.time) }}</span>
+              </li>
+            </ol>
+          </ng-container>
         </ng-container>
-
       </ng-container>
+
+      <ng-template #lapRaceTemplate>
+        <ng-container *ngFor="let category of categories">
+          <ng-container *ngIf="finishersByCategoriesMap$.value[category].length > 0">
+            <table class="table-category">
+              <tr>
+                <th></th>
+                <th><h3 class="th-category">{{ category }}</h3></th>
+                <th class="table-header" *ngFor="let index of getArrayByLength(lapByCategoriesMap[category])">
+                  Круг {{ index }}
+                </th>
+                <th class="table-header finish-lap">Время финиша</th>
+              </tr>
+              <tr
+                *ngFor="let finisher of finishersByCategoriesMap$.value[category]; let i = index"
+              >
+                <td class="table-description table-description--count">{{ i + 1 }}.</td>
+                <td class="finisher-name table-description">
+                  {{ finisher.name }}
+                </td>
+                <td class="finisher-time table-description" *ngFor="let time of finisher.timeList">
+                  {{ getTimeRemaining(time) }}
+                </td>
+                <td class="finisher-time table-description finish-lap" *ngIf="finisher.time">
+                  {{getTimeRemaining(finisher.time)}}
+                </td>
+              </tr>
+            </table>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+
     </ng-container>
   </ng-container>
 </tui-island>

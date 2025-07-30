@@ -56,6 +56,14 @@ export class CurrentRaceService {
     })
   );
 
+  get isLapRace() {
+    for (let key in this.lapByCategoriesMap) {
+      if (this.lapByCategoriesMap[key] > 1) return true;
+    }
+
+    return false;
+  }
+
   constructor(private repositoryService: RepositoryService, private racersService: RacersService, private finisherService: FinishersService) {
     this.initCurrentRaceData();
   }

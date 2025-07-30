@@ -6,10 +6,9 @@ import {map} from "rxjs";
 import {TuiDialogFormService} from "@taiga-ui/kit";
 import {TuiDialogService} from "@taiga-ui/core";
 import {FinishersService} from "../../services/finishers.service";
-import {SKIPPED_RACER_NAME} from "../../constants/itt.constants";
 import {CurrentRaceService} from "../../services/current-race.service";
 import {RacerStatus, RaceType} from "../../models/enums";
-import {IFinisher} from "../../models/interfaces";
+import {IFinisher, IStarter} from "../../models/interfaces";
 
 @Component({
   selector: "app-finish-race",
@@ -30,11 +29,12 @@ export class FinishRaceComponent {
   public currentSelectedAnonIndex: number | null = null;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
   public raceType$ = this.currentRaceService.raceType$;
+  public lapByCategoriesMap = this.currentRaceService.lapByCategoriesMap;
 
   public racers$ = tuiControlValue<string>(this.racerControl).pipe(
     map(value => {
       const difference = this.racersService.starterNameList$.value.filter((racer) => {
-        return !this.finishersService.finisherNameList.includes(racer) && racer !== SKIPPED_RACER_NAME;
+        return !this.finishersService.finisherNameList.includes(racer);
       });
 
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
@@ -53,8 +53,9 @@ export class FinishRaceComponent {
   public anonRacers$ = tuiControlValue<string>(this.anonNameControl).pipe(
     map(value => {
       const difference = this.racersService.starterNameList$.value.filter((racer) => {
-        return !this.finishersService.finisherNameList.includes(racer) && racer !== SKIPPED_RACER_NAME;
+        return !this.finishersService.finisherNameList.includes(racer);
       });
+
       const filtered = difference.filter(racer => TUI_DEFAULT_MATCHER(racer, value));
 
       if (
@@ -68,7 +69,11 @@ export class FinishRaceComponent {
     })
   );
 
-  get categories() {
+  public get isLapRace(): boolean {
+    return this.currentRaceService.isLapRace
+  }
+
+  public get categories() {
     return Object.keys(this.finishersByCategoriesMap$.value);
   }
 
@@ -89,6 +94,11 @@ export class FinishRaceComponent {
 
       if (startedData === undefined) return;
 
+      /**
+       * У гонки на круги своя логика финиша
+       */
+      if (this.currentRaceService.isLapRace) return this.onLapRaceFinish(currentTime, currentRacerNameAndNumber, racerNameAndNumber, startedData);
+
       const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === racerNameAndNumber.number);
       const currentRacer = this.racersService.racers$.value[currentRacerIndex];
       const categoryName = currentRacer.category;
@@ -98,9 +108,10 @@ export class FinishRaceComponent {
         time: actualTime
       }
 
+
+      this.finishersService.updateFinisherNameList([ ...this.finishersService.finisherNameList, currentRacerNameAndNumber ]);
       this.updateFinisherList(this.finishers$.value.slice(), currentFinisher)
       this.updateFinishersByCategories({ ...this.finishersByCategoriesMap$.value }, categoryName, currentFinisher)
-      this.finishersService.updateFinisherNameList([ ...this.finishersService.finisherNameList, currentRacerNameAndNumber ]);
       this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
     } else {
       /**
@@ -109,7 +120,9 @@ export class FinishRaceComponent {
     }
   }
 
-  public getTimeRemaining(t: number) {
+  public getTimeRemaining(t: number | null) {
+    if (t === null) return '';
+
     const mseconds = Math.floor(t % 1000);
     const seconds = Math.floor((t / 1000) % 60);
     const minutes = Math.floor((t / 1000 / 60) % 60);
@@ -153,7 +166,7 @@ export class FinishRaceComponent {
 
     if (currentNameForAnon === null || currentNameForAnon === "") return;
 
-    this.onFinish(currentSelectedAnon.time, currentNameForAnon);
+    this.onFinish(currentSelectedAnon.time!, currentNameForAnon);
 
     anonFinishers.splice(this.currentSelectedAnonIndex, 1);
     this.currentSelectedAnonIndex = null;
@@ -172,9 +185,87 @@ export class FinishRaceComponent {
     this.dialogs.open(content, {size: 's'}).subscribe();
   }
 
+  public getArrayByLength(length: number): number[] {
+    return new Array(length).fill(0).map((_, i) => i + 1);
+  }
+
+  private onLapRaceFinish(currentTime: number, currentRacerNameAndNumber: string, racerNameAndNumber: { name: string, number: number }, startedData: IStarter) {
+    const currentRacerIndex = this.racersService.racers$.value.findIndex((racer) => racer.number === racerNameAndNumber.number);
+    const currentRacer = this.racersService.racers$.value[currentRacerIndex];
+    const categoryName = currentRacer.category;
+    const actualTime = currentTime - startedData!.time;
+
+    const currentFinisher = this.updateCurrentFinisherForLapRace(actualTime, currentRacerNameAndNumber, categoryName);
+
+    this.updateFinishersByCategoriesForLapRace(categoryName, currentFinisher);
+
+    const isFinishLap = currentFinisher.timeList?.length === this.currentRaceService.lapByCategoriesMap[categoryName];
+
+    /**
+     * Обновляется только, когда финишный круг
+     */
+    if (isFinishLap) {
+      this.finishersService.updateFinisherNameList([...this.finishersService.finisherNameList, currentRacerNameAndNumber]);
+      this.racersService.updateRacerStatusByIndex(currentRacerIndex, RacerStatus.FINISHED)
+    }
+  }
+
+  private updateFinishersByCategoriesForLapRace(categoryName: string, currentFinisher: IFinisher) {
+    const finishersByCategoriesMap = { ...this.finishersByCategoriesMap$.value }
+
+    if (finishersByCategoriesMap[categoryName] === undefined) {
+      finishersByCategoriesMap[categoryName] = [ currentFinisher ];
+    } else {
+      const currentFinisherIndex = finishersByCategoriesMap[categoryName].findIndex((finisher) => finisher.name === currentFinisher.name);
+
+      if (currentFinisherIndex === -1) {
+        finishersByCategoriesMap[categoryName].push(currentFinisher);
+      } else {
+        finishersByCategoriesMap[categoryName][currentFinisherIndex] = currentFinisher
+      }
+    }
+
+    this.finishersService.updateFinishersByCategories(finishersByCategoriesMap);
+  }
+
+  private updateCurrentFinisherForLapRace(actualTime: number, currentRacerNameAndNumber: string, categoryName: string) {
+    const finishers = this.finishers$.value.slice();
+    const currentFinisherIndex = finishers.findIndex((finisher) => finisher.name === currentRacerNameAndNumber);
+    let currentFinisher;
+
+    if (currentFinisherIndex === -1) {
+      const finishTime = this.currentRaceService.lapByCategoriesMap[categoryName] === 1 ? actualTime : null
+
+      currentFinisher = {
+        name: currentRacerNameAndNumber,
+        time: finishTime,
+        timeList: [actualTime]
+      }
+
+      finishers.push(currentFinisher);
+
+    } else {
+      currentFinisher = finishers[currentFinisherIndex];
+
+      const totalTime = currentFinisher.timeList!.reduce((accumulator, currentValue) => {
+        return accumulator + currentValue;
+      }, 0);
+
+      finishers[currentFinisherIndex].timeList?.push(actualTime - totalTime)
+
+      const isFinishLap = currentFinisher.timeList?.length === this.currentRaceService.lapByCategoriesMap[categoryName];
+
+      if (isFinishLap) finishers[currentFinisherIndex].time = actualTime;
+    }
+
+    this.finishersService.updateFinishers(finishers);
+
+    return currentFinisher;
+  }
+
   private updateFinisherList(finishers: IFinisher[], currentFinisher: { name: string; time: number }) {
     finishers.push(currentFinisher);
-    finishers.sort((a, b) => a.time - b.time);
+    finishers.sort((a, b) => a.time! - b.time!);
 
     this.finishersService.updateFinishers(finishers.slice());
   }
@@ -189,7 +280,7 @@ export class FinishRaceComponent {
       finishersByCategories[categoryName] = [currentFinisher]
     }
 
-    finishersByCategories[categoryName].sort((a, b) => a.time - b.time);
+    finishersByCategories[categoryName].sort((a, b) => a.time! - b.time!);
 
     this.finishersService.updateFinishersByCategories(finishersByCategories);
   }

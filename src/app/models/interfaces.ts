@@ -2,7 +2,8 @@ import {RacerStatus, RaceType} from "./enums";
 
 export interface IFinisher {
   name: string;
-  time: number;
+  time: number | null;
+  timeList?: number[];
 }
 
 export interface IRacer {
