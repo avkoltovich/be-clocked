@@ -11,7 +11,7 @@
     </li>
   </ol>
   <button
-    *ngIf="!(isRaceBeginning$ | async)"
+    *ngIf="!(isRaceBeginning$ | async) && !(isRaceEnded$ | async)"
     class="tui-space_top-6"
     tuiButton
     appearance="primary"

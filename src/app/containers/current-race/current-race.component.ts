@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnDestroy, TemplateRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, Inject, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {BehaviorSubject, Subscription, takeUntil, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
@@ -16,7 +16,7 @@ import {TuiDestroyService} from "@taiga-ui/cdk";
   styleUrls: ["./current-race.component.scss"],
   providers: [TuiDestroyService],
 })
-export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
+export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   private ittTimerSubscription: Subscription | null = null;
   readonly RaceStatus = RaceStatus;
   readonly RaceType = RaceType;
@@ -87,6 +87,12 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy {
     const { tableKeys, tableData } = data
     const { name, category } = tableKeys;
     this.racersService.setRacersFromGoogleSheet(tableData, name, category);
+  }
+
+  public ngOnInit(): void {
+    if (this.raceType$.value === RaceType.GROUP && this.isRaceEnded$.value !== null) {
+      this.currentGroupRaceTime$.next(this.formatTime());
+    }
   }
 
   public ngAfterViewInit(): void {

@@ -1,5 +1,5 @@
 <ng-container *tuiLet="(racers$ | async) as racers">
-  <tui-island size="l" *ngIf="racers!.length > 0">
+  <tui-island size="l">
     <h2 class="tui-island__title tui-space_bottom-5">Список участников на старт</h2>
 
     <tui-notification
@@ -45,7 +45,7 @@
           <span class="category">
           {{ racer.category }}
         </span>
-          <ng-container *ngIf="(raceType$.value === RaceType.ITT && i >= currentRacerIndex$.value) || (raceType$.value === RaceType.GROUP && !isRaceBeginning$.value)">
+          <ng-container *ngIf="(raceType$.value === RaceType.ITT && i >= currentRacerIndex$.value) || (raceType$.value === RaceType.GROUP && !isRaceBeginning$.value && !isRaceEnded$.value)">
             <button
               *ngIf="raceType$.value === RaceType.ITT"
               tuiIconButton

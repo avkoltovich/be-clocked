@@ -23,6 +23,7 @@ export class RacerListComponent {
   public currentRacerIndex$ = this.currentRaceService.currentRacerIndex$;
   public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+  public isRaceEnded$ = this.currentRaceService.isRaceEnded$;
   public racers$ = this.racersService.racers$;
   public isAllRacersHasNumbers$ = this.racersService.isAllRacersHasNumbers$;
   public raceType$ = this.currentRaceService.raceType$;

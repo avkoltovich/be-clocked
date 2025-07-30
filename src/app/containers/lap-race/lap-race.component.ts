@@ -21,6 +21,8 @@ export class LapRaceComponent implements OnInit {
 
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$
 
+  public isRaceEnded$ = this.currentRaceService.isRaceEnded$
+
   constructor(private racersService: RacersService,
               private currentRaceService: CurrentRaceService,
               @Inject(TuiDestroyService) private readonly destroy$: TuiDestroyService,

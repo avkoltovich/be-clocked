@@ -11,6 +11,10 @@
   }
 }
 
+.form:not(:last-child) {
+  margin-bottom: 40px;
+}
+
 .item {
   display: flex;
   align-items: center;
