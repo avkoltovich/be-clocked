@@ -5,7 +5,7 @@
     type="button"
     appearance="primary"
     (click)="onStart()"
-    [disabled]="isRaceBeginning && !isRacePaused"
+    [disabled]="(isRaceBeginning && !isRacePaused) || isRaceEnded"
   >
     <tui-svg
       src="tuiIconPlayCircleLarge"
