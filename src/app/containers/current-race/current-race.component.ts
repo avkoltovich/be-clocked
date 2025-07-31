@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, Inject, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {BehaviorSubject, Subscription, takeUntil, tap} from "rxjs";
+import {BehaviorSubject, combineLatest, Subscription, takeUntil, tap} from "rxjs";
 import {RacersService} from "../../services/racers.service";
 import {TuiDialogService} from "@taiga-ui/core";
 import {RepositoryService} from "../../services/repository.service";
@@ -84,15 +84,22 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   private setDataFromGoogleTable(data: IGoogleTableData): void {
-    const { tableKeys, tableData } = data
-    const { name, category } = tableKeys;
+    const {tableKeys, tableData} = data
+    const {name, category} = tableKeys;
     this.racersService.setRacersFromGoogleSheet(tableData, name, category);
   }
 
   public ngOnInit(): void {
-    if (this.raceType$.value === RaceType.GROUP && this.isRaceEnded$.value !== null) {
-      this.currentGroupRaceTime$.next(this.formatTime());
-    }
+    combineLatest([
+      this.isRaceEnded$,
+      this.raceType$
+    ]).pipe(
+      tap(([ isRaceEnded, raceType ]) => {
+        if (raceType === RaceType.GROUP && isRaceEnded) {
+          this.currentGroupRaceTime$.next(this.formatTime());
+        }
+      })
+    ).subscribe();
 
     this.finishersService.isAllFinished$.pipe(
       tap((isAllFinished) => {
@@ -109,8 +116,7 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
 
     if (this.racersService.racers$.value.length > 0) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
-    }
-    else {
+    } else {
       this.repositoryService.resetLS();
     }
 
@@ -151,6 +157,10 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public onStop() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+
     this.racersService.dnfRacers();
     this.currentRaceService.endGroupRace()
   }
@@ -176,6 +186,9 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public onReset() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
     this.ittTimerSubscription?.unsubscribe();
     this.currentRaceService.resetCurrentRace();
     this.racersService.resetRacersData();
@@ -183,6 +196,10 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
     this.raceStatus$.next(RaceStatus.PREPARE);
     this.currentRaceService.updateRaceStartTime(null);
     this.repositoryService.resetLS();
+
+    if (this.raceType$.value === RaceType.GROUP) {
+      this.currentGroupRaceTime$.next(this.formatTime());
+    }
   }
 
   public openResetDialog(content: any): void {
@@ -241,8 +258,10 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   private formatTime(): string {
     let totalSeconds = 0;
 
-    if (this.isRaceBeginning$.value) totalSeconds = Math.floor((Date.now() - this.startTime$.value!) / 1000)
     if (this.isRaceEnded$.value) totalSeconds = Math.floor((this.endTime$.value! - this.startTime$.value!) / 1000)
+    if (this.isRaceBeginning$.value) totalSeconds = Math.floor((Date.now() - this.startTime$.value!) / 1000)
+
+    if (totalSeconds <= 0) return '0:00:00';
 
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
