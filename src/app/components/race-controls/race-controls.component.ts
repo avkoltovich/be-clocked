@@ -21,6 +21,8 @@ export class RaceControlsComponent implements AfterViewInit {
 
   @Input() isRacePaused = false;
 
+  @Input() isAllRacersStarted = false;
+
   @Input() raceStatus = RaceStatus.PREPARE;
 
   @Input() raceType: RaceType = RaceType.ITT;

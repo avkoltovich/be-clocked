@@ -33,7 +33,7 @@
     type="button"
     appearance="secondary"
     (click)="onSkip()"
-    [disabled]="!isRaceBeginning || isRacePaused"
+    [disabled]="!isRaceBeginning || isRacePaused || isAllRacersStarted"
   >
     <tui-svg
       src="tuiIconFastForwardLarge"
@@ -60,7 +60,7 @@
     type="button"
     appearance="flat"
     (click)="onPause()"
-    [disabled]="!isRaceBeginning || isRacePaused"
+    [disabled]="!isRaceBeginning || isRacePaused || isAllRacersStarted"
   >
     <tui-svg
       src="tuiIconPauseCircleLarge"
