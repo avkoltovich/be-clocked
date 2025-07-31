@@ -40,6 +40,7 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   public isRaceStarted$ = this.currentRaceService.isRaceStarted$;
   public isRacePaused$ = this.currentRaceService.isRacePaused$;
   public isAllRacersStarted$ = this.currentRaceService.isAllRacersStarted$;
+  public isAllRacersHasNumbers = this.racersService.isAllRacersHasNumbers$;
   public raceName$ = this.currentRaceService.raceName$;
   public raceType$ = this.currentRaceService.raceType$;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
@@ -92,11 +93,17 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   public ngOnInit(): void {
     combineLatest([
       this.isRaceEnded$,
-      this.raceType$
+      this.raceType$,
+      this.startTime$
     ]).pipe(
-      tap(([ isRaceEnded, raceType ]) => {
+      tap(([ isRaceEnded, raceType, startTime ]) => {
         if (raceType === RaceType.GROUP && isRaceEnded) {
           this.currentGroupRaceTime$.next(this.formatTime());
+        }
+
+        if (raceType === RaceType.GROUP && startTime !== null && !isRaceEnded && !this.intervalId) {
+          this.currentRaceService.setRaceBeginning(true);
+          this.startTimer();
         }
       })
     ).subscribe();
@@ -109,11 +116,6 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public ngAfterViewInit(): void {
-    if (this.raceType$.value === RaceType.GROUP && this.startTime$.value !== null && !this.isRaceEnded$.value) {
-      this.currentRaceService.setRaceBeginning(true);
-      this.startTimer();
-    }
-
     if (this.racersService.racers$.value.length > 0) {
       this.dialogs.open(this.newRace, {size: 'auto'}).subscribe();
     } else {
@@ -186,20 +188,14 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   public onReset() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    this.repositoryService.resetLS();
     this.ittTimerSubscription?.unsubscribe();
     this.currentRaceService.resetCurrentRace();
     this.racersService.resetRacersData();
     this.finishersService.resetFinishersData();
     this.raceStatus$.next(RaceStatus.PREPARE);
-    this.currentRaceService.updateRaceStartTime(null);
-    this.repositoryService.resetLS();
-
-    if (this.raceType$.value === RaceType.GROUP) {
-      this.currentGroupRaceTime$.next(this.formatTime());
-    }
+    this.checkAndClearInterval();
+    this.currentGroupRaceTime$.next('0:00:00');
   }
 
   public openResetDialog(content: any): void {
@@ -271,14 +267,21 @@ export class CurrentRaceComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   private startTimer() {
+    console.log('startTimer');
     this.intervalId = setInterval(() => {
+      console.log('timer')
       this.currentGroupRaceTime$.next(this.formatTime());
     }, 1000);
   }
 
   public ngOnDestroy() {
+    this.checkAndClearInterval();
+  }
+
+  private checkAndClearInterval() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
+      this.intervalId = null;
     }
   }
 }
