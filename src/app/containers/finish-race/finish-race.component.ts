@@ -90,6 +90,8 @@ export class FinishRaceComponent {
     if (currentRacerNameAndNumber !== null && currentRacerNameAndNumber !== "") {
       this.racerControl.setValue("");
 
+      if (this.finishersService.finisherNameList.includes(currentRacerNameAndNumber)) return;
+
       const racerNameAndNumber = this.racersService.splitRacerNameAndNumberString(currentRacerNameAndNumber);
       const startedData = this.racersService.startedRacers.find((starter) => starter.racer.number === racerNameAndNumber.number);
 
@@ -192,7 +194,7 @@ export class FinishRaceComponent {
   }
 
   private checkAllFinished() {
-    if (this.racersService.racers$.value.every((racer) => racer.status === RacerStatus.FINISHED)) {
+    if (this.racersService.racers$.value.every((racer) => racer.status === RacerStatus.FINISHED || racer.status === RacerStatus.DNS)) {
       this.finishersService.isAllFinished$.next(true);
     }
   }

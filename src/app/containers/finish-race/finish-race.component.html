@@ -4,7 +4,6 @@
   <ng-container *ngIf="!(isRaceEnded$ | async)">
     <form class="tui-form__row_multi-fields form" [formGroup]="formGroup" (ngSubmit)="$event.preventDefault(); onFinish()">
       <tui-input
-        *tuiLet="racers$ | async as racers"
         class="input"
         formControlName="racer"
         tuiTextfieldSize="m"
@@ -14,10 +13,10 @@
           tuiTextfield
           type="text"
         >
-        <ng-container *ngIf="racers?.length">
+        <ng-container *ngIf="(racers$ | async)?.length">
           <tui-data-list *tuiDataList>
             <button
-              *ngFor="let racer of racers"
+              *ngFor="let racer of racers$ | async"
               tuiOption
               [value]="racer.toString()"
             >
