@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
-import {BehaviorSubject, combineLatest, combineLatestWith, takeUntil, tap} from "rxjs";
+import {BehaviorSubject, combineLatest, takeUntil, tap} from "rxjs";
 import {RaceType} from "../../models/enums";
 import {TuiDestroyService} from "@taiga-ui/cdk";
 
