@@ -159,10 +159,10 @@ export class CurrentRaceService {
 
   public endGroupRace() {
     const endTime = Date.now();
-    this.isRaceEnded$.next(true);
-    this.isRaceBeginning$.next(false);
     this.raceEndTime$.next(endTime);
+    this.isRaceBeginning$.next(false);
     this.repositoryService.updateRaceEndTime(endTime);
     this.repositoryService.updateIsRaceEnded(true);
+    this.isRaceEnded$.next(true);
   }
 }
