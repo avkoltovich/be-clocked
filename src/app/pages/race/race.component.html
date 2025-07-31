@@ -1,6 +1,6 @@
 <div class="rows">
   <app-current-race></app-current-race>
-  <app-lap-race *ngIf="(raceType$ | async) === RaceType.GROUP"></app-lap-race>
+  <app-lap-race *ngIf="(raceType$ | async) === RaceType.GROUP && (racers$ | async)!.length > 0"></app-lap-race>
   <app-add-racer *ngIf="((raceType$ | async) === RaceType.ITT) || (!(isRaceBeginning$ | async) && !(isRaceEnded$ | async))"></app-add-racer>
   <app-racer-list *ngIf="(racers$ | async)!.length > 0"></app-racer-list>
   <app-finish-race *ngIf="(isRaceBeginning$ | async) || ((isRaceEnded$ | async) && (finishers$ | async)!.length > 0)"></app-finish-race>

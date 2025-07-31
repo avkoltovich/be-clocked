@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
-import {BehaviorSubject, takeUntil, tap} from "rxjs";
+import {BehaviorSubject, combineLatest, takeUntil, tap} from "rxjs";
 import {RaceType} from "../../models/enums";
 import {TuiDestroyService} from "@taiga-ui/cdk";
 
@@ -39,36 +39,39 @@ export class RaceHeaderComponent implements OnInit {
     if (this.isRaceEnded$.value) {
       this.raceTypeControl.disable();
       this.raceTypeControl.setValue(this.raceType$.value, { emitEvent: false });
-    } else {
-      this.raceTypeControl.valueChanges.pipe(
-        tap((value) => {
-          if (value) {
-            this.raceTypeChange.emit(value)
-          }
-        }),
-        takeUntil(this.destroy$),
-      ).subscribe();
-
-      this.raceType$.pipe(
-        tap((raceType) => {
-          if (this.raceTypeControl.value !== raceType) {
-            this.raceTypeControl.setValue(raceType);
-          }
-        }),
-        takeUntil(this.destroy$)
-      ).subscribe();
-
-      this.isRaceBeginning$.pipe(
-        tap((isRaceBeginning) => {
-          if (isRaceBeginning || this.isRaceEnded$.value) {
-            this.raceTypeControl.disable();
-          } else {
-            this.raceTypeControl.enable();
-          }
-        }),
-        takeUntil(this.destroy$),
-      ).subscribe()
     }
+
+    this.raceTypeControl.valueChanges.pipe(
+      tap((value) => {
+        if (value) {
+          this.raceTypeChange.emit(value)
+        }
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe();
+
+    this.raceType$.pipe(
+      tap((raceType) => {
+        if (this.raceTypeControl.value !== raceType) {
+          this.raceTypeControl.setValue(raceType);
+        }
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe();
+
+    combineLatest([
+      this.isRaceBeginning$,
+      this.isRaceEnded$,
+    ]).pipe(
+      tap(([isRaceBeginning, isRaceEnded]) => {
+        if (isRaceBeginning || isRaceEnded) {
+          this.raceTypeControl.disable();
+        } else {
+          this.raceTypeControl.enable();
+        }
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe()
   }
 
   public onRaceNameClick(): void {

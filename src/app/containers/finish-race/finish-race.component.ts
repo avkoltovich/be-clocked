@@ -28,6 +28,7 @@ export class FinishRaceComponent {
   public anonIndex$ = this.finishersService.currentAnonIndex$;
   public currentSelectedAnonIndex: number | null = null;
   public isRaceBeginning$ = this.currentRaceService.isRaceBeginning$;
+  public isRaceEnded$ = this.currentRaceService.isRaceEnded$;
   public raceType$ = this.currentRaceService.raceType$;
   public lapByCategoriesMap = this.currentRaceService.lapByCategoriesMap;
 
