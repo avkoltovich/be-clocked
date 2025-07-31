@@ -37,6 +37,7 @@
     <app-race-controls
       [raceStatus]="raceStatus$.value"
       [raceType]="raceType$.value"
+      [isAllRacersStarted]="(isAllRacersStarted$ | async)!"
       [isRaceBeginning]="(isRaceBeginning$ | async)!"
       [isRaceEnded]="(isRaceEnded$ | async)!"
       [isRacePaused]="(isRacePaused$ | async)!"
