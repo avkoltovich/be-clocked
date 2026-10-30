@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.workflow.json",
+    "sha256": "f8e8527a4c6d415840b5d41eff25cbf67f34e8fb42ef2c2bc6d7c4f725474c81",
+    "bytes": 7581
+  },
+  "artifact": {
+    "path": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.html",
+    "sha256": "161f36f4e86cee4265d82bd7d4ebcc63f12ec0c9bbb4e7df4a61be5aa58b49dd",
+    "bytes": 855452
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.finalize.json",
+    "summaryReceipt": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.finalize-summary.json",
+    "browserCheckReceipt": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-10-30T16:07:01.635Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 3867,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "552e2838-e2c5-4898-934c-13153d9eabe6",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.workflow.json",
+  "output": "/Users/avkoltovich/repos/be-clocked/.archify/workflow-finish-protocol-20261030-185056/finish-protocol.html",
+  "specification": {
+    "sha256": "f8e8527a4c6d415840b5d41eff25cbf67f34e8fb42ef2c2bc6d7c4f725474c81",
+    "bytes": 7581
+  },
+  "artifact": {
+    "sha256": "161f36f4e86cee4265d82bd7d4ebcc63f12ec0c9bbb4e7df4a61be5aa58b49dd",
+    "bytes": 855452
+  }
+}

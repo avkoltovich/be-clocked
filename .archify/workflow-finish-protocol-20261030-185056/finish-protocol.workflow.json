@@ -1,0 +1,214 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "BeClocked — Finish Protocol",
+    "subtitle": "Naming a finish and publishing results, after openspec/specs/finish-protocol/spec.md",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "output": ".archify/workflow-finish-protocol-20261030-185056/finish-protocol.html"
+  },
+  "lanes": [
+    { "id": "operator", "label": "Finish-line operator" },
+    { "id": "core", "label": "BeClocked timing core" },
+    { "id": "results", "label": "Protocol & display" },
+    { "id": "corrections", "label": "Guards · corrections · open", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "capture", "label": "Capture", "fromCol": 0, "toCol": 1, "variant": "emphasis" },
+    { "id": "validate", "label": "Validate & record", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "publish", "label": "Publish", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["trigger", "guard", "record", "lapdec", "protocol", "display"],
+  "semanticChecks": {
+    "allowedRoots": ["trigger"],
+    "allowedTerminals": ["display", "ignore", "gone", "completion", "rename"],
+    "requiredEdges": [
+      { "from": "trigger", "to": "guard" },
+      { "from": "trigger", "to": "anon" },
+      { "from": "guard", "to": "record" },
+      { "from": "guard", "to": "ignore" },
+      { "from": "record", "to": "lapdec" },
+      { "from": "lapdec", "to": "protocol" },
+      { "from": "lapdec", "to": "addlap" },
+      { "from": "addlap", "to": "record" },
+      { "from": "protocol", "to": "display" },
+      { "from": "protocol", "to": "completion" },
+      { "from": "anon", "to": "delete" },
+      { "from": "anon", "to": "rename" },
+      { "from": "delete", "to": "gone" }
+    ],
+    "requiredPaths": [
+      { "from": "trigger", "to": "display" },
+      { "from": "trigger", "to": "ignore" },
+      { "from": "trigger", "to": "completion" },
+      { "from": "trigger", "to": "gone" }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "trigger",
+      "lane": "operator",
+      "col": 0,
+      "type": "external",
+      "icon": "start",
+      "label": "Finish call",
+      "sublabel": "name / number + finish"
+    },
+    {
+      "id": "guard",
+      "lane": "core",
+      "col": 1,
+      "type": "security",
+      "icon": "decision",
+      "label": "Eligible?",
+      "sublabel": "started & not finished"
+    },
+    {
+      "id": "record",
+      "lane": "core",
+      "col": 2,
+      "type": "backend",
+      "icon": "clock",
+      "label": "Record result",
+      "sublabel": "Δt = finish − start",
+      "tag": "status FINISH"
+    },
+    {
+      "id": "lapdec",
+      "lane": "core",
+      "col": 3,
+      "type": "security",
+      "icon": "decision",
+      "label": "Last lap?",
+      "sublabel": "laps · category"
+    },
+    {
+      "id": "addlap",
+      "lane": "core",
+      "col": 5,
+      "type": "database",
+      "icon": "waiting",
+      "label": "More laps",
+      "sublabel": "lap ∅ · total undefined"
+    },
+    {
+      "id": "protocol",
+      "lane": "results",
+      "col": 4,
+      "type": "database",
+      "label": "Protocol",
+      "sublabel": "absolute + by-category"
+    },
+    {
+      "id": "display",
+      "lane": "results",
+      "col": 5,
+      "type": "external",
+      "icon": "success",
+      "label": "Display",
+      "sublabel": "HH:MM:SS.mmm"
+    },
+    {
+      "id": "ignore",
+      "lane": "corrections",
+      "col": 1,
+      "type": "security",
+      "icon": "failure",
+      "label": "No result",
+      "sublabel": "ignored · nothing added"
+    },
+    {
+      "id": "anon",
+      "lane": "operator",
+      "col": 3,
+      "type": "frontend",
+      "icon": "neutral",
+      "label": "Anonymous finish",
+      "sublabel": "«Аноним N» · unknown"
+    },
+    {
+      "id": "rename",
+      "lane": "operator",
+      "col": 4,
+      "type": "frontend",
+      "label": "Rename → known",
+      "sublabel": "transfer Δt · drop anon",
+      "tag": "owner: spec silent"
+    },
+    {
+      "id": "delete",
+      "lane": "corrections",
+      "col": 3,
+      "type": "security",
+      "icon": "decision",
+      "label": "Delete anon",
+      "sublabel": "human confirmation",
+      "tag": "approval gate"
+    },
+    {
+      "id": "gone",
+      "lane": "corrections",
+      "col": 4,
+      "type": "security",
+      "icon": "failure",
+      "label": "Removed",
+      "sublabel": "dropped from protocol"
+    },
+    {
+      "id": "completion",
+      "lane": "corrections",
+      "col": 5,
+      "type": "security",
+      "icon": "flag",
+      "label": "Race complete",
+      "sublabel": "auto-finish · all FINISH/DNS",
+      "tag": "undefined in this spec"
+    }
+  ],
+  "edges": [
+    { "id": "e-trigger-guard", "from": "trigger", "to": "guard", "label": "capture", "variant": "emphasis", "role": "main", "route": "auto" },
+    { "id": "e-trigger-anon", "from": "trigger", "to": "anon", "label": "race on-going", "variant": "dashed", "role": "branch" },
+    { "id": "e-guard-record", "from": "guard", "to": "record", "label": "yes", "variant": "emphasis", "role": "main" },
+    { "id": "e-guard-ignore", "from": "guard", "to": "ignore", "label": "not started / repeat", "variant": "security", "role": "error", "route": "auto" },
+    { "id": "e-record-lapdec", "from": "record", "to": "lapdec", "variant": "emphasis", "role": "main" },
+    { "id": "e-lapdec-protocol", "from": "lapdec", "to": "protocol", "label": "last lap", "variant": "emphasis", "role": "main", "route": "auto" },
+    { "id": "e-lapdec-addlap", "from": "lapdec", "to": "addlap", "label": "more laps", "variant": "dashed", "role": "branch" },
+    { "id": "e-addlap-record", "from": "addlap", "to": "record", "label": "next lap", "variant": "dashed", "role": "branch", "route": "auto" },
+    { "id": "e-protocol-display", "from": "protocol", "to": "display", "label": "time-ordered", "variant": "emphasis", "role": "main" },
+    { "id": "e-protocol-completion", "from": "protocol", "to": "completion", "label": "all FINISH/DNS", "variant": "security", "role": "branch", "route": "auto" },
+    { "id": "e-anon-delete", "from": "anon", "to": "delete", "label": "with confirm", "variant": "security", "role": "branch", "route": "auto" },
+    { "id": "e-anon-rename", "from": "anon", "to": "rename", "label": "later", "variant": "dashed", "role": "branch" },
+    { "id": "e-delete-gone", "from": "delete", "to": "gone", "label": "confirmed", "variant": "security", "role": "branch" }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "One happy path",
+      "items": [
+        "A started, not-yet-finished racer is named at the finish line",
+        "Record Δt = finish − start and set status FINISH",
+        "On the last lap the time publishes to the absolute / by-category protocol",
+        "Results render time-ordered as HH:MM:SS.mmm"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Guards & corrections",
+      "items": [
+        "Not started or already finished ⇒ ignored, nothing is added",
+        "Anonymous finishers get a system name «Аноним N» with an unknown racer",
+        "Deletion is a human-confirmation gate; a rename transfers its Δt and drops the anon"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Open — not invented",
+      "items": [
+        "Who and when an anon is renamed or deleted is not fixed by this spec",
+        "Full-race auto-termination is named in Purpose but defined in race-lifecycle/spec.md, not here",
+        "Source is the untracked working-tree file, so no commit is pinned"
+      ]
+    }
+  ]
+}
