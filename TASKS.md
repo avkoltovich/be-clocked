@@ -129,7 +129,7 @@ rg '\[ \]' TASKS.md               # что впереди
 - **Стек (решён)**: **Angular 19+ (standalone-компоненты, signals) +
   Taiga UI v5** (по официальной матрице совместимости Taiga 5.x → Angular
   `^19.0.0 … latest`; текущий проект `16 + Taiga 3.x` — не поддерживается,
-  при полной переписываем не наследуется). PWA — через встроенный
+  при полной переписывании не наследуется). PWA — через встроенный
   `@angular/service-worker` (`ngsw`, `ng g @angular/pwa`), **не** через Vite/CRA.
   Зафиксировать в `DECISIONS.md`.
 - **Бюджет чита**: `openspec/config.yaml`, `openspec/README.md`,
