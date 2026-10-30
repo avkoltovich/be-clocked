@@ -44,10 +44,12 @@
 
 ## Открытые вопросы
 
-- Имя ветки: `feat/rewrite-angular-signals` — подтверждено/перезаписано (задача 0.1).
+- Имя ветки: `feat/rewrite-angular-signals` — **подтверждено** (2026-10-30, timlead).
 - Стек (Angular 19+, standalone, signals, zoneless, Taiga UI v5, PWA через `@angular/service-worker`) — **подтверждён** и зафиксирован в задаче 0.1.
-- AI-интеграция Taiga UI (`@taiga-ui/mcp` + `llms.txt`) — доступна ли в runtimes агентов (Pi/OpenCode). Если нет в OpenCode — 0.3 деградирует до «агент читает `llms.txt` вручную».
-- Каждая роль запускаться в **Pi** (qwen 3.8:27b-mlx) или **OpenCode** (Recursive Flint, nemotron), или по ситуации. Формирование `opencode.json` через `npx @taiga-ui/mcp init --client opencode`.
+- AI-интеграция Taiga UI (`@taiga-ui/mcp` + `llms.txt`) — **доступна** в Pi/OpenCode (2026-10-30, timlead). Формируется через `npx @taiga-ui/mcp init --client opencode --version latest`. Деградация на ручной `llms.txt` не требуется.
+- Каждая роль запускается в **Pi** (qwen 3.8:27b-mlx) или **OpenCode** (Recursive Flint / nemotron) — по ситуации.
+- **Первый шаг (git) выполнен 2026-10-30:** commit `668c5cd docs(tracking): add task/process files` в `main`, ветки `feat/rewrite-angular-signals` создана с `main`, working tree clean, branch active.
+- **Push в origin/main** — **не выполнен** (ждём явного запроса).
 
 ## Роли и конвейер (3 агента)
 
